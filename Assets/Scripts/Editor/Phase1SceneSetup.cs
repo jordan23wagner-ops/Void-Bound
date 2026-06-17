@@ -8,6 +8,9 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using VoidBound.Combat;
 using VoidBound.Core;
+using VoidBound.Data;
+using VoidBound.Inventory;
+using VoidBound.UI;
 
 namespace VoidBound.Editor
 {
@@ -24,9 +27,11 @@ namespace VoidBound.Editor
             SetupGround();
             SetupMobileControls();
             SetupTestEnemy();
+            SetupInventoryUI(player);
+            CreateTestGearAssets(player);
 
             EditorSceneManager.SaveScene(scene, "Assets/Scenes/Homestead.unity");
-            Debug.Log("[Phase 2] Homestead scene created with combat setup.");
+            Debug.Log("[Phase 3] Homestead scene created with combat + inventory.");
         }
 
         private static void SetupLighting()
@@ -98,6 +103,7 @@ namespace VoidBound.Editor
             player.AddComponent<StatsComponent>();
             player.AddComponent<Health>();
             player.AddComponent<PlayerCombat>();
+            player.AddComponent<PlayerInventory>();
             AddHealthBar(player);
 
             ApplyPlayerMaterial(player);
@@ -310,6 +316,146 @@ namespace VoidBound.Editor
 
             foreach (var r in renderers)
                 r.sharedMaterial = mat;
+        }
+
+        private static void SetupInventoryUI(GameObject player)
+        {
+            var canvasObj = new GameObject("InventoryCanvas");
+            var canvas = canvasObj.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 200;
+
+            var scaler = canvasObj.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920, 1080);
+            scaler.matchWidthOrHeight = 0.5f;
+
+            canvasObj.AddComponent<GraphicRaycaster>();
+
+            var panel = new GameObject("InventoryPanel");
+            panel.transform.SetParent(canvasObj.transform, false);
+            var panelImage = panel.AddComponent<Image>();
+            panelImage.color = new Color(0.1f, 0.1f, 0.15f, 0.9f);
+            var panelRect = panel.GetComponent<RectTransform>();
+            panelRect.anchorMin = new Vector2(0.05f, 0.05f);
+            panelRect.anchorMax = new Vector2(0.95f, 0.95f);
+            panelRect.offsetMin = Vector2.zero;
+            panelRect.offsetMax = Vector2.zero;
+
+            var slotsHeader = CreateUIText(panel.transform, "Equipment", new Vector2(0.02f, 0.9f), new Vector2(0.48f, 0.98f));
+
+            var slotsParent = new GameObject("SlotsParent");
+            slotsParent.transform.SetParent(panel.transform, false);
+            var slotsRect = slotsParent.AddComponent<RectTransform>();
+            slotsRect.anchorMin = new Vector2(0.02f, 0.05f);
+            slotsRect.anchorMax = new Vector2(0.48f, 0.9f);
+            slotsRect.offsetMin = Vector2.zero;
+            slotsRect.offsetMax = Vector2.zero;
+            var slotsLayout = slotsParent.AddComponent<VerticalLayoutGroup>();
+            slotsLayout.spacing = 4f;
+            slotsLayout.childForceExpandWidth = true;
+            slotsLayout.childForceExpandHeight = false;
+            slotsLayout.childControlHeight = true;
+            slotsLayout.childControlWidth = true;
+            var slotsFitter = slotsParent.AddComponent<ContentSizeFitter>();
+            slotsFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            var bpHeader = CreateUIText(panel.transform, "Backpack", new Vector2(0.52f, 0.9f), new Vector2(0.98f, 0.98f));
+
+            var bpParent = new GameObject("BackpackParent");
+            bpParent.transform.SetParent(panel.transform, false);
+            var bpRect = bpParent.AddComponent<RectTransform>();
+            bpRect.anchorMin = new Vector2(0.52f, 0.05f);
+            bpRect.anchorMax = new Vector2(0.98f, 0.9f);
+            bpRect.offsetMin = Vector2.zero;
+            bpRect.offsetMax = Vector2.zero;
+            var bpLayout = bpParent.AddComponent<VerticalLayoutGroup>();
+            bpLayout.spacing = 4f;
+            bpLayout.childForceExpandWidth = true;
+            bpLayout.childForceExpandHeight = false;
+            bpLayout.childControlHeight = true;
+            bpLayout.childControlWidth = true;
+            var bpFitter = bpParent.AddComponent<ContentSizeFitter>();
+            bpFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            var invUI = canvasObj.AddComponent<InventoryUI>();
+            var so = new SerializedObject(invUI);
+            so.FindProperty("inventory").objectReferenceValue = player.GetComponent<PlayerInventory>();
+            so.FindProperty("panel").objectReferenceValue = panel;
+            so.FindProperty("slotsParent").objectReferenceValue = slotsParent.transform;
+            so.FindProperty("backpackParent").objectReferenceValue = bpParent.transform;
+            so.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static GameObject CreateUIText(Transform parent, string text, Vector2 anchorMin, Vector2 anchorMax)
+        {
+            var obj = new GameObject(text + "Header");
+            obj.transform.SetParent(parent, false);
+            var rect = obj.AddComponent<RectTransform>();
+            rect.anchorMin = anchorMin;
+            rect.anchorMax = anchorMax;
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+            var t = obj.AddComponent<Text>();
+            t.text = text;
+            t.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            t.fontSize = 22;
+            t.alignment = TextAnchor.MiddleCenter;
+            t.color = Color.white;
+            return obj;
+        }
+
+        private static void CreateTestGearAssets(GameObject player)
+        {
+            string soDir = "Assets/ScriptableObjects/TestGear";
+            if (!AssetDatabase.IsValidFolder(soDir))
+                AssetDatabase.CreateFolder("Assets/ScriptableObjects", "TestGear");
+
+            var common = CreateGearAsset(soDir, "Rusty Sword", EquipmentSlot.Weapon, WeaponType.Sword,
+                RarityTier.Common, new CharacterStats(2, 0, 0, 0), 8);
+            var rare = CreateGearAsset(soDir, "Arcane Blade", EquipmentSlot.Weapon, WeaponType.Sword,
+                RarityTier.Rare, new CharacterStats(5, 3, 0, 2), 14);
+            var legendary = CreateGearAsset(soDir, "Flamecleaver", EquipmentSlot.Weapon, WeaponType.Sword2H,
+                RarityTier.Legendary, new CharacterStats(12, 5, 3, 0), 22);
+            var voidforged = CreateGearAsset(soDir, "Voidreaver", EquipmentSlot.Weapon, WeaponType.Sword2H,
+                RarityTier.Voidforged, new CharacterStats(20, 10, 8, 5), 35);
+
+            var inv = player.GetComponent<PlayerInventory>();
+            if (inv == null) return;
+
+            var so = new SerializedObject(inv);
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            var startup = player.AddComponent<TestGearStartup>();
+            var startupSO = new SerializedObject(startup);
+            var arr = startupSO.FindProperty("testItems");
+            arr.arraySize = 4;
+            arr.GetArrayElementAtIndex(0).objectReferenceValue = common;
+            arr.GetArrayElementAtIndex(1).objectReferenceValue = rare;
+            arr.GetArrayElementAtIndex(2).objectReferenceValue = legendary;
+            arr.GetArrayElementAtIndex(3).objectReferenceValue = voidforged;
+            startupSO.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static GearItemSO CreateGearAsset(string dir, string name, EquipmentSlot slot,
+            WeaponType weapon, RarityTier rarity, CharacterStats mods, int baseDmg)
+        {
+            string path = $"{dir}/{name.Replace(" ", "_")}_{rarity}.asset";
+            var existing = AssetDatabase.LoadAssetAtPath<GearItemSO>(path);
+            if (existing != null) return existing;
+
+            var item = ScriptableObject.CreateInstance<GearItemSO>();
+            item.itemId = name.ToLower().Replace(" ", "_");
+            item.displayName = name;
+            item.slot = slot;
+            item.weaponType = weapon;
+            item.rarity = rarity;
+            item.statModifiers = mods;
+            item.baseDamage = baseDmg;
+            item.setId = "";
+
+            AssetDatabase.CreateAsset(item, path);
+            return item;
         }
     }
 }

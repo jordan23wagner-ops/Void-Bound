@@ -10,7 +10,11 @@ namespace VoidBound.Data
         public EquipmentSlot slot;
         public WeaponType weaponType;
         public RarityTier rarity;
+        public CharacterStats statModifiers;
         public GameObject visualPrefab;
         public string setId;
+
+        [Header("Combat")]
+        public int baseDamage;
     }
 }

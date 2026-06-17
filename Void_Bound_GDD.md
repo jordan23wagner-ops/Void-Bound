@@ -21,8 +21,8 @@
 **Equipment Slots (11 — full RunePortal depth):**
 Weapon, Shield, Head, Cape, Neck, Body, Legs, Hands, Feet, Ring, Ammo
 
-**Weapon Types (8, carried from RunePortal):**
-Sword, Axe, Spear, Mace, Bow, Crossbow, Staff, Wand *(confirm/adjust during Phase 3)*
+**Weapon Types (8, confirmed from RunePortal WEAPON_TYPES):**
+Sword, Sword2H, Dagger, Mace, Bow, Crossbow, Staff, Wand
 
 **Rarity Tiers (9, full depth):**
 Common → Uncommon → Rare → Epic → Legendary → Mythic → Ascended → Eternal → Voidforged
@@ -162,4 +162,4 @@ This mirrors RunePortal's data-driven gear/drop table approach almost exactly �
 - ~~Confirm remaining Homestead buildings~~ → **12 structures total** (resolved Phase 0, pulled from RunePortal HS_BUILDINGS)
 - ~~Lock level cap + XP curve~~ → **99 per skill, 3x curve** (resolved Phase 0, tunable)
 - ~~Confirm currency~~ → **Gold + Void Shards** (resolved Phase 0)
-- Confirm exact 8 weapon types match RunePortal's GEAR_DB (deferred to Phase 3)
+- ~~Confirm exact 8 weapon types~~ → **Sword, Sword2H, Dagger, Mace, Bow, Crossbow, Staff, Wand** (resolved Phase 3, pulled from RunePortal WEAPON_TYPES)

@@ -19,8 +19,8 @@ namespace VoidBound.Data
     {
         None,
         Sword,
-        Axe,
-        Spear,
+        Sword2H,
+        Dagger,
         Mace,
         Bow,
         Crossbow,

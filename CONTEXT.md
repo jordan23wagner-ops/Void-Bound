@@ -3,7 +3,7 @@
 
 ## Project State
 - **Engine:** Unity 6.5 (6000.5.0f1), URP, mobile-first
-- **Status:** Phase 2 (Combat) complete — core combat loop functional
+- **Status:** Phase 3 (Gear & Inventory) complete
 - **GDD:** See `Void_Bound_GDD.md` in repo root — full design spec, all systems locked
 - **MCP connections live:** Unity MCP (scene/asset control) + Blender MCP (procedural low-poly model generation)
 
@@ -24,7 +24,17 @@ Void Bound evolved from RunePortal (a Three.js browser ARPG). All gameplay syste
 6. **Update this CONTEXT.md** after each phase completes — log what was built, file locations, and any decisions made.
 
 ## Current Phase
-**Phase 3: Gear & Inventory** — see `PHASES/phase3_gear_inventory.md`
+**Phase 4: Loot & Drop Tables** — see `PHASES/phase4_loot_drops.md`
+
+## Phase 3 Log (completed 2026-06-17)
+- **Weapon Types Resolved:** Sword, Sword2H, Dagger, Mace, Bow, Crossbow, Staff, Wand (from RunePortal `WEAPON_TYPES`). Replaced Axe/Spear with Sword2H/Dagger per source.
+- **GearItemSO:** `Scripts/Data/GearItemSO.cs` — full fields: itemId, displayName, slot, weaponType, rarity, statModifiers (CharacterStats), visualPrefab, setId, baseDamage
+- **PlayerInventory:** `Scripts/Inventory/PlayerInventory.cs` — 11-slot equip map + backpack list, EquipItem/UnequipItem applies stat modifiers to StatsComponent at runtime
+- **RarityVisualEffects:** `Scripts/Inventory/RarityVisualEffects.cs` — static utility, 9-tier color mapping, emission for Rare+, particle accent for Legendary+
+- **InventoryUI:** `Scripts/UI/InventoryUI.cs` — Tab key toggles, left panel = 11 equipment slots, right panel = backpack. Click to equip/unequip. Rarity-colored buttons.
+- **TestGearStartup:** `Scripts/Inventory/TestGearStartup.cs` — adds 4 test weapons to backpack at Start
+- **Test Gear Assets:** `ScriptableObjects/TestGear/` — Rusty Sword (Common, +2 STR), Arcane Blade (Rare, +5 STR/+3 DEX), Flamecleaver (Legendary, +12 STR), Voidreaver (Voidforged, +20 STR)
+- **Stat Application:** Equipping gear adds statModifiers to StatsComponent.BaseStats, directly affecting auto-attack damage via the Phase 2 DamageCalculator pipeline
 
 ## Phase 2 Log (completed 2026-06-17)
 - **Design:** Combat is fully automatic/proximity-based — NO manual attack button. Player auto-attacks nearest enemy within range on DEX-based cooldown. Attack input action removed from PlayerCombat.
@@ -65,7 +75,8 @@ Void Bound evolved from RunePortal (a Three.js browser ARPG). All gameplay syste
 - **Homestead:** 12 structures total (pulled from RunePortal `HS_BUILDINGS`): Campfire, Forge, Shrine, Garden, Watchtower, Merchant, Warriors'/Rangers'/Mages' Guilds, Pool of Refreshment, Fast Travel Portal, Storage Chest
 
 ## Open Items
-- Confirm exact 8 weapon types match RunePortal's GEAR_DB (deferred to Phase 3)
+- ~~Confirm exact 8 weapon types~~ → **Resolved Phase 3** (Sword, Sword2H, Dagger, Mace, Bow, Crossbow, Staff, Wand)
+- No remaining open items at this time
 
 ## Folder Structure (target)
 ```
