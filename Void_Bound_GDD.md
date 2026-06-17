@@ -10,7 +10,7 @@
 | Pillar | Decision |
 |---|---|
 | Camera | Fixed isometric, orthographic, no rotation |
-| Input | Virtual joystick (mobile) + attack button; keyboard equivalent for desktop testing |
+| Input | Virtual joystick (mobile) for movement; keyboard equivalent for desktop testing. Combat is automatic — player auto-attacks enemies in range on an attack-speed cooldown, no manual attack button. Interactables (resources, NPCs, objects) are activated by tapping them directly or walking into them. |
 | Visual style | Low-poly 3D, unlit/simple diffuse shaders, warm oranges/sandy browns + bright green/purple UI accents |
 | Core loop | Explore zone → fight → loot → return to Homestead → craft/upgrade → push deeper |
 

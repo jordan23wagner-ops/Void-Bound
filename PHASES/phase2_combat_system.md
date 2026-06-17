@@ -1,66 +1,76 @@
-# Phase 2 — Combat System
+# Phase 2 — Combat System (Auto-Attack + Interaction)
 
-**Read `CONTEXT.md` before starting. Phases 0-1 complete — extend, don't refactor.**
+**Read `CONTEXT.md` before starting. Phases 0-1 are complete and committed — extend, don't refactor.**
+
+**Design change from original plan:** No manual attack button. Combat is automatic (proximity-based), and all interactables (enemies, resource nodes, NPCs, objects) are activated by tapping them directly or by the player walking into/near them. This simplifies mobile UI — joystick is now the only persistent on-screen control.
 
 ## Goal
-Implement core combat: player can attack enemies, enemies chase and attack back, damage calculated from STR/DEX/VIG/INT stats. No loot drops (Phase 4), no gear stat modifiers (Phase 3) — just the raw combat loop.
+Player auto-attacks enemies that come within range while moving (no button press needed), and a general-purpose Interactable system lets other objects respond to tap or proximity/collision — laying groundwork for resource nodes, NPCs, and crafting stations in later phases.
 
 ## Tasks
 
-### 1. Character Stats System
-- `Scripts/Data/CharacterStats.cs` — Serializable struct: STR, DEX, VIG, INT (int values)
-- `Scripts/Combat/StatsComponent.cs` — MonoBehaviour holding CharacterStats, exposes computed properties (MaxHP, PhysicalDamage, AttackSpeed, CritChance, Defense)
-- Add `CharacterStats` field to `EnemyDefinitionSO` for base enemy stats
+### 1. Character Stats
+- Create `Scripts/Data/CharacterStatsSO.cs` implementing the simplified RPG stat block: **STR, DEX, VIG, INT**
+- Derive starting formulas (flag as tunable, not final):
+  - Max HP = base value + (VIG × multiplier)
+  - Physical damage = base weapon damage + (STR × multiplier)
+  - Attack speed (time between auto-attacks) influenced by DEX — higher DEX = faster attack cooldown
+  - INT reserved for magic damage (not used yet, no spells in Phase 2 — just include the field)
+- Attach to Player as a component reading from a default `CharacterStatsSO` asset
 
-### 2. Health System
-- `Scripts/Combat/Health.cs` — MonoBehaviour: currentHP, maxHP, TakeDamage(), OnDeath event
-- Derives maxHP from StatsComponent (100 + VIG * 10)
-- Player and enemies both use this component
+### 2. Enemy Definition & Prefab
+- Flesh out `EnemyDefinitionSO.cs` (stubbed in Phase 0): tier (use `EnemyTier` enum), base HP, base damage, aggro range, attack range
+- Create ONE test enemy instance for Phase 2: **Weak tier**, simple stats (low HP, low damage)
+- Generate a low-poly placeholder enemy model via Blender MCP
+  - **Avoid repeating the Phase 1 FBX bug:** explicitly set Blender's FBX export axis to Forward: -Z, Up: Y before exporting. Verify on import that the GameObject's Transform Rotation reads (0,0,0) before attaching AI/physics components.
+- Enemy prefab needs: Collider (trigger, for proximity detection), the EnemyController script (Task 4), URP/Lit material (avoid magenta)
 
-### 3. Player Combat
-- `Scripts/Combat/PlayerCombat.cs` — reads Attack action from InputSystem_Actions
-- On attack: sphere overlap check (Physics.OverlapSphere) around player for enemies in melee range
-- Apply damage using DamageCalculator
-- Attack cooldown based on DEX (attack speed)
-- Simple attack animation placeholder: brief scale pulse on the player model
+### 3. Auto-Combat System (PlayerCombat.cs)
+- New script: `Scripts/Combat/PlayerCombat.cs`
+- **No input action for attacking.** Instead, continuously check for enemies within attack range (e.g. `Physics.OverlapSphere` each frame or on a short interval, OR a trigger collider on the player)
+- When an enemy is in range: auto-attack on a cooldown timer (cooldown derived from DEX-based attack speed). Apply damage using the STR-derived formula from Task 1.
+- If multiple enemies are in range, attack the nearest one first (simple targeting — full targeting priority can be refined later)
+- Attacks stop automatically when no enemy is in range (player walks away)
 
-### 4. Damage Calculator
-- `Scripts/Combat/DamageCalculator.cs` — static utility class
-- Physical damage: baseDamage * (1 + STR * 0.02)
-- Crit chance: DEX * 0.005 (0.5% per point, capped at 50%)
-- Crit multiplier: 1.5x
-- Defense reduction: incomingDamage * (100 / (100 + targetVIG))
-- Attack interval: 1.0 / (1 + DEX * 0.01) seconds
+### 4. EnemyController Script
+- New script: `Scripts/Combat/EnemyController.cs`
+- Simple state machine: **Idle → Aggro → Attack → Dead**
+  - Idle: enemy stands still until player enters aggro range
+  - Aggro: enemy moves toward player
+  - Attack: when within attack range, deals damage to player on an interval (same cooldown-based pattern as player's auto-attack)
+  - Dead: HP ≤ 0 → disable GameObject (full death state/animation is later polish)
 
-### 5. Enemy AI
-- `Scripts/Combat/EnemyAI.cs` — simple state machine (Idle → Chase → Attack → Dead)
-- Idle: stand still until player enters aggro range
-- Chase: move toward player (NavMeshAgent or simple transform.Translate)
-- Attack: deal damage to player when in melee range, on cooldown
-- Dead: disable on HP <= 0
+### 5. General-Purpose Interactable System
+This is new groundwork for Phase 5/6 (resource nodes, NPCs, crafting stations) — build the base now since combat needs it too.
+- New script: `Scripts/Core/Interactable.cs` (base component or interface — your call, document the choice)
+- Two trigger methods, both should call the same `OnInteract()` logic:
+  1. **Tap/click detection**: raycast from screen touch/mouse position, if it hits an object with `Interactable`, trigger it
+  2. **Proximity/collision detection**: trigger collider on the player (or on the interactable) fires `OnInteract()` when player walks into/near it
+- Enemies can implement `Interactable` too if it simplifies things, OR stay fully separate from this system since combat already auto-triggers on proximity (your call — document the decision in CONTEXT.md). The Interactable system is primarily for non-combat objects going forward.
 
-### 6. Flesh Out EnemyDefinitionSO
-- Add: baseStats (CharacterStats), baseDamage (int), moveSpeed (float), aggroRange (float), attackRange (float)
-- Keep existing fields (enemyId, displayName, tier, visualPrefab)
+### 6. Minimal Combat Feedback
+- Simple on-screen text or console log showing damage dealt/taken (full UI/VFX polish is a later phase)
+- Player HP visibly decreases when hit by enemy; enemy HP visibly decreases when auto-attacked
 
-### 7. Placeholder Enemy Model
-- Use Blender MCP: low-poly goblin/creature, shorter than player, reddish color
-- Export FBX with bake_space_transform=True per CODING_STANDARDS.md
-- Import to Assets/Art/Models/EnemyPlaceholder.fbx
+### 7. Self-Test Before Reporting Complete (per standing protocol)
+Using Unity MCP editor control tools:
+1. Enter Play Mode programmatically
+2. Move player toward the test enemy
+3. Confirm auto-attack triggers automatically when in range (no input simulated for attacking — only movement)
+4. Confirm enemy HP decreases, enemy AI aggros and attacks back, player HP decreases
+5. Confirm enemy dies and deactivates at 0 HP
+6. Confirm walking away from the enemy stops the auto-attack
+7. Check Console for any errors throughout
+8. Exit Play Mode
+9. Only report Phase 2 complete if all of the above passes. If anything fails, diagnose and fix first.
 
-### 8. Scene Setup & Editor Script
-- Update Phase1SceneSetup (or create Phase2 addition) to spawn a test enemy in Homestead scene
-- Enemy should have: EnemyAI, Health, StatsComponent, CharacterController or simple collider
-
-### 9. Verification
-- Compile check — zero errors
-- Play Mode self-test per CODING_STANDARDS.md Pre-Report Protocol
-- Player can attack enemy, enemy HP decreases, enemy dies
-- Enemy chases player, attacks back, player HP decreases
-- Commit as: `[Phase 2] Combat system - stats, health, damage calc, player attack, enemy AI`
+### 8. Commit & Update CONTEXT.md
+- Commit as: `[Phase 2] Auto-attack combat system + base Interactable framework`
+- Update CONTEXT.md: log the damage/attack-speed formula decisions (flag as tunable), the Interactable architecture decision, confirm self-test passed, point "Current Phase" to Phase 3
 
 ## Do NOT
-- No loot drops (Phase 4)
-- No gear stat modifiers applied to combat yet (Phase 3)
-- No multiple enemy types/spawning systems yet (Phase 7-8)
-- No death/respawn UI yet — just log to console for now
+- Do not add any manual attack button or input action for attacking — combat is fully automatic/proximity-based
+- Do not build the full 8-tier enemy system yet — one Weak-tier test enemy is enough to validate the loop
+- Do not build gear/inventory yet (Phase 3)
+- Do not build animations — state changes without visual animation are fine for now
+- Do not guess at unresolved GDD items — flag in CONTEXT.md
