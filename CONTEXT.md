@@ -3,7 +3,7 @@
 
 ## Project State
 - **Engine:** Unity 6.5 (6000.5.0f1), URP, mobile-first
-- **Status:** Fresh project, no gameplay code written yet
+- **Status:** Phase 2 (Combat) in progress — movement and camera working
 - **GDD:** See `Void_Bound_GDD.md` in repo root — full design spec, all systems locked
 - **MCP connections live:** Unity MCP (scene/asset control) + Blender MCP (procedural low-poly model generation)
 
@@ -23,7 +23,16 @@ Void Bound evolved from RunePortal (a Three.js browser ARPG). All gameplay syste
 6. **Update this CONTEXT.md** after each phase completes — log what was built, file locations, and any decisions made.
 
 ## Current Phase
-**Phase 1: Core Movement** — see `PHASES/phase1_movement.md`
+**Phase 2: Combat System** — see `PHASES/phase2_combat_system.md`
+
+## Phase 1 Log (completed 2026-06-17)
+- **Input System:** Using Unity template's `InputSystem_Actions.inputactions` — Move (WASD/arrows/gamepad/joystick), Attack (left mouse/gamepad west)
+- **PlayerController:** `Scripts/Core/PlayerController.cs` — CharacterController-based, isometric camera-relative movement, configurable speed/gravity
+- **Decision: CharacterController** over Rigidbody — simpler API, no physics jitter, standard for fixed-camera isometric
+- **Placeholder Character:** Low-poly box humanoid exported from Blender (`Art/Models/PlayerPlaceholder.fbx`), sandy brown URP/Lit material
+- **Homestead Scene:** `Scenes/Homestead.unity` — ground (40x1x40), orthographic camera (X=30 Y=45), IsometricCameraFollow targeting player, mobile joystick (OnScreenStick bottom-left)
+- **FBX Export Fix:** `bake_space_transform=True` required to avoid -90° X rotation bug (added to CODING_STANDARDS.md)
+- **Verification Protocol:** Pre-Report self-test added to CODING_STANDARDS.md
 
 ## Phase 0 Log (completed 2026-06-16)
 - **URP:** Confirmed active — `Mobile_RPAsset` (render scale 0.8, 1 cascade, no soft shadows) + `PC_RPAsset` already configured; `GraphicsSettings.asset` points to the correct pipeline

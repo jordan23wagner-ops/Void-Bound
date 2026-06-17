@@ -43,6 +43,34 @@ After every code change, run Unity in batch mode to confirm zero compile errors 
 ```
 Then check `compile_check.log` for `error CS` strings. If found, fix before proceeding — never leave a phase with known compile errors.
 
+## Blender → Unity FBX Export
+All Blender MCP exports to Unity **must** use these FBX settings to avoid the Z-up → Y-up -90° rotation bug:
+```python
+bpy.ops.export_scene.fbx(
+    filepath=path,
+    use_selection=True,
+    apply_scale_options='FBX_SCALE_ALL',
+    axis_forward='-Z',
+    axis_up='Y',
+    bake_space_transform=True,   # CRITICAL — bakes axis conversion into vertices
+    mesh_smooth_type='OFF',
+    use_mesh_modifiers=True,
+    bake_anim=False
+)
+```
+After import, verify the root GameObject's Transform Rotation reads (0, 0, 0). If it shows -90 on X, the export was wrong — re-export, don't manually correct the instance.
+
+## Pre-Report Verification Protocol
+Before reporting ANY task or phase as complete, run this self-test:
+1. Enter Play Mode (programmatically or manually)
+2. Wait 2-3 seconds
+3. Query the Player's `transform.position.y` — if it has dropped more than 1 unit below spawn, that is a fall-through failure
+4. Check the Console for any errors during this test window
+5. Exit Play Mode
+6. **Only report the task complete if this self-test passes.** If it fails, diagnose and fix before reporting back.
+
+This prevents round-trips on basic runtime failures (fall-through, missing references, null errors on Play).
+
 ## Things to Avoid
 - No `FindObjectOfType` in hot paths (use direct references or a registry/service locator pattern)
 - No magic numbers — use named constants or ScriptableObject-configured values
