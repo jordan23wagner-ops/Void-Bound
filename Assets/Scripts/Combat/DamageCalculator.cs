@@ -17,8 +17,7 @@ namespace VoidBound.Combat
             float reduced = rawDamage * target.DefenseMultiplier;
             int finalDamage = Mathf.Max(1, Mathf.RoundToInt(reduced));
 
-            if (isCrit)
-                Debug.Log($"CRIT! {attacker.gameObject.name} → {target.gameObject.name}: {finalDamage} damage");
+            FloatingDamageNumber.Spawn(target.transform.position, finalDamage, isCrit);
 
             return finalDamage;
         }

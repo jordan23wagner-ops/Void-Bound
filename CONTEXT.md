@@ -11,6 +11,7 @@
 Void Bound evolved from RunePortal (a Three.js browser ARPG). All gameplay systems (gear tiers, drop tables, skilling, Homestead hub) carry over conceptually — rebuilt natively in Unity/C#, not ported code.
 
 ## Critical Rules
+0. **At the start of every session, before reading any other file, run `git pull origin main`** to ensure you're working from the latest committed design docs. If GDD or PHASES files appear to conflict with what you're about to build, the freshly-pulled version wins — flag the discrepancy to Jordon rather than proceeding on stale assumptions.
 1. **Never refactor existing systems — extend only**, unless explicitly told otherwise.
 2. **Verify compilation after every change** using Unity batch-mode:
    ```
@@ -26,15 +27,19 @@ Void Bound evolved from RunePortal (a Three.js browser ARPG). All gameplay syste
 **Phase 3: Gear & Inventory** — see `PHASES/phase3_gear_inventory.md`
 
 ## Phase 2 Log (completed 2026-06-17)
+- **Design:** Combat is fully automatic/proximity-based — NO manual attack button. Player auto-attacks nearest enemy within range on DEX-based cooldown. Attack input action removed from PlayerCombat.
 - **CharacterStats:** `Scripts/Data/CharacterStats.cs` — serializable struct (STR/DEX/VIG/INT) with operator+
 - **StatsComponent:** `Scripts/Combat/StatsComponent.cs` — computed MaxHP (100+VIG*10), PhysicalDamage, AttackInterval, CritChance (0.5%/DEX), DefenseMultiplier
 - **Health:** `Scripts/Combat/Health.cs` — TakeDamage/Heal, OnDeath event, derives maxHP from StatsComponent
-- **DamageCalculator:** `Scripts/Combat/DamageCalculator.cs` — STR scaling → crit roll (DEX, 1.5x) → VIG defense reduction → min 1
-- **PlayerCombat:** `Scripts/Combat/PlayerCombat.cs` — Attack input (left click), Physics.OverlapSphere melee, DEX-based cooldown
+- **DamageCalculator:** `Scripts/Combat/DamageCalculator.cs` — STR scaling → crit roll (DEX, 1.5x) → VIG defense reduction → min 1 → spawns FloatingDamageNumber
+- **PlayerCombat:** `Scripts/Combat/PlayerCombat.cs` — continuous OverlapSphere auto-attack, targets nearest enemy, DEX-based cooldown, faces target on attack
 - **EnemyAI:** `Scripts/Combat/EnemyAI.cs` — state machine (Idle→Chase→Attack→Dead), CharacterController movement, reads from EnemyDefinitionSO
 - **EnemyDefinitionSO:** Extended with baseStats, baseDamage, moveSpeed, aggroRange, attackRange
-- **EnemyPlaceholder:** `Art/Models/EnemyPlaceholder.fbx` — low-poly squat goblin, red-brown, exported with bake_space_transform=True
-- **Scene:** Homestead.unity updated — TestEnemy at (5,0.1,5), player has StatsComponent + Health + PlayerCombat, attack wired to InputSystem Attack action
+- **HealthBar:** `Scripts/Combat/HealthBar.cs` — world-space health bar above entities, color shifts green→yellow→red
+- **FloatingDamageNumber:** `Scripts/Combat/FloatingDamageNumber.cs` — TextMesh that spawns on hit, rises, fades over 1s, yellow bold for crits
+- **Interactable:** `Scripts/Core/Interactable.cs` — abstract base for future non-combat interactions (NPCs, resource nodes, crafting stations)
+- **EnemyPlaceholder:** `Art/Models/EnemyPlaceholder.fbx` — low-poly squat goblin, red-brown, bake_space_transform=True
+- **Scene:** Homestead.unity — TestEnemy at (5,0.1,5), both player and enemy have HealthBar components
 
 ## Phase 1 Log (completed 2026-06-17)
 - **Input System:** Using Unity template's `InputSystem_Actions.inputactions` — Move (WASD/arrows/gamepad/joystick), Attack (left mouse/gamepad west)

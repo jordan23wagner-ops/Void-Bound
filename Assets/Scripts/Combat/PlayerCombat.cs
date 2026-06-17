@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace VoidBound.Combat
 {
@@ -8,12 +7,10 @@ namespace VoidBound.Combat
     public class PlayerCombat : MonoBehaviour
     {
         [SerializeField] private int baseDamage = 10;
-        [SerializeField] private float attackRange = 2f;
-        [SerializeField] private InputActionReference attackAction;
+        [SerializeField] private float attackRange = 2.5f;
         [SerializeField] private LayerMask enemyLayer = ~0;
 
         private StatsComponent stats;
-        private float attackCooldown;
         private float lastAttackTime = -999f;
 
         private void Awake()
@@ -21,35 +18,16 @@ namespace VoidBound.Combat
             stats = GetComponent<StatsComponent>();
         }
 
-        private void OnEnable()
-        {
-            if (attackAction != null && attackAction.action != null)
-                attackAction.action.Enable();
-        }
-
-        private void OnDisable()
-        {
-            if (attackAction != null && attackAction.action != null)
-                attackAction.action.Disable();
-        }
-
         private void Update()
         {
-            attackCooldown = stats.AttackInterval;
-
-            if (attackAction == null || attackAction.action == null) return;
-            if (!attackAction.action.WasPressedThisFrame()) return;
+            float attackCooldown = stats.AttackInterval;
             if (Time.time - lastAttackTime < attackCooldown) return;
 
-            PerformAttack();
-        }
-
-        private void PerformAttack()
-        {
-            lastAttackTime = Time.time;
-
             var hits = Physics.OverlapSphere(transform.position, attackRange, enemyLayer);
-            bool hitSomething = false;
+
+            float closestDist = float.MaxValue;
+            Health closestTarget = null;
+            StatsComponent closestStats = null;
 
             foreach (var hit in hits)
             {
@@ -59,13 +37,25 @@ namespace VoidBound.Combat
                 var targetStats = hit.GetComponent<StatsComponent>();
                 if (targetHealth == null || targetHealth.IsDead || targetStats == null) continue;
 
-                int damage = DamageCalculator.CalculateDamage(stats, targetStats, baseDamage);
-                targetHealth.TakeDamage(damage);
-                hitSomething = true;
+                float dist = Vector3.Distance(transform.position, hit.transform.position);
+                if (dist < closestDist)
+                {
+                    closestDist = dist;
+                    closestTarget = targetHealth;
+                    closestStats = targetStats;
+                }
             }
 
-            if (!hitSomething)
-                Debug.Log("Attack: no targets in range.");
+            if (closestTarget == null) return;
+
+            lastAttackTime = Time.time;
+            int damage = DamageCalculator.CalculateDamage(stats, closestStats, baseDamage);
+            closestTarget.TakeDamage(damage);
+
+            Vector3 faceDir = closestTarget.transform.position - transform.position;
+            faceDir.y = 0f;
+            if (faceDir.sqrMagnitude > 0.01f)
+                transform.rotation = Quaternion.LookRotation(faceDir);
         }
 
         private void OnDrawGizmosSelected()

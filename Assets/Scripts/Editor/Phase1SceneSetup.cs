@@ -97,23 +97,8 @@ namespace VoidBound.Editor
 
             player.AddComponent<StatsComponent>();
             player.AddComponent<Health>();
-
-            var combat = player.AddComponent<PlayerCombat>();
-            if (inputActions != null)
-            {
-                var atkAction = inputActions.FindActionMap("Player")?.FindAction("Attack");
-                if (atkAction != null)
-                {
-                    var atkRef = InputActionReference.Create(atkAction);
-                    var combatSO = new SerializedObject(combat);
-                    var atkField = combatSO.FindProperty("attackAction");
-                    if (atkField != null)
-                    {
-                        atkField.objectReferenceValue = atkRef;
-                        combatSO.ApplyModifiedPropertiesWithoutUndo();
-                    }
-                }
-            }
+            player.AddComponent<PlayerCombat>();
+            AddHealthBar(player);
 
             ApplyPlayerMaterial(player);
             return player;
@@ -282,8 +267,26 @@ namespace VoidBound.Editor
             enemy.AddComponent<StatsComponent>();
             enemy.AddComponent<Health>();
             enemy.AddComponent<EnemyAI>();
+            AddHealthBar(enemy, new Vector3(0f, 1.6f, 0f));
 
             ApplyEnemyMaterial(enemy);
+        }
+
+        private static void AddHealthBar(GameObject target, Vector3 offset = default)
+        {
+            var hbObj = new GameObject("HealthBar");
+            hbObj.transform.SetParent(target.transform, false);
+            var hb = hbObj.AddComponent<HealthBar>();
+            if (offset != default)
+            {
+                var so = new SerializedObject(hb);
+                var offsetProp = so.FindProperty("offset");
+                if (offsetProp != null)
+                {
+                    offsetProp.vector3Value = offset;
+                    so.ApplyModifiedPropertiesWithoutUndo();
+                }
+            }
         }
 
         private static void ApplyEnemyMaterial(GameObject enemy)
