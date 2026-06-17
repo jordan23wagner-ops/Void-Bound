@@ -40,7 +40,7 @@ namespace VoidBound.Combat
             canvas.sortingOrder = 10;
 
             var rt = canvasObj.GetComponent<RectTransform>();
-            rt.sizeDelta = new Vector2(1.2f, 0.15f);
+            rt.sizeDelta = new Vector2(120f, 15f);
             rt.localScale = Vector3.one * 0.01f;
 
             canvasObj.AddComponent<CanvasScaler>();
