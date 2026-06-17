@@ -3,7 +3,7 @@
 
 ## Project State
 - **Engine:** Unity 6.5 (6000.5.0f1), URP, mobile-first
-- **Status:** Phase 2 (Combat) in progress — movement and camera working
+- **Status:** Phase 2 (Combat) complete — core combat loop functional
 - **GDD:** See `Void_Bound_GDD.md` in repo root — full design spec, all systems locked
 - **MCP connections live:** Unity MCP (scene/asset control) + Blender MCP (procedural low-poly model generation)
 
@@ -23,7 +23,18 @@ Void Bound evolved from RunePortal (a Three.js browser ARPG). All gameplay syste
 6. **Update this CONTEXT.md** after each phase completes — log what was built, file locations, and any decisions made.
 
 ## Current Phase
-**Phase 2: Combat System** — see `PHASES/phase2_combat_system.md`
+**Phase 3: Gear & Inventory** — see `PHASES/phase3_gear_inventory.md`
+
+## Phase 2 Log (completed 2026-06-17)
+- **CharacterStats:** `Scripts/Data/CharacterStats.cs` — serializable struct (STR/DEX/VIG/INT) with operator+
+- **StatsComponent:** `Scripts/Combat/StatsComponent.cs` — computed MaxHP (100+VIG*10), PhysicalDamage, AttackInterval, CritChance (0.5%/DEX), DefenseMultiplier
+- **Health:** `Scripts/Combat/Health.cs` — TakeDamage/Heal, OnDeath event, derives maxHP from StatsComponent
+- **DamageCalculator:** `Scripts/Combat/DamageCalculator.cs` — STR scaling → crit roll (DEX, 1.5x) → VIG defense reduction → min 1
+- **PlayerCombat:** `Scripts/Combat/PlayerCombat.cs` — Attack input (left click), Physics.OverlapSphere melee, DEX-based cooldown
+- **EnemyAI:** `Scripts/Combat/EnemyAI.cs` — state machine (Idle→Chase→Attack→Dead), CharacterController movement, reads from EnemyDefinitionSO
+- **EnemyDefinitionSO:** Extended with baseStats, baseDamage, moveSpeed, aggroRange, attackRange
+- **EnemyPlaceholder:** `Art/Models/EnemyPlaceholder.fbx` — low-poly squat goblin, red-brown, exported with bake_space_transform=True
+- **Scene:** Homestead.unity updated — TestEnemy at (5,0.1,5), player has StatsComponent + Health + PlayerCombat, attack wired to InputSystem Attack action
 
 ## Phase 1 Log (completed 2026-06-17)
 - **Input System:** Using Unity template's `InputSystem_Actions.inputactions` — Move (WASD/arrows/gamepad/joystick), Attack (left mouse/gamepad west)
