@@ -25,7 +25,7 @@ Weapon, Shield, Head, Cape, Neck, Body, Legs, Hands, Feet, Ring, Ammo
 Sword, Axe, Spear, Mace, Bow, Crossbow, Staff, Wand *(confirm/adjust during Phase 3)*
 
 **Rarity Tiers (9, full depth):**
-Common → Uncommon → Rare → Epic → Legendary → Mythic → Ascended → Eternal → *(top tier name TBD — pull from RunePortal GEAR_DB)*
+Common → Uncommon → Rare → Epic → Legendary → Mythic → Ascended → Eternal → Voidforged
 
 **Visual rarity language (Unity translation of Three.js glow system):**
 - Common/Uncommon: flat color, no emission
@@ -44,7 +44,7 @@ Simplified RPG stat block (Portal Quest style):
 - **VIG** — health pool, defense
 - **INT** — magic damage, mana pool
 
-Stats scale via gear, skill levels, and zone-based progression. Level cap and XP curve: *TBD in Phase 1 (recommend keeping RunePortal's 3x curve as starting point, tune from playtesting).*
+Stats scale via gear, skill levels, and zone-based progression. Level cap: **99 per skill** (OSRS-style, matches RunePortal lineage). XP curve: **3x multiplier** as starting value (tunable, not final).
 
 ---
 
@@ -83,16 +83,23 @@ Each skill needs: XP curve, level-gated recipes/resources, associated Homestead 
 
 ## 6. Homestead Hub
 
-Full 9-building hub carried from RunePortal, re-skinned in low-poly Unity style:
+12-structure hub carried from RunePortal (9 original buildings + 3 utility structures), re-skinned in low-poly Unity style:
 
-- **Forge** → Smithing
-- **Workshop** → Crafting
-- **Garden** → Gathering, Alchemy (potion crafting)
+**Core Buildings (9):**
+- **Campfire** → Rest & Recover (rested bonus)
+- **Forge** → Smithing & Crafting
+- **Shrine** → Receive Blessing (buffs)
+- **Garden** → Gathering, Alchemy (potion crafting, GROW/BREW tabs, 36 recipes)
+- **Watchtower** → Survey the Land (zone info/map)
+- **Merchant** → Browse Wares (buy/sell)
+- **Warriors' Guild** → STR training & upgrades
+- **Rangers' Guild** → DEX training & upgrades
+- **Mages' Guild** → INT training & upgrades
+
+**Utility Structures (3):**
 - **Pool of Refreshment** → buff/recovery station (4 upgrade tiers, cooldown system carried over)
-- **Cooking station** → Cooking
-- **Fishing dock/pond** → Fishing access point
-- **Mining node area** → Mining (or routed through world zones — confirm in Phase 6)
-- *(Remaining 2-3 buildings: confirm exact list from RunePortal CONTEXT.md during Phase 0)*
+- **Fast Travel Portal** → Teleport to discovered waypoints
+- **Storage Chest** → 20-slot persistent homestead storage
 
 Homestead = safe zone, no combat, full crafting/progression hub. This is the player's persistent base between runs.
 
@@ -112,7 +119,6 @@ Homestead = safe zone, no combat, full crafting/progression hub. This is the pla
 
 ## 8. Currency & Economy
 
-*(Recommend, confirm during Phase 0):*
 - **Gold** — primary currency, dropped by enemies, used for vendor trades/repairs
 - **Void Shards** — secondary currency, earned from Elite+ tier kills and bosses, used for premium crafting/upgrades (thematically ties to "Void Bound"/"Void Throne")
 
@@ -150,10 +156,10 @@ This mirrors RunePortal's data-driven gear/drop table approach almost exactly �
 
 ---
 
-## 11. Open Items (resolve before/during Phase 0)
+## 11. Open Items
 
-- Confirm exact 8 weapon types match RunePortal's GEAR_DB
-- Confirm 9th rarity tier name (top of ladder)
-- Confirm remaining 2-3 Homestead buildings
-- Lock level cap + XP curve values
-- Confirm currency names/icons (Gold + Void Shards proposed)
+- ~~Confirm 9th rarity tier name~~ → **Voidforged** (resolved Phase 0)
+- ~~Confirm remaining Homestead buildings~~ → **12 structures total** (resolved Phase 0, pulled from RunePortal HS_BUILDINGS)
+- ~~Lock level cap + XP curve~~ → **99 per skill, 3x curve** (resolved Phase 0, tunable)
+- ~~Confirm currency~~ → **Gold + Void Shards** (resolved Phase 0)
+- Confirm exact 8 weapon types match RunePortal's GEAR_DB (deferred to Phase 3)

@@ -23,10 +23,24 @@ Void Bound evolved from RunePortal (a Three.js browser ARPG). All gameplay syste
 6. **Update this CONTEXT.md** after each phase completes — log what was built, file locations, and any decisions made.
 
 ## Current Phase
-**Phase 0: Project Setup** — see `PHASES/phase0_setup.md`
+**Phase 1: Core Movement** — see `PHASES/phase1_movement.md`
 
-## Open Items (resolve as encountered)
-See Section 11 of `Void_Bound_GDD.md` for unresolved design questions (exact weapon type list, top rarity tier name, remaining Homestead buildings, XP curve values). Flag these to Jordon rather than guessing.
+## Phase 0 Log (completed 2026-06-16)
+- **URP:** Confirmed active — `Mobile_RPAsset` (render scale 0.8, 1 cascade, no soft shadows) + `PC_RPAsset` already configured; `GraphicsSettings.asset` points to the correct pipeline
+- **Isometric Camera:** Main Camera in SampleScene set to orthographic (size 8), rotation X=30 Y=45; `IsometricCameraFollow.cs` in `Scripts/Core/` — smoothly follows a target transform on X/Z with configurable offset and smoothing
+- **Folder Structure:** Full tree created per spec (`Scripts/{Core,Data,Combat,Inventory,Skilling,UI}`, `Prefabs/`, `ScriptableObjects/`, `Art/{Models,Materials,Textures}`)
+- **Base SOs:** `Enums.cs` (EquipmentSlot 11 slots, WeaponType 8+None, RarityTier 9 tiers ending in Voidforged, EnemyTier 8, SkillType 7), `GearItemSO`, `EnemyDefinitionSO`, `ZoneDefinitionSO`, `SkillDefinitionSO`, `RecipeDefinitionSO`, `LootTableSO` — all with `[CreateAssetMenu]` under `VoidBound/`
+- **Scene:** SampleScene has PlayerPlaceholder cube (tagged Player) at (0, 0.5, 0) and Ground plane (20x0.1x20) for visual reference
+- **Git:** `.gitignore` updated with `UserSettings/` exclusion
+
+## Resolved Items (Phase 0)
+- **9th rarity tier:** Voidforged (ties to Void Throne endgame)
+- **Currency:** Gold (primary) + Void Shards (secondary) — locked
+- **Level cap:** 99 per skill, 3x XP curve multiplier (tunable)
+- **Homestead:** 12 structures total (pulled from RunePortal `HS_BUILDINGS`): Campfire, Forge, Shrine, Garden, Watchtower, Merchant, Warriors'/Rangers'/Mages' Guilds, Pool of Refreshment, Fast Travel Portal, Storage Chest
+
+## Open Items
+- Confirm exact 8 weapon types match RunePortal's GEAR_DB (deferred to Phase 3)
 
 ## Folder Structure (target)
 ```
