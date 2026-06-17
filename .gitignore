@@ -1,0 +1,41 @@
+# Unity .gitignore
+
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Mm]emoryCaptures/
+[Rr]ecordings/
+
+# Visual Studio / VS Code
+.vs/
+.vscode/
+*.csproj
+*.sln
+*.user
+*.userprefs
+
+# OS generated
+.DS_Store
+Thumbs.db
+
+# Unity generated
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+sysinfo.txt
+*.apk
+*.aab
+*.unitypackage
+*.app
+
+# Crashlytics
+crashlytics-build.properties
+
+# Asset meta backups (keep .meta files, ignore backups)
+*.meta.bak
+
+# Compile check logs (local verification only)
+compile_check.log
