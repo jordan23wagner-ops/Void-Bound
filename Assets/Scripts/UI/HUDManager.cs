@@ -1,7 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 using VoidBound.Combat;
+using VoidBound.Data;
 using VoidBound.Inventory;
+using VoidBound.Skilling;
 
 namespace VoidBound.UI
 {
@@ -125,14 +127,30 @@ namespace VoidBound.UI
 
         private void RefreshStats()
         {
-            if (playerStats == null) return;
+            var skills = playerStats?.GetComponent<PlayerSkills>();
 
-            var s = playerStats.BaseStats;
             if (statsText != null)
-                statsText.text = $"STR {s.str}  DEX {s.dex}\nVIG {s.vig}  INT {s.intel}";
+            {
+                if (skills != null)
+                {
+                    int vig = skills.GetLevel(SkillType.CombatVIG);
+                    int str = skills.GetLevel(SkillType.CombatSTR);
+                    int dex = skills.GetLevel(SkillType.CombatDEX);
+                    int intel = skills.GetLevel(SkillType.CombatINT);
+                    statsText.text = $"VIG {vig}  STR {str}\nDEX {dex}  INT {intel}";
+                }
+                else if (playerStats != null)
+                {
+                    var s = playerStats.EffectiveStats;
+                    statsText.text = $"VIG {s.vig}  STR {s.str}\nDEX {s.dex}  INT {s.intel}";
+                }
+            }
 
             if (levelText != null)
-                levelText.text = "Lv 1";
+            {
+                int combatLvl = skills != null ? CombatLevelCalculator.GetCombatLevel(skills) : 1;
+                levelText.text = $"Lv {combatLvl}";
+            }
 
             if (xpFill != null)
                 xpFill.fillAmount = 0f;

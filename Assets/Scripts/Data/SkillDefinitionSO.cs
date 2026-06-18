@@ -18,7 +18,11 @@ namespace VoidBound.Data
         public int XPForLevel(int level)
         {
             if (level <= 1) return 0;
-            return Mathf.RoundToInt(Mathf.Pow(level, 2) * xpMultiplier * 10f);
+            // OSRS-style XP curve from RunePortal: sum(i + 300 * 2^(i/7)) / 4 * 3
+            double total = 0;
+            for (int i = 1; i < level; i++)
+                total += i + 300.0 * System.Math.Pow(2, i / 7.0);
+            return (int)(total / 4.0 * xpMultiplier);
         }
     }
 }

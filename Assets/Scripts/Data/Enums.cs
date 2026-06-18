@@ -61,6 +61,10 @@ namespace VoidBound.Data
         Smithing,
         Crafting,
         Cooking,
-        Alchemy
+        Alchemy,
+        CombatVIG,
+        CombatSTR,
+        CombatDEX,
+        CombatINT
     }
 }

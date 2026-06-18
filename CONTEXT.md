@@ -3,7 +3,7 @@
 
 ## Project State
 - **Engine:** Unity 6.5 (6000.5.0f1), URP, mobile-first
-- **Status:** Phase 5 (Skilling & Homestead) complete
+- **Status:** Phase 5b (Combat Stat XP Overhaul) complete
 - **GDD:** See `Void_Bound_GDD.md` in repo root — full design spec, all systems locked
 - **MCP connections live:** Unity MCP (scene/asset control) + Blender MCP (procedural low-poly model generation)
 
@@ -25,6 +25,18 @@ Void Bound evolved from RunePortal (a Three.js browser ARPG). All gameplay syste
 
 ## Current Phase
 **Phase 6: Homestead Full Build-out** — see `PHASES/phase6_homestead.md`
+
+## Phase 5b Log (completed 2026-06-17)
+- **RunePortal source confirmed:** XP split is 40/40/20+vigor. Actual code: melee→STR XP, ranged→DEX XP, magic→INT XP, VIG gets `xpGain * 0.5` (50% ratio, not 33%). XP curve uses OSRS formula: `sum(i + 300 * 2^(i/7)) / 4 * 3`. Character Level = `levelFromXP(player.totalXP)`.
+- **CombatStatXP:** `Scripts/Combat/CombatStatXP.cs` — WeaponStyleMap (melee/ranged/magic → STR/DEX/INT), CombatXPCalculator (damage-based XP + 50% VIG passive), CombatLevelCalculator (average of 4 stat levels)
+- **SkillType enum:** Added CombatVIG, CombatSTR, CombatDEX, CombatINT to existing enum
+- **StatsComponent overhaul:** Now derives stats from combat skill levels (via PlayerSkills) + gear bonuses. EffectiveStats property combines both. MaxHP from VIG level. AddGearBonus/RemoveGearBonus replaces old SetBaseStats pattern.
+- **PlayerCombat:** Awards combat XP on every hit — determines weapon style from equipped weapon, calls CombatXPCalculator
+- **PlayerInventory:** Uses AddGearBonus/RemoveGearBonus instead of modifying BaseStats
+- **HUD:** Stats display reordered to VIG/STR/DEX/INT (top to bottom per RunePortal). Character Level derived from CombatLevelCalculator. Individual stat levels shown.
+- **XP curve:** OSRS-style from RunePortal source, 3x multiplier, level 99 cap
+- **VIG XP ratio:** 50% (from RunePortal source `xpGain * 0.5`)
+- **Weapon-to-stat mapping:** Sword/Sword2H/Mace/Dagger → STR (melee), Bow/Crossbow → DEX (ranged), Staff/Wand → INT (magic)
 
 ## Phase 5 Log (completed 2026-06-17)
 - **Building Mapping Resolved (from RunePortal source):** Guilds = stat training (not crafting). Fishing/Mining = field-based resource nodes. Forge = Smithing. Campfire = Cooking. Garden = Gathering + Alchemy.

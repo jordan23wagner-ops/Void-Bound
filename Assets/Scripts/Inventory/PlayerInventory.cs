@@ -70,14 +70,10 @@ namespace VoidBound.Inventory
         {
             if (stats == null) return;
 
-            var current = stats.BaseStats;
-            var delta = new CharacterStats(
-                mods.str * sign,
-                mods.dex * sign,
-                mods.vig * sign,
-                mods.intel * sign
-            );
-            stats.SetBaseStats(current + delta);
+            if (sign > 0)
+                stats.AddGearBonus(mods);
+            else
+                stats.RemoveGearBonus(mods);
         }
     }
 }

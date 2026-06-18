@@ -36,6 +36,10 @@ namespace VoidBound.Editor
             CreateSkillDef(dir, "Mining", SkillType.Mining);
             CreateSkillDef(dir, "Alchemy", SkillType.Alchemy);
             CreateSkillDef(dir, "Crafting", SkillType.Crafting);
+            CreateSkillDef(dir, "CombatVIG", SkillType.CombatVIG);
+            CreateSkillDef(dir, "CombatSTR", SkillType.CombatSTR);
+            CreateSkillDef(dir, "CombatDEX", SkillType.CombatDEX);
+            CreateSkillDef(dir, "CombatINT", SkillType.CombatINT);
         }
 
         private static void CreateSkillDef(string dir, string name, SkillType type)
@@ -380,6 +384,10 @@ namespace VoidBound.Editor
                     AssetDatabase.LoadAssetAtPath<SkillDefinitionSO>($"{skillDir}/Mining.asset"),
                     AssetDatabase.LoadAssetAtPath<SkillDefinitionSO>($"{skillDir}/Alchemy.asset"),
                     AssetDatabase.LoadAssetAtPath<SkillDefinitionSO>($"{skillDir}/Crafting.asset"),
+                    AssetDatabase.LoadAssetAtPath<SkillDefinitionSO>($"{skillDir}/CombatVIG.asset"),
+                    AssetDatabase.LoadAssetAtPath<SkillDefinitionSO>($"{skillDir}/CombatSTR.asset"),
+                    AssetDatabase.LoadAssetAtPath<SkillDefinitionSO>($"{skillDir}/CombatDEX.asset"),
+                    AssetDatabase.LoadAssetAtPath<SkillDefinitionSO>($"{skillDir}/CombatINT.asset"),
                 };
                 var so = new SerializedObject(ps);
                 var arr = so.FindProperty("skillDefinitions");

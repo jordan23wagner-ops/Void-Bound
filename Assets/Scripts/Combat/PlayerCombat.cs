@@ -1,4 +1,7 @@
 using UnityEngine;
+using VoidBound.Data;
+using VoidBound.Inventory;
+using VoidBound.Skilling;
 
 namespace VoidBound.Combat
 {
@@ -11,11 +14,15 @@ namespace VoidBound.Combat
         [SerializeField] private LayerMask enemyLayer = ~0;
 
         private StatsComponent stats;
+        private PlayerInventory inventory;
+        private PlayerSkills skills;
         private float lastAttackTime = -999f;
 
         private void Awake()
         {
             stats = GetComponent<StatsComponent>();
+            inventory = GetComponent<PlayerInventory>();
+            skills = GetComponent<PlayerSkills>();
         }
 
         private void Update()
@@ -52,10 +59,20 @@ namespace VoidBound.Combat
             int damage = DamageCalculator.CalculateDamage(stats, closestStats, baseDamage);
             closestTarget.TakeDamage(damage);
 
+            WeaponType equippedWeapon = GetEquippedWeaponType();
+            CombatXPCalculator.AwardCombatXP(skills, equippedWeapon, damage);
+
             Vector3 faceDir = closestTarget.transform.position - transform.position;
             faceDir.y = 0f;
             if (faceDir.sqrMagnitude > 0.01f)
                 transform.rotation = Quaternion.LookRotation(faceDir);
+        }
+
+        private WeaponType GetEquippedWeaponType()
+        {
+            if (inventory == null) return WeaponType.Sword;
+            var weapon = inventory.GetEquipped(EquipmentSlot.Weapon);
+            return weapon != null ? weapon.weaponType : WeaponType.Sword;
         }
 
         private void OnDrawGizmosSelected()
