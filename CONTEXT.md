@@ -3,7 +3,7 @@
 
 ## Project State
 - **Engine:** Unity 6.5 (6000.5.0f1), URP, mobile-first
-- **Status:** Phase 4 (Loot & Drop Tables) complete
+- **Status:** Phase 5 (Skilling & Homestead) complete
 - **GDD:** See `Void_Bound_GDD.md` in repo root — full design spec, all systems locked
 - **MCP connections live:** Unity MCP (scene/asset control) + Blender MCP (procedural low-poly model generation)
 
@@ -24,7 +24,24 @@ Void Bound evolved from RunePortal (a Three.js browser ARPG). All gameplay syste
 6. **Update this CONTEXT.md** after each phase completes — log what was built, file locations, and any decisions made.
 
 ## Current Phase
-**Phase 5: Skilling Systems** — see `PHASES/phase5_skilling.md`
+**Phase 6: Homestead Full Build-out** — see `PHASES/phase6_homestead.md`
+
+## Phase 5 Log (completed 2026-06-17)
+- **Building Mapping Resolved (from RunePortal source):** Guilds = stat training (not crafting). Fishing/Mining = field-based resource nodes. Forge = Smithing. Campfire = Cooking. Garden = Gathering + Alchemy.
+- **SkillDefinitionSO:** `Scripts/Data/SkillDefinitionSO.cs` — XP curve (level^2 * 3x * 10), level 99 cap, recipe list
+- **RecipeDefinitionSO:** `Scripts/Data/RecipeDefinitionSO.cs` — ingredients (MaterialItemSO + quantity), output (Material or Gear), required skill/level/station, XP reward
+- **MaterialItemSO:** `Scripts/Data/MaterialItemSO.cs` — lighter item type for raw materials/consumables (not full GearItemSO)
+- **PlayerSkills:** `Scripts/Skilling/PlayerSkills.cs` — tracks XP/level per SkillType, AddXP with auto-level-up
+- **MaterialInventory:** `Scripts/Skilling/MaterialInventory.cs` — dictionary-based material tracking, Add/Has/Consume
+- **CraftingStation:** `Scripts/Skilling/CraftingStation.cs` — Interactable subclass on buildings, opens CraftingUI
+- **ResourceNode:** `Scripts/Skilling/ResourceNode.cs` — Interactable subclass, gather material + grant XP, respawns on cooldown (8s)
+- **CraftingUI:** `Scripts/Skilling/CraftingUI.cs` — recipe list, ingredient check, craft button, skill level/XP display
+- **PlayerInteractor:** `Scripts/Skilling/PlayerInteractor.cs` — proximity-based Interactable detection on player
+- **12 Homestead Buildings:** All placed in scene with low-poly Blender models (Hut, Stall, Garden, Tower, Pool, Portal, Chest, Shrine). Forge/Campfire/Garden have CraftingStation components. Others are visual stubs.
+- **Resource Nodes:** 2 herb patches (Gathering), 1 fishing spot, 1 iron deposit — all with ResourceNode + respawn
+- **Test Recipes:** Cook Fish (Cooking Lv1), Smelt Iron Ore (Smithing Lv1), Forge Iron Sword (Smithing Lv3)
+- **Test Materials:** Wild Herb, Raw Fish, Iron Ore, Cooked Fish, Iron Ingot
+- **Stubbed buildings (functional later):** Watchtower, Merchant, Shrine, Pool, Fast Travel Portal, Storage Chest, 3 Guilds
 
 ## Phase 4 Log (completed 2026-06-17)
 - **LootTableSO:** `Scripts/Data/LootTableSO.cs` — full implementation: rarity weights array, gear pool, gold/shard ranges, zone modifier, RollRarity/RollGear/RollGold/RollVoidShards methods

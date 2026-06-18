@@ -85,16 +85,20 @@ Each skill needs: XP curve, level-gated recipes/resources, associated Homestead 
 
 12-structure hub carried from RunePortal (9 original buildings + 3 utility structures), re-skinned in low-poly Unity style:
 
-**Core Buildings (9):**
-- **Campfire** → Rest & Recover (rested bonus)
-- **Forge** → Smithing & Crafting
-- **Shrine** → Receive Blessing (buffs)
-- **Garden** → Gathering, Alchemy (potion crafting, GROW/BREW tabs, 36 recipes)
-- **Watchtower** → Survey the Land (zone info/map)
-- **Merchant** → Browse Wares (buy/sell)
-- **Warriors' Guild** → STR training & upgrades
-- **Rangers' Guild** → DEX training & upgrades
-- **Mages' Guild** → INT training & upgrades
+**Core Buildings (9, skill mapping confirmed from RunePortal source):**
+- **Campfire** → Cooking station + Rest/Recover
+- **Forge** → Smithing station (smelting + gear crafting)
+- **Shrine** → Blessings (buffs, gold cost)
+- **Garden** → Gathering + Alchemy (potion crafting, GROW/BREW tabs)
+- **Watchtower** → Survey the Land (zone info/map) — stub
+- **Merchant** → Browse Wares (buy/sell) — stub
+- **Warriors' Guild** → STR training (confirmed: stat training, not gear crafting)
+- **Rangers' Guild** → DEX training
+- **Mages' Guild** → INT training
+
+**Field-Based Skills (not tied to a building):**
+- **Fishing** → Resource nodes in zones/near water
+- **Mining** → Rock deposits in zones
 
 **Utility Structures (3):**
 - **Pool of Refreshment** → buff/recovery station (4 upgrade tiers, cooldown system carried over)

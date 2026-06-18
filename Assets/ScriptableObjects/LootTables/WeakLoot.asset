@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e54ecacde23653840af761dca9e7925c, type: 3}
+  m_Name: WeakLoot
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Data.LootTableSO
+  tableId: weakloot
+  displayName: WeakLoot
+  gearPool:
+  - {fileID: 11400000, guid: a929355f9f972f24ea0ddced663411a2, type: 2}
+  - {fileID: 11400000, guid: ec94fc0ecbc82184b882ba7284200c30, type: 2}
+  - {fileID: 11400000, guid: 3a85fc9a22400ff47aa7e8ee93823448, type: 2}
+  - {fileID: 11400000, guid: 3952da1cff65b6240a6cf711eefd708d, type: 2}
+  rarityWeights:
+  - rarity: 0
+    weight: 70
+  - rarity: 1
+    weight: 25
+  - rarity: 2
+    weight: 5
+  gearDropChance: 0.3
+  goldMin: 2
+  goldMax: 8
+  voidShardMin: 0
+  voidShardMax: 0
+  zoneModifier: 1

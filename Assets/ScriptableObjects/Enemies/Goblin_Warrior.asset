@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0c27df59cea0734daa3d12f9ba16bdf, type: 3}
+  m_Name: Goblin_Warrior
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Data.EnemyDefinitionSO
+  enemyId: goblin_warrior
+  displayName: Goblin Warrior
+  tier: 1
+  visualPrefab: {fileID: 0}
+  baseStats:
+    str: 6
+    dex: 5
+    vig: 8
+    intel: 2
+  baseDamage: 7
+  moveSpeed: 3
+  aggroRange: 9
+  attackRange: 2
+  lootTable: {fileID: 11400000, guid: d67214ddde15158469d3a0663ed85426, type: 2}
