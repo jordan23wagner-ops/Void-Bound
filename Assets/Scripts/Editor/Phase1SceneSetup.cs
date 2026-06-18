@@ -26,7 +26,8 @@ namespace VoidBound.Editor
             SetupCamera(player.transform);
             SetupGround();
             SetupMobileControls();
-            SetupTestEnemy();
+            CreateLootAndEnemyAssets();
+            SpawnTestEnemies();
             CreateTestGearAssets(player);
             SetupHUD(player);
 
@@ -104,6 +105,7 @@ namespace VoidBound.Editor
             player.AddComponent<Health>();
             player.AddComponent<PlayerCombat>();
             player.AddComponent<PlayerInventory>();
+            player.AddComponent<PlayerCurrency>();
             AddHealthBar(player);
 
             ApplyPlayerMaterial(player);
@@ -245,7 +247,112 @@ namespace VoidBound.Editor
                 eventSystem.AddComponent<UnityEngine.InputSystem.UI.InputSystemUIInputModule>();
             }
         }
-        private static void SetupTestEnemy()
+        private static void CreateLootAndEnemyAssets()
+        {
+            string ltDir = "Assets/ScriptableObjects/LootTables";
+            if (!AssetDatabase.IsValidFolder(ltDir))
+                AssetDatabase.CreateFolder("Assets/ScriptableObjects", "LootTables");
+
+            string edDir = "Assets/ScriptableObjects/Enemies";
+            if (!AssetDatabase.IsValidFolder(edDir))
+                AssetDatabase.CreateFolder("Assets/ScriptableObjects", "Enemies");
+
+            string gearDir = "Assets/ScriptableObjects/TestGear";
+            var testGear = new[] {
+                AssetDatabase.LoadAssetAtPath<GearItemSO>($"{gearDir}/Rusty_Sword_Common.asset"),
+                AssetDatabase.LoadAssetAtPath<GearItemSO>($"{gearDir}/Arcane_Blade_Rare.asset"),
+                AssetDatabase.LoadAssetAtPath<GearItemSO>($"{gearDir}/Flamecleaver_Legendary.asset"),
+                AssetDatabase.LoadAssetAtPath<GearItemSO>($"{gearDir}/Voidreaver_Voidforged.asset")
+            };
+
+            CreateLootTable(ltDir, "WeakLoot", testGear, 0.3f, 2, 8, 0, 0,
+                new[] {
+                    new RarityWeight { rarity = RarityTier.Common, weight = 70f },
+                    new RarityWeight { rarity = RarityTier.Uncommon, weight = 25f },
+                    new RarityWeight { rarity = RarityTier.Rare, weight = 5f }
+                });
+            CreateLootTable(ltDir, "StandardLoot", testGear, 0.5f, 5, 15, 0, 1,
+                new[] {
+                    new RarityWeight { rarity = RarityTier.Common, weight = 40f },
+                    new RarityWeight { rarity = RarityTier.Uncommon, weight = 35f },
+                    new RarityWeight { rarity = RarityTier.Rare, weight = 20f },
+                    new RarityWeight { rarity = RarityTier.Epic, weight = 5f }
+                });
+            CreateLootTable(ltDir, "EliteLoot", testGear, 0.7f, 10, 30, 1, 3,
+                new[] {
+                    new RarityWeight { rarity = RarityTier.Uncommon, weight = 20f },
+                    new RarityWeight { rarity = RarityTier.Rare, weight = 35f },
+                    new RarityWeight { rarity = RarityTier.Epic, weight = 25f },
+                    new RarityWeight { rarity = RarityTier.Legendary, weight = 15f },
+                    new RarityWeight { rarity = RarityTier.Mythic, weight = 5f }
+                });
+
+            var weakLT = AssetDatabase.LoadAssetAtPath<LootTableSO>($"{ltDir}/WeakLoot.asset");
+            var stdLT = AssetDatabase.LoadAssetAtPath<LootTableSO>($"{ltDir}/StandardLoot.asset");
+            var eliteLT = AssetDatabase.LoadAssetAtPath<LootTableSO>($"{ltDir}/EliteLoot.asset");
+
+            CreateEnemyDef(edDir, "Goblin Scout", EnemyTier.Weak,
+                new CharacterStats(3, 3, 3, 1), 4, 2.5f, 7f, 1.8f, weakLT);
+            CreateEnemyDef(edDir, "Goblin Warrior", EnemyTier.Standard,
+                new CharacterStats(6, 5, 8, 2), 7, 3f, 9f, 2f, stdLT);
+            CreateEnemyDef(edDir, "Goblin Champion", EnemyTier.Elite,
+                new CharacterStats(10, 8, 15, 4), 12, 3.5f, 12f, 2.2f, eliteLT);
+        }
+
+        private static void CreateLootTable(string dir, string name, GearItemSO[] pool,
+            float dropChance, int goldMin, int goldMax, int shardMin, int shardMax, RarityWeight[] weights)
+        {
+            string path = $"{dir}/{name}.asset";
+            if (AssetDatabase.LoadAssetAtPath<LootTableSO>(path) != null) return;
+
+            var lt = ScriptableObject.CreateInstance<LootTableSO>();
+            lt.tableId = name.ToLower();
+            lt.displayName = name;
+            lt.gearPool = pool;
+            lt.gearDropChance = dropChance;
+            lt.goldMin = goldMin;
+            lt.goldMax = goldMax;
+            lt.voidShardMin = shardMin;
+            lt.voidShardMax = shardMax;
+            lt.rarityWeights = weights;
+            lt.zoneModifier = 1f;
+            AssetDatabase.CreateAsset(lt, path);
+        }
+
+        private static void CreateEnemyDef(string dir, string name, EnemyTier tier,
+            CharacterStats stats, int dmg, float speed, float aggro, float atkRange, LootTableSO loot)
+        {
+            string path = $"{dir}/{name.Replace(" ", "_")}.asset";
+            if (AssetDatabase.LoadAssetAtPath<EnemyDefinitionSO>(path) != null) return;
+
+            var ed = ScriptableObject.CreateInstance<EnemyDefinitionSO>();
+            ed.enemyId = name.ToLower().Replace(" ", "_");
+            ed.displayName = name;
+            ed.tier = tier;
+            ed.baseStats = stats;
+            ed.baseDamage = dmg;
+            ed.moveSpeed = speed;
+            ed.aggroRange = aggro;
+            ed.attackRange = atkRange;
+            ed.lootTable = loot;
+            AssetDatabase.CreateAsset(ed, path);
+        }
+
+        private static void SpawnTestEnemies()
+        {
+            string edDir = "Assets/ScriptableObjects/Enemies";
+            SpawnEnemy("Goblin Scout", new Vector3(5f, 0.1f, 5f),
+                AssetDatabase.LoadAssetAtPath<EnemyDefinitionSO>($"{edDir}/Goblin_Scout.asset"),
+                new Color(0.65f, 0.25f, 0.18f));
+            SpawnEnemy("Goblin Warrior", new Vector3(-5f, 0.1f, 6f),
+                AssetDatabase.LoadAssetAtPath<EnemyDefinitionSO>($"{edDir}/Goblin_Warrior.asset"),
+                new Color(0.5f, 0.35f, 0.15f));
+            SpawnEnemy("Goblin Champion", new Vector3(7f, 0.1f, -4f),
+                AssetDatabase.LoadAssetAtPath<EnemyDefinitionSO>($"{edDir}/Goblin_Champion.asset"),
+                new Color(0.4f, 0.12f, 0.12f));
+        }
+
+        private static void SpawnEnemy(string name, Vector3 pos, EnemyDefinitionSO def, Color tintColor)
         {
             var enemyModel = AssetDatabase.LoadAssetAtPath<GameObject>(
                 "Assets/Art/Models/EnemyPlaceholder.fbx");
@@ -254,16 +361,15 @@ namespace VoidBound.Editor
             if (enemyModel != null)
             {
                 enemy = (GameObject)PrefabUtility.InstantiatePrefab(enemyModel);
-                enemy.name = "TestEnemy";
+                enemy.name = name;
             }
             else
             {
                 enemy = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                enemy.name = "TestEnemy";
-                Debug.LogWarning("EnemyPlaceholder.fbx not found — using cube fallback.");
+                enemy.name = name;
             }
 
-            enemy.transform.position = new Vector3(5f, 0.1f, 5f);
+            enemy.transform.position = pos;
 
             var cc = enemy.AddComponent<CharacterController>();
             cc.center = new Vector3(0f, 0.7f, 0f);
@@ -272,10 +378,22 @@ namespace VoidBound.Editor
 
             enemy.AddComponent<StatsComponent>();
             enemy.AddComponent<Health>();
-            enemy.AddComponent<EnemyAI>();
+
+            var ai = enemy.AddComponent<EnemyAI>();
+            if (def != null)
+            {
+                var aiSO = new SerializedObject(ai);
+                aiSO.FindProperty("definition").objectReferenceValue = def;
+                aiSO.ApplyModifiedPropertiesWithoutUndo();
+            }
+
+            var dropper = enemy.AddComponent<LootDropper>();
+            if (def != null && def.lootTable != null)
+                dropper.SetLootTable(def.lootTable, def.tier);
+
             AddHealthBar(enemy, new Vector3(0f, 1.6f, 0f));
 
-            ApplyEnemyMaterial(enemy);
+            ApplyEnemyMaterial(enemy, tintColor);
         }
 
         private static void AddHealthBar(GameObject target, Vector3 offset = default)
@@ -295,24 +413,18 @@ namespace VoidBound.Editor
             }
         }
 
-        private static void ApplyEnemyMaterial(GameObject enemy)
+        private static void ApplyEnemyMaterial(GameObject enemy, Color tint = default)
         {
             var renderers = enemy.GetComponentsInChildren<Renderer>();
             if (renderers.Length == 0) return;
 
-            string matPath = "Assets/Art/Materials/EnemyMaterial.mat";
-            var mat = AssetDatabase.LoadAssetAtPath<Material>(matPath);
-            if (mat == null)
-            {
-                var shader = Shader.Find("Universal Render Pipeline/Lit");
-                if (shader == null) shader = Shader.Find("Standard");
+            if (tint == default) tint = new Color(0.65f, 0.25f, 0.18f, 1f);
 
-                mat = new Material(shader);
-                mat.name = "EnemyMaterial";
-                mat.color = new Color(0.65f, 0.25f, 0.18f, 1f);
-                mat.SetFloat("_Smoothness", 0.15f);
-                AssetDatabase.CreateAsset(mat, matPath);
-            }
+            var shader = Shader.Find("Universal Render Pipeline/Lit");
+            if (shader == null) shader = Shader.Find("Standard");
+            var mat = new Material(shader);
+            mat.color = tint;
+            mat.SetFloat("_Smoothness", 0.15f);
 
             foreach (var r in renderers)
                 r.sharedMaterial = mat;
@@ -344,7 +456,9 @@ namespace VoidBound.Editor
             var hpText = CreateTextElement(statsPanel.transform, "HPText", "200/200", 12,
                 new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(8f, -44f), new Vector2(-8f, -62f));
             var statsText = CreateTextElement(statsPanel.transform, "StatsText", "STR 10  DEX 10\nVIG 10  INT 10", 12,
-                new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(5f, -66f), new Vector2(-5f, -130f));
+                new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(5f, -66f), new Vector2(-5f, -100f));
+            var currencyText = CreateTextElement(statsPanel.transform, "CurrencyText", "Gold: 0  Shards: 0", 12,
+                new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(5f, -104f), new Vector2(-5f, -130f));
 
             // === TOP-RIGHT: Minimap + buttons ===
             var minimapPanel = CreateAnchoredPanel(canvasObj.transform, "MinimapPanel",
@@ -411,6 +525,8 @@ namespace VoidBound.Editor
             hmSO.FindProperty("hpFill").objectReferenceValue = hpBg.transform.Find("Fill")?.GetComponent<Image>();
             hmSO.FindProperty("hpText").objectReferenceValue = hpText.GetComponent<Text>();
             hmSO.FindProperty("statsText").objectReferenceValue = statsText.GetComponent<Text>();
+            hmSO.FindProperty("currencyText").objectReferenceValue = currencyText.GetComponent<Text>();
+            hmSO.FindProperty("playerCurrency").objectReferenceValue = player.GetComponent<PlayerCurrency>();
             hmSO.FindProperty("equipmentPanel").objectReferenceValue = equipPanel;
             hmSO.FindProperty("backpackPanel").objectReferenceValue = bpPanel;
             hmSO.FindProperty("devToolsPanel").objectReferenceValue = devPanel;

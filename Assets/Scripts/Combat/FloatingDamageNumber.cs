@@ -10,6 +10,25 @@ namespace VoidBound.Combat
         private TextMesh textMesh;
         private Color startColor;
 
+        public static void SpawnText(Vector3 worldPos, string text, Color color)
+        {
+            var go = new GameObject("FloatText");
+            go.transform.position = worldPos + new Vector3(Random.Range(-0.3f, 0.3f), 1.8f, 0f);
+
+            var tm = go.AddComponent<TextMesh>();
+            tm.text = text;
+            tm.fontSize = 32;
+            tm.characterSize = 0.08f;
+            tm.alignment = TextAlignment.Center;
+            tm.anchor = TextAnchor.MiddleCenter;
+            tm.color = color;
+            tm.fontStyle = FontStyle.Bold;
+
+            var fdn = go.AddComponent<FloatingDamageNumber>();
+            fdn.textMesh = tm;
+            fdn.startColor = color;
+        }
+
         public static void Spawn(Vector3 worldPos, int damage, bool isCrit)
         {
             var go = new GameObject("DmgNum");

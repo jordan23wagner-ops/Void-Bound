@@ -18,6 +18,8 @@ namespace VoidBound.UI
         [SerializeField] private Image hpFill;
         [SerializeField] private Text hpText;
         [SerializeField] private Text statsText;
+        [SerializeField] private Text currencyText;
+        [SerializeField] private PlayerCurrency playerCurrency;
 
         [Header("Panels")]
         [SerializeField] private GameObject equipmentPanel;
@@ -57,7 +59,11 @@ namespace VoidBound.UI
             if (inventory != null)
                 inventory.OnInventoryChanged += RefreshStats;
 
+            if (playerCurrency != null)
+                playerCurrency.OnCurrencyChanged += RefreshCurrency;
+
             RefreshStats();
+            RefreshCurrency();
         }
 
         private void Update()
@@ -137,12 +143,20 @@ namespace VoidBound.UI
                 hpText.text = $"{playerHealth.CurrentHP}/{playerHealth.MaxHP}";
         }
 
+        private void RefreshCurrency()
+        {
+            if (currencyText == null || playerCurrency == null) return;
+            currencyText.text = $"Gold: {playerCurrency.Gold}  Shards: {playerCurrency.VoidShards}";
+        }
+
         private void OnDestroy()
         {
             if (playerHealth != null)
                 playerHealth.OnHealthChanged -= OnHealthChanged;
             if (inventory != null)
                 inventory.OnInventoryChanged -= RefreshStats;
+            if (playerCurrency != null)
+                playerCurrency.OnCurrencyChanged -= RefreshCurrency;
         }
     }
 }

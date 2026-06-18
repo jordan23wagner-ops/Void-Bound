@@ -14,5 +14,6 @@ namespace VoidBound.Data
         public float moveSpeed = 3f;
         public float aggroRange = 8f;
         public float attackRange = 2f;
+        public LootTableSO lootTable;
     }
 }

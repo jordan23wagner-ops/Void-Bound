@@ -3,7 +3,7 @@
 
 ## Project State
 - **Engine:** Unity 6.5 (6000.5.0f1), URP, mobile-first
-- **Status:** Phase 3b (HUD & Menus) complete
+- **Status:** Phase 4 (Loot & Drop Tables) complete
 - **GDD:** See `Void_Bound_GDD.md` in repo root — full design spec, all systems locked
 - **MCP connections live:** Unity MCP (scene/asset control) + Blender MCP (procedural low-poly model generation)
 
@@ -24,7 +24,18 @@ Void Bound evolved from RunePortal (a Three.js browser ARPG). All gameplay syste
 6. **Update this CONTEXT.md** after each phase completes — log what was built, file locations, and any decisions made.
 
 ## Current Phase
-**Phase 4: Loot & Drop Tables** — see `PHASES/phase4_loot_drops.md`
+**Phase 5: Skilling Systems** — see `PHASES/phase5_skilling.md`
+
+## Phase 4 Log (completed 2026-06-17)
+- **LootTableSO:** `Scripts/Data/LootTableSO.cs` — full implementation: rarity weights array, gear pool, gold/shard ranges, zone modifier, RollRarity/RollGear/RollGold/RollVoidShards methods
+- **Architecture:** Shared loot tables referenced per EnemyDefinitionSO (WeakLoot/StandardLoot/EliteLoot). Tier scaling via different rarity weight distributions per table. Zone modifier field exists, tested at 1.0.
+- **LootDropper:** `Scripts/Combat/LootDropper.cs` — attached to enemies, called on death, rolls loot table, spawns WorldPickup for gear, adds currency directly
+- **WorldPickup:** `Scripts/Combat/WorldPickup.cs` — sphere primitive with rarity-colored material + RarityVisualEffects, spins, auto-pickup on proximity (1.5 units), adds to PlayerInventory
+- **PlayerCurrency:** `Scripts/Inventory/PlayerCurrency.cs` — Gold + Void Shards tracking, AddGold/AddVoidShards/SpendGold, OnCurrencyChanged event
+- **Currency HUD:** Added to top-left stats panel, live-updates via HUDManager
+- **Pickup Feedback:** FloatingDamageNumber.SpawnText reused for "+X Gold" / "+X Void Shards" / item name on pickup
+- **Enemy Tiers:** 3 EnemyDefinitionSO assets (Goblin Scout/Weak, Goblin Warrior/Standard, Goblin Champion/Elite) with color-tinted materials
+- **Loot Table Assets:** WeakLoot (30% gear, 2-8 gold), StandardLoot (50% gear, 5-15 gold, 0-1 shards), EliteLoot (70% gear, 10-30 gold, 1-3 shards)
 
 ## Phase 3b Log (completed 2026-06-17)
 - **HUDManager:** `Scripts/UI/HUDManager.cs` — persistent Screen Space Overlay canvas, manages all panel toggles

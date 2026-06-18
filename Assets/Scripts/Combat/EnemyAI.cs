@@ -145,6 +145,12 @@ namespace VoidBound.Combat
         private void HandleDeath()
         {
             state = EnemyState.Dead;
+            Vector3 deathPos = transform.position;
+
+            var dropper = GetComponent<LootDropper>();
+            if (dropper != null)
+                dropper.DropLoot(deathPos);
+
             controller.enabled = false;
             gameObject.SetActive(false);
         }
