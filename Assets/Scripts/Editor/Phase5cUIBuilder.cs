@@ -96,6 +96,13 @@ namespace VoidBound.Editor
                 return;
             }
 
+            // ── Ensure Canvas Scaler is correct ─────────────────────
+            var scaler = hudCanvasGO.GetComponent<CanvasScaler>();
+            if (scaler == null) scaler = hudCanvasGO.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920, 1080);
+            scaler.matchWidthOrHeight = 0.5f;
+
             // ── Remove old panels if they exist ───────────────────
             DestroyIfExists(hudCanvasGO, "EquipmentPanel");
             DestroyIfExists(hudCanvasGO, "InventoryPanel");
@@ -507,24 +514,24 @@ namespace VoidBound.Editor
         // ═══════════════════════════════════════════════════════════
         static string SlotIconChar(string label) => label switch
         {
-            "HELM"  => "⛨",
-            "BODY"  => "⬡",
-            "LEGS"  => "▤",
-            "BOOTS" => "⊓",
-            "GLVS"  => "✋",
-            "AMLT"  => "⬦",
-            "RING"  => "○",
-            "CAPE"  => "▽",
-            "WPGN"  => "⚔",
-            "SHLD"  => "🛡",
-            _ => "□"
+            "HELM"  => "H",
+            "BODY"  => "B",
+            "LEGS"  => "L",
+            "BOOTS" => "Bo",
+            "GLVS"  => "G",
+            "AMLT"  => "A",
+            "RING"  => "R",
+            "CAPE"  => "C",
+            "WPGN"  => "W",
+            "SHLD"  => "S",
+            _ => "-"
         };
 
         static string InvIconChar(string key) => key switch
         {
-            "ti-sword" => "⚔",
-            "ti-flask" => "⚗",
-            _ => "□"
+            "ti-sword" => "W",
+            "ti-flask" => "F",
+            _ => "-"
         };
 
         static RectTransform MakeRect(string name, Transform parent)
