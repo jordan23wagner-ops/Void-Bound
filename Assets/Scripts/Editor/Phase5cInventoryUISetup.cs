@@ -166,7 +166,7 @@ namespace VoidBound.Editor
             so.FindProperty("leftColumn").objectReferenceValue = leftCol.transform;
             so.FindProperty("rightColumn").objectReferenceValue = rightCol.transform;
             so.FindProperty("weaponDock").objectReferenceValue = dock.transform;
-            so.FindProperty("statReadout").objectReferenceValue = statReadout.GetComponent<TMP_Text>() as Text;
+            so.FindProperty("tmpStatReadout").objectReferenceValue = statReadout.GetComponent<TMP_Text>();
             so.ApplyModifiedPropertiesWithoutUndo();
 
             return panel;

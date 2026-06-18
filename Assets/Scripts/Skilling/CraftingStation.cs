@@ -16,7 +16,7 @@ namespace VoidBound.Skilling
 
         public override void OnInteract(GameObject instigator)
         {
-            var ui = FindAnyObjectByType<CraftingUI>();
+            var ui = Object.FindAnyObjectByType<CraftingUI>();
             if (ui != null)
                 ui.Open(this, instigator);
         }

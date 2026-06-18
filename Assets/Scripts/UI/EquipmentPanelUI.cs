@@ -38,7 +38,6 @@ namespace VoidBound.UI
         private static readonly EquipmentSlot[] RightSlots = {
             EquipmentSlot.Amulet, EquipmentSlot.Ring, EquipmentSlot.Ring2, EquipmentSlot.Cape
         };
-        private static readonly string[] SlotIcons = null;
 
         private EquipmentSlot selectedSlot;
 
@@ -80,7 +79,7 @@ namespace VoidBound.UI
 
             if (stats == null)
             {
-                statReadout.text = "NO STATS";
+                if (tmpStatReadout != null) tmpStatReadout.text = "NO STATS";
                 Debug.LogWarning("[EquipmentPanelUI] StatsComponent missing on player.");
                 return;
             }
