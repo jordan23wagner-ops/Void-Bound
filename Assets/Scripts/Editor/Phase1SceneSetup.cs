@@ -453,18 +453,18 @@ namespace VoidBound.Editor
             poolProp.arraySize = allGear.Length;
             for (int i = 0; i < allGear.Length; i++)
                 poolProp.GetArrayElementAtIndex(i).objectReferenceValue = allGear[i];
+            var devBtns = devContent.GetComponentsInChildren<Button>();
+            devSO.FindProperty("giveGearButton").objectReferenceValue = devBtns.Length > 0 ? devBtns[0] : null;
+            devSO.FindProperty("killAllButton").objectReferenceValue = devBtns.Length > 1 ? devBtns[1] : null;
+            devSO.FindProperty("godModeButton").objectReferenceValue = devBtns.Length > 2 ? devBtns[2] : null;
             devSO.ApplyModifiedPropertiesWithoutUndo();
 
-            // Wire buttons to HUDManager
-            equipBtn.GetComponent<Button>().onClick.AddListener(() => hudManager.ToggleEquipment());
-            bpBtn.GetComponent<Button>().onClick.AddListener(() => hudManager.ToggleBackpack());
-            devBtn.GetComponent<Button>().onClick.AddListener(() => hudManager.ToggleDevTools());
-
-            // Wire dev buttons
-            var devButtons = devContent.GetComponentsInChildren<Button>();
-            if (devButtons.Length > 0) devButtons[0].onClick.AddListener(() => devComp.GiveTestGear());
-            if (devButtons.Length > 1) devButtons[1].onClick.AddListener(() => devComp.KillAllEnemies());
-            if (devButtons.Length > 2) devButtons[2].onClick.AddListener(() => devComp.ToggleGodMode());
+            // Wire HUD button references (serialized — wired at runtime in Start)
+            hmSO = new SerializedObject(hudManager);
+            hmSO.FindProperty("equipButton").objectReferenceValue = equipBtn.GetComponent<Button>();
+            hmSO.FindProperty("backpackButton").objectReferenceValue = bpBtn.GetComponent<Button>();
+            hmSO.FindProperty("devToolsButton").objectReferenceValue = devBtn.GetComponent<Button>();
+            hmSO.ApplyModifiedPropertiesWithoutUndo();
 
             // Wire minimap RenderTexture after Start runs (deferred)
             var mmWirer = minimapDisplay.AddComponent<MinimapWirer>();

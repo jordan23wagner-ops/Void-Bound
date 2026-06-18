@@ -24,6 +24,11 @@ namespace VoidBound.UI
         [SerializeField] private GameObject backpackPanel;
         [SerializeField] private GameObject devToolsPanel;
 
+        [Header("Buttons")]
+        [SerializeField] private Button equipButton;
+        [SerializeField] private Button backpackButton;
+        [SerializeField] private Button devToolsButton;
+
         private EquipmentPanelUI equipmentUI;
         private BackpackPanelUI backpackUI;
 
@@ -41,6 +46,10 @@ namespace VoidBound.UI
             }
             if (devToolsPanel != null)
                 devToolsPanel.SetActive(false);
+
+            if (equipButton != null) equipButton.onClick.AddListener(ToggleEquipment);
+            if (backpackButton != null) backpackButton.onClick.AddListener(ToggleBackpack);
+            if (devToolsButton != null) devToolsButton.onClick.AddListener(ToggleDevTools);
 
             if (playerHealth != null)
                 playerHealth.OnHealthChanged += OnHealthChanged;

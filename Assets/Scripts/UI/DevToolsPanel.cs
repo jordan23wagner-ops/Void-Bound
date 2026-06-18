@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using VoidBound.Combat;
 using VoidBound.Data;
 using VoidBound.Inventory;
@@ -10,8 +11,18 @@ namespace VoidBound.UI
         [SerializeField] private PlayerInventory inventory;
         [SerializeField] private Health playerHealth;
         [SerializeField] private GearItemSO[] testGearPool;
+        [SerializeField] private Button giveGearButton;
+        [SerializeField] private Button killAllButton;
+        [SerializeField] private Button godModeButton;
 
         private bool godMode;
+
+        private void Start()
+        {
+            if (giveGearButton != null) giveGearButton.onClick.AddListener(GiveTestGear);
+            if (killAllButton != null) killAllButton.onClick.AddListener(KillAllEnemies);
+            if (godModeButton != null) godModeButton.onClick.AddListener(ToggleGodMode);
+        }
 
         public void GiveTestGear()
         {
