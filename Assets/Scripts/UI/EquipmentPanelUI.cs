@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using VoidBound.Combat;
 using VoidBound.Data;
 using VoidBound.Inventory;
@@ -13,7 +14,7 @@ namespace VoidBound.UI
         [SerializeField] private Transform leftColumn;
         [SerializeField] private Transform rightColumn;
         [SerializeField] private Transform weaponDock;
-        [SerializeField] private Text statReadout;
+        [SerializeField] private TMP_Text tmpStatReadout;
         [SerializeField] private GameObject detailPanel;
         [SerializeField] private Text detailName;
         [SerializeField] private Text detailRarity;
@@ -67,7 +68,10 @@ namespace VoidBound.UI
 
         private void RefreshStatReadout()
         {
-            if (statReadout == null || inventory == null) return;
+            if (inventory == null) return;
+            if (tmpStatReadout == null)
+                tmpStatReadout = GetComponentInChildren<TMP_Text>();
+            if (tmpStatReadout == null) return;
 
             var player = inventory.gameObject;
             var stats = player.GetComponent<StatsComponent>();
@@ -89,14 +93,14 @@ namespace VoidBound.UI
             float totalDmg = stats.PhysicalDamage(dmg);
             int defense = (int)(100 - stats.DefenseMultiplier * 100);
 
-            statReadout.text =
-                $"<color=white>Level {combatLvl}</color>\n\n" +
-                $"<color=#999999>Damage</color>  <color=white>{totalDmg:F0}</color>\n" +
-                $"<color=#999999>Defense</color>  <color=white>{defense}</color>\n\n" +
-                $"<color=#{ColorUtility.ToHtmlStringRGB(VigColor)}>VIG {s.vig}</color>\n" +
-                $"<color=#{ColorUtility.ToHtmlStringRGB(StrColor)}>STR {s.str}</color>\n" +
-                $"<color=#{ColorUtility.ToHtmlStringRGB(DexColor)}>DEX {s.dex}</color>\n" +
-                $"<color=#{ColorUtility.ToHtmlStringRGB(IntColor)}>INT {s.intel}</color>";
+            tmpStatReadout.text =
+                $"<color=#d4d8d0>Level {combatLvl}</color>\n\n" +
+                $"<color=#888d84>Damage</color>  <color=#d4d8d0>{totalDmg:F0}</color>\n" +
+                $"<color=#888d84>Defense</color>  <color=#d4d8d0>{defense}</color>\n\n" +
+                $"<color=#E24B4A>VIG  {s.vig}</color>\n" +
+                $"<color=#FAC775>STR  {s.str}</color>\n" +
+                $"<color=#97C459>DEX  {s.dex}</color>\n" +
+                $"<color=#378ADD>INT  {s.intel}</color>";
         }
 
         private string GetSlotLabel(EquipmentSlot slot)

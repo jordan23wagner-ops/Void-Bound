@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using VoidBound.Combat;
 using VoidBound.Data;
 using VoidBound.Inventory;
@@ -83,22 +84,29 @@ namespace VoidBound.UI
 
         public void ToggleEquipment()
         {
-            bool opening = equipmentPanel != null && !equipmentPanel.activeSelf;
-            CloseAllPanels();
-            if (opening && equipmentPanel != null)
-            {
-                equipmentPanel.SetActive(true);
-                equipmentUI?.Refresh();
-            }
+            ToggleInventoryGroup();
         }
 
         public void ToggleBackpack()
         {
-            bool opening = backpackPanel != null && !backpackPanel.activeSelf;
+            ToggleInventoryGroup();
+        }
+
+        private void ToggleInventoryGroup()
+        {
+            var panel = equipmentPanel ?? backpackPanel;
+            if (panel == null) return;
+
+            bool opening = !panel.activeSelf;
             CloseAllPanels();
-            if (opening && backpackPanel != null)
+            if (opening)
             {
-                backpackPanel.SetActive(true);
+                panel.SetActive(true);
+                if (equipmentUI == null)
+                    equipmentUI = panel.GetComponentInChildren<EquipmentPanelUI>(true);
+                if (backpackUI == null)
+                    backpackUI = panel.GetComponentInChildren<BackpackPanelUI>(true);
+                equipmentUI?.Refresh();
                 backpackUI?.Refresh();
             }
         }
@@ -183,7 +191,15 @@ namespace VoidBound.UI
         private static Text FindTextInChildren(Transform root, string name)
         {
             var t = FindInChildren(root, name);
-            return t != null ? t.GetComponent<Text>() : null;
+            if (t == null) return null;
+            var legacy = t.GetComponent<Text>();
+            if (legacy != null) return legacy;
+            var tmp = t.GetComponent<TMP_Text>();
+            if (tmp != null)
+            {
+                Debug.Log($"[HUDManager] {name} is TMP, not legacy Text — adding legacy Text wrapper.");
+            }
+            return legacy;
         }
 
         private static Transform FindInChildren(Transform root, string name)
@@ -204,17 +220,16 @@ namespace VoidBound.UI
                 ResolvePlayerReferences();
                 if (playerStats == null)
                 {
-                    if (statsText != null) statsText.text = "NO PLAYER REF";
-                    Debug.LogWarning("[HUDManager] RefreshStats skipped — playerStats is null.");
+                    SetText(statsText, "NO PLAYER");
+                    Debug.LogWarning("[HUDManager] RefreshStats — playerStats null after resolve.");
                     return;
                 }
             }
 
-            var skills = playerStats.GetComponent<PlayerSkills>();
+            var s = playerStats.EffectiveStats;
 
             if (statsText != null)
             {
-                var s = playerStats.EffectiveStats;
                 statsText.supportRichText = true;
                 statsText.text =
                     $"<color=#E24B4A>VIG {s.vig}</color>  <color=#FAC775>STR {s.str}</color>\n" +
@@ -225,6 +240,7 @@ namespace VoidBound.UI
                 Debug.LogWarning("[HUDManager] statsText is null — cannot display stats.");
             }
 
+            var skills = playerStats.GetComponent<PlayerSkills>();
             if (levelText != null)
             {
                 int combatLvl = skills != null ? CombatLevelCalculator.GetCombatLevel(skills) : 1;
@@ -261,6 +277,11 @@ namespace VoidBound.UI
                 inventory.OnInventoryChanged -= RefreshStats;
             if (playerCurrency != null)
                 playerCurrency.OnCurrencyChanged -= RefreshCurrency;
+        }
+
+        private static void SetText(Text t, string val)
+        {
+            if (t != null) t.text = val;
         }
     }
 }
