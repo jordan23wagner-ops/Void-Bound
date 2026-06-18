@@ -38,6 +38,8 @@ namespace VoidBound.UI
 
         private void Start()
         {
+            ResolvePlayerReferences();
+
             if (equipmentPanel != null)
             {
                 equipmentPanel.SetActive(false);
@@ -125,9 +127,41 @@ namespace VoidBound.UI
                 hpText.text = $"{current}/{max}";
         }
 
+        private void ResolvePlayerReferences()
+        {
+            if (playerStats != null && playerHealth != null && inventory != null && playerCurrency != null)
+                return;
+
+            var player = GameObject.FindGameObjectWithTag("Player");
+            if (player == null)
+            {
+                Debug.LogError("[HUDManager] No Player found — stats panel will be blank.");
+                return;
+            }
+
+            if (playerStats == null) playerStats = player.GetComponent<StatsComponent>();
+            if (playerHealth == null) playerHealth = player.GetComponent<Health>();
+            if (inventory == null) inventory = player.GetComponent<PlayerInventory>();
+            if (playerCurrency == null) playerCurrency = player.GetComponent<PlayerCurrency>();
+
+            if (playerStats == null) Debug.LogError("[HUDManager] Player missing StatsComponent.");
+            if (playerHealth == null) Debug.LogError("[HUDManager] Player missing Health.");
+        }
+
         private void RefreshStats()
         {
-            var skills = playerStats?.GetComponent<PlayerSkills>();
+            if (playerStats == null)
+            {
+                ResolvePlayerReferences();
+                if (playerStats == null)
+                {
+                    if (statsText != null) statsText.text = "NO PLAYER REF";
+                    Debug.LogWarning("[HUDManager] RefreshStats skipped — playerStats is null.");
+                    return;
+                }
+            }
+
+            var skills = playerStats.GetComponent<PlayerSkills>();
 
             if (statsText != null)
             {
@@ -139,11 +173,15 @@ namespace VoidBound.UI
                     int intel = skills.GetLevel(SkillType.CombatINT);
                     statsText.text = $"VIG {vig}  STR {str}\nDEX {dex}  INT {intel}";
                 }
-                else if (playerStats != null)
+                else
                 {
                     var s = playerStats.EffectiveStats;
                     statsText.text = $"VIG {s.vig}  STR {s.str}\nDEX {s.dex}  INT {s.intel}";
                 }
+            }
+            else
+            {
+                Debug.LogWarning("[HUDManager] statsText is null — cannot display stats.");
             }
 
             if (levelText != null)
@@ -155,10 +193,17 @@ namespace VoidBound.UI
             if (xpFill != null)
                 xpFill.fillAmount = 0f;
 
-            if (playerHealth != null && hpFill != null)
-                hpFill.fillAmount = playerHealth.MaxHP > 0 ? (float)playerHealth.CurrentHP / playerHealth.MaxHP : 1f;
-            if (playerHealth != null && hpText != null)
-                hpText.text = $"{playerHealth.CurrentHP}/{playerHealth.MaxHP}";
+            if (playerHealth != null)
+            {
+                if (hpFill != null)
+                    hpFill.fillAmount = playerHealth.MaxHP > 0 ? (float)playerHealth.CurrentHP / playerHealth.MaxHP : 1f;
+                if (hpText != null)
+                    hpText.text = $"{playerHealth.CurrentHP}/{playerHealth.MaxHP}";
+            }
+            else if (hpText != null)
+            {
+                hpText.text = "NO HP REF";
+            }
         }
 
         private void RefreshCurrency()
