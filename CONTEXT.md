@@ -3,7 +3,7 @@
 
 ## Project State
 - **Engine:** Unity 6.5 (6000.5.0f1), URP, mobile-first
-- **Status:** Phase 5b (Combat Stat XP Overhaul) complete
+- **Status:** Phase 5c (Equipment & Inventory UI) complete
 - **GDD:** See `Void_Bound_GDD.md` in repo root — full design spec, all systems locked
 - **MCP connections live:** Unity MCP (scene/asset control) + Blender MCP (procedural low-poly model generation)
 
@@ -25,6 +25,14 @@ Void Bound evolved from RunePortal (a Three.js browser ARPG). All gameplay syste
 
 ## Current Phase
 **Phase 6: Homestead Full Build-out** — see `PHASES/phase6_homestead.md`
+
+## Phase 5c Log (completed 2026-06-17)
+- **Equipment Panel (reference-matched):** Two-column slot layout (Left: Head/Body/Legs/Hands/Feet, Right: Cape/Neck/Ring/Ammo) + bottom Weapon/Shield dock. Center stat readout shows Character Level, Damage, Defense, VIG/STR/DEX/INT levels (live values from StatsComponent + PlayerSkills). Rarity-colored slot borders. Detail view with Unequip button.
+- **Inventory Panel (grid layout):** 5-column grid with 30 max slots. Rarity-colored borders on filled slots, empty slots as dark squares. Capacity counter (X/30). Currency display (Gold + Void Shards) at bottom. Detail view with Equip button.
+- **Player Info Bar:** Top-left: portrait placeholder, "PLAYER" name, HP bar (green fill, current/max text). Replaces old flat HP bar from Phase 3b.
+- **Close buttons:** Both panels have X close buttons wired at runtime (learned pattern from Phase 3b button fix).
+- **Character preview:** Deferred — requires secondary camera/render texture, low priority vs functional panels.
+- **Editor script:** `VoidBound > Setup Phase 5c - Inventory UI` — builds both panels, wires all serialized refs, destroys old panels if present.
 
 ## Phase 5b Log (completed 2026-06-17)
 - **RunePortal source confirmed:** XP split is 40/40/20+vigor. Actual code: melee→STR XP, ranged→DEX XP, magic→INT XP, VIG gets `xpGain * 0.5` (50% ratio, not 33%). XP curve uses OSRS formula: `sum(i + 300 * 2^(i/7)) / 4 * 3`. Character Level = `levelFromXP(player.totalXP)`.
