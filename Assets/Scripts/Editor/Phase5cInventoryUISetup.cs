@@ -46,9 +46,9 @@ namespace VoidBound.Editor
 
             GenerateIcons();
 
-            var group = new GameObject("InventoryPanelGroup");
+            var group = new GameObject("InventoryPanelGroup", typeof(RectTransform));
             group.transform.SetParent(root, false);
-            var gRect = group.AddComponent<RectTransform>();
+            var gRect = group.GetComponent<RectTransform>();
             gRect.anchorMin = new Vector2(0.5f, 0.5f);
             gRect.anchorMax = new Vector2(0.5f, 0.5f);
             gRect.pivot = new Vector2(0.5f, 0.5f);
@@ -99,9 +99,9 @@ namespace VoidBound.Editor
 
             CreateHeader(panel.transform, "EQUIPMENT", 340);
 
-            var body = new GameObject("Body");
+            var body = new GameObject("Body", typeof(RectTransform));
             body.transform.SetParent(panel.transform, false);
-            var bodyRect = body.AddComponent<RectTransform>();
+            var bodyRect = body.GetComponent<RectTransform>();
             bodyRect.anchorMin = new Vector2(0f, 0f);
             bodyRect.anchorMax = new Vector2(1f, 1f);
             bodyRect.offsetMin = new Vector2(18f, 90f);
@@ -116,9 +116,9 @@ namespace VoidBound.Editor
 
             float centerX = 76f;
             float centerW = 340 - 36 - 64 - 64 - 24;
-            var centerCol = new GameObject("CenterStats");
+            var centerCol = new GameObject("CenterStats", typeof(RectTransform));
             centerCol.transform.SetParent(body.transform, false);
-            var cRect = centerCol.AddComponent<RectTransform>();
+            var cRect = centerCol.GetComponent<RectTransform>();
             cRect.anchorMin = new Vector2(0f, 0f);
             cRect.anchorMax = new Vector2(0f, 1f);
             cRect.pivot = new Vector2(0f, 0.5f);
@@ -140,9 +140,9 @@ namespace VoidBound.Editor
             CreateSlot(rightCol, "RING", ringIcon);
             CreateSlot(rightCol, "CAPE", capeIcon);
 
-            var dock = new GameObject("WeaponDock");
+            var dock = new GameObject("WeaponDock", typeof(RectTransform));
             dock.transform.SetParent(panel.transform, false);
-            var dRect = dock.AddComponent<RectTransform>();
+            var dRect = dock.GetComponent<RectTransform>();
             dRect.anchorMin = new Vector2(0.5f, 0f);
             dRect.anchorMax = new Vector2(0.5f, 0f);
             dRect.pivot = new Vector2(0.5f, 0f);
@@ -185,9 +185,9 @@ namespace VoidBound.Editor
             capRect.offsetMin = new Vector2(0f, 0f);
             capRect.offsetMax = new Vector2(-40f, 0f);
 
-            var grid = new GameObject("Grid");
+            var grid = new GameObject("Grid", typeof(RectTransform));
             grid.transform.SetParent(panel.transform, false);
-            var gRect = grid.AddComponent<RectTransform>();
+            var gRect = grid.GetComponent<RectTransform>();
             gRect.anchorMin = new Vector2(0f, 0f);
             gRect.anchorMax = new Vector2(1f, 1f);
             gRect.offsetMin = new Vector2(16f, 60f);
@@ -202,7 +202,7 @@ namespace VoidBound.Editor
             for (int i = 0; i < 12; i++)
                 CreateEmptyInvSlot(grid.transform);
 
-            var footer = new GameObject("Footer");
+            var footer = new GameObject("Footer", typeof(RectTransform));
             footer.transform.SetParent(panel.transform, false);
             footer.AddComponent<Image>().color = Color.clear;
             var fRect = footer.GetComponent<RectTransform>();
@@ -240,7 +240,7 @@ namespace VoidBound.Editor
             var outline = panel.AddComponent<Outline>();
             outline.effectColor = PanelBorder;
             outline.effectDistance = new Vector2(1f, 1f);
-            var rect = panel.AddComponent<RectTransform>();
+            var rect = panel.GetComponent<RectTransform>();
             var le = panel.AddComponent<LayoutElement>();
             le.preferredWidth = w;
             le.preferredHeight = h;
@@ -250,7 +250,7 @@ namespace VoidBound.Editor
 
         private static GameObject CreateHeader(Transform parent, string title, float panelWidth)
         {
-            var header = new GameObject("Header");
+            var header = new GameObject("Header", typeof(RectTransform));
             header.transform.SetParent(parent, false);
             header.AddComponent<Image>().color = HeaderBg;
             var hRect = header.GetComponent<RectTransform>();
@@ -264,9 +264,9 @@ namespace VoidBound.Editor
                 (Color)TextPrimary, TextAlignmentOptions.MidlineLeft)
                 .GetComponent<RectTransform>().offsetMin = new Vector2(16f, 0f);
 
-            var xBtn = new GameObject("XButton");
+            var xBtn = new GameObject("XButton", typeof(RectTransform));
             xBtn.transform.SetParent(header.transform, false);
-            var xRect = xBtn.AddComponent<RectTransform>();
+            var xRect = xBtn.GetComponent<RectTransform>();
             xRect.anchorMin = new Vector2(1f, 0.5f);
             xRect.anchorMax = new Vector2(1f, 0.5f);
             xRect.pivot = new Vector2(1f, 0.5f);
@@ -291,9 +291,9 @@ namespace VoidBound.Editor
 
         private static Transform CreateSlotColumn(Transform parent, string name, float x, float slotSize)
         {
-            var col = new GameObject(name);
+            var col = new GameObject(name, typeof(RectTransform));
             col.transform.SetParent(parent, false);
-            var cRect = col.AddComponent<RectTransform>();
+            var cRect = col.GetComponent<RectTransform>();
             cRect.anchorMin = new Vector2(0f, 0f);
             cRect.anchorMax = new Vector2(0f, 1f);
             cRect.pivot = new Vector2(0f, 1f);
@@ -311,23 +311,23 @@ namespace VoidBound.Editor
 
         private static void CreateSlot(Transform parent, string label, Texture2D icon)
         {
-            var slot = new GameObject(label);
+            var slot = new GameObject(label, typeof(RectTransform));
             slot.transform.SetParent(parent, false);
+            var bg = slot.AddComponent<Image>();
+            bg.color = SlotBg;
             var le = slot.AddComponent<LayoutElement>();
             le.preferredWidth = 64f;
             le.preferredHeight = 64f;
-            slot.AddComponent<RectTransform>().sizeDelta = new Vector2(64f, 64f);
-            var bg = slot.AddComponent<Image>();
-            bg.color = SlotBg;
+            slot.GetComponent<RectTransform>().sizeDelta = new Vector2(64f, 64f);
             var outline = slot.AddComponent<Outline>();
             outline.effectColor = SlotBorderEmpty;
             outline.effectDistance = new Vector2(2f, 2f);
 
             if (icon != null)
             {
-                var iconObj = new GameObject("Icon");
+                var iconObj = new GameObject("Icon", typeof(RectTransform));
                 iconObj.transform.SetParent(slot.transform, false);
-                var iRect = iconObj.AddComponent<RectTransform>();
+                var iRect = iconObj.GetComponent<RectTransform>();
                 iRect.anchorMin = new Vector2(0.15f, 0.25f);
                 iRect.anchorMax = new Vector2(0.85f, 0.9f);
                 iRect.offsetMin = Vector2.zero;
@@ -346,7 +346,7 @@ namespace VoidBound.Editor
 
         private static void CreateEmptyInvSlot(Transform parent)
         {
-            var slot = new GameObject("Empty");
+            var slot = new GameObject("Empty", typeof(RectTransform));
             slot.transform.SetParent(parent, false);
             slot.AddComponent<Image>().color = SlotBg;
             var outline = slot.AddComponent<Outline>();
@@ -357,9 +357,9 @@ namespace VoidBound.Editor
         private static GameObject CreateTMP(Transform parent, string name, string text,
             int fontSize, Color color, TextAlignmentOptions align)
         {
-            var obj = new GameObject(name);
+            var obj = new GameObject(name, typeof(RectTransform));
             obj.transform.SetParent(parent, false);
-            var rect = obj.AddComponent<RectTransform>();
+            var rect = obj.GetComponent<RectTransform>();
             rect.anchorMin = Vector2.zero;
             rect.anchorMax = Vector2.one;
             rect.offsetMin = Vector2.zero;

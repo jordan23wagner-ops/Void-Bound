@@ -19,7 +19,9 @@ namespace VoidBound.Editor
         [MenuItem("VoidBound/Setup Homestead Scene")]
         public static void SetupHomesteadScene()
         {
+            const string scenePath = "Assets/Scenes/Homestead.unity";
             var scene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
+            EditorSceneManager.SaveScene(scene, scenePath);
 
             SetupLighting();
             var player = SetupPlayer();
@@ -31,8 +33,8 @@ namespace VoidBound.Editor
             CreateTestGearAssets(player);
             SetupHUD(player);
 
-            EditorSceneManager.SaveScene(scene, "Assets/Scenes/Homestead.unity");
-            Debug.Log("[Phase 3b] Homestead scene created with HUD + combat + inventory.");
+            EditorSceneManager.SaveScene(scene, scenePath);
+            Debug.Log($"[Setup] Homestead scene built and saved to {scenePath}.");
         }
 
         private static void SetupLighting()

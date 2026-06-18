@@ -37,7 +37,7 @@ namespace VoidBound.UI
 
         public void KillAllEnemies()
         {
-            var enemies = Object.FindObjectsByType<EnemyAI>(FindObjectsSortMode.None);
+            var enemies = Object.FindObjectsByType<EnemyAI>();
             int count = 0;
             foreach (var enemy in enemies)
             {
