@@ -4,15 +4,15 @@ namespace VoidBound.Data
     {
         Weapon,
         Shield,
-        Head,
-        Cape,
-        Neck,
+        Helm,
         Body,
         Legs,
-        Hands,
-        Feet,
+        Boots,
+        Gloves,
+        Amulet,
         Ring,
-        Ammo
+        Ring2,
+        Cape
     }
 
     public enum WeaponType

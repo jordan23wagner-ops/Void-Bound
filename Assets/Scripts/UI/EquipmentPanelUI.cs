@@ -14,7 +14,6 @@ namespace VoidBound.UI
         [SerializeField] private Transform rightColumn;
         [SerializeField] private Transform weaponDock;
         [SerializeField] private Text statReadout;
-        [SerializeField] private Text charLevelText;
         [SerializeField] private GameObject detailPanel;
         [SerializeField] private Text detailName;
         [SerializeField] private Text detailRarity;
@@ -24,13 +23,21 @@ namespace VoidBound.UI
         [SerializeField] private Button unequipButton;
         [SerializeField] private Button closeButton;
 
+        private static readonly Color EmptyIconColor = new Color32(0x6a, 0x6d, 0x64, 0xFF);
+        private static readonly Color EmptyBorderColor = new Color32(0x5a, 0x5d, 0x54, 0xFF);
+        private static readonly Color VigColor = new Color32(0xE2, 0x4B, 0x4A, 0xFF);
+        private static readonly Color StrColor = new Color32(0xFA, 0xC7, 0x75, 0xFF);
+        private static readonly Color DexColor = new Color32(0x97, 0xC4, 0x59, 0xFF);
+        private static readonly Color IntColor = new Color32(0x37, 0x8A, 0xDD, 0xFF);
+
         private static readonly EquipmentSlot[] LeftSlots = {
-            EquipmentSlot.Head, EquipmentSlot.Body, EquipmentSlot.Legs,
-            EquipmentSlot.Hands, EquipmentSlot.Feet
+            EquipmentSlot.Helm, EquipmentSlot.Body, EquipmentSlot.Legs,
+            EquipmentSlot.Boots, EquipmentSlot.Gloves
         };
         private static readonly EquipmentSlot[] RightSlots = {
-            EquipmentSlot.Cape, EquipmentSlot.Neck, EquipmentSlot.Ring, EquipmentSlot.Ammo
+            EquipmentSlot.Amulet, EquipmentSlot.Ring, EquipmentSlot.Ring2, EquipmentSlot.Cape
         };
+        private static readonly string[] SlotIcons = null;
 
         private EquipmentSlot selectedSlot;
 
@@ -48,12 +55,12 @@ namespace VoidBound.UI
             if (detailPanel != null) detailPanel.SetActive(false);
 
             foreach (var slot in LeftSlots)
-                CreateSlotIcon(leftColumn, slot);
+                CreateSlotIcon(leftColumn, slot, GetSlotLabel(slot));
             foreach (var slot in RightSlots)
-                CreateSlotIcon(rightColumn, slot);
+                CreateSlotIcon(rightColumn, slot, GetSlotLabel(slot));
 
-            CreateSlotIcon(weaponDock, EquipmentSlot.Weapon);
-            CreateSlotIcon(weaponDock, EquipmentSlot.Shield);
+            CreateSlotIcon(weaponDock, EquipmentSlot.Weapon, "⚔");
+            CreateSlotIcon(weaponDock, EquipmentSlot.Shield, "⛨");
 
             RefreshStatReadout();
         }
@@ -65,35 +72,62 @@ namespace VoidBound.UI
             var player = inventory.gameObject;
             var stats = player.GetComponent<StatsComponent>();
             var skills = player.GetComponent<PlayerSkills>();
+            var health = player.GetComponent<Health>();
 
-            if (stats == null) return;
-            var s = stats.EffectiveStats;
-
-            string text = "";
-            if (skills != null)
+            if (stats == null)
             {
-                int combatLvl = CombatLevelCalculator.GetCombatLevel(skills);
-                text += $"Level {combatLvl}\n\n";
+                statReadout.text = "NO STATS";
+                Debug.LogWarning("[EquipmentPanelUI] StatsComponent missing on player.");
+                return;
             }
+
+            var s = stats.EffectiveStats;
+            int combatLvl = skills != null ? CombatLevelCalculator.GetCombatLevel(skills) : 1;
 
             var weapon = inventory.GetEquipped(EquipmentSlot.Weapon);
             int dmg = weapon != null ? weapon.baseDamage : 10;
             float totalDmg = stats.PhysicalDamage(dmg);
+            int defense = (int)(100 - stats.DefenseMultiplier * 100);
 
-            text += $"Damage  {totalDmg:F0}\n";
-            text += $"Defense  {(int)(100 - stats.DefenseMultiplier * 100)}\n\n";
-            text += $"VIG  {s.vig}\n";
-            text += $"STR  {s.str}\n";
-            text += $"DEX  {s.dex}\n";
-            text += $"INT  {s.intel}";
-            statReadout.text = text;
+            statReadout.text =
+                $"<color=white>Level {combatLvl}</color>\n\n" +
+                $"<color=#999999>Damage</color>  <color=white>{totalDmg:F0}</color>\n" +
+                $"<color=#999999>Defense</color>  <color=white>{defense}</color>\n\n" +
+                $"<color=#{ColorUtility.ToHtmlStringRGB(VigColor)}>VIG {s.vig}</color>\n" +
+                $"<color=#{ColorUtility.ToHtmlStringRGB(StrColor)}>STR {s.str}</color>\n" +
+                $"<color=#{ColorUtility.ToHtmlStringRGB(DexColor)}>DEX {s.dex}</color>\n" +
+                $"<color=#{ColorUtility.ToHtmlStringRGB(IntColor)}>INT {s.intel}</color>";
         }
 
-        private void CreateSlotIcon(Transform parent, EquipmentSlot slot)
+        private string GetSlotLabel(EquipmentSlot slot)
+        {
+            return slot switch
+            {
+                EquipmentSlot.Helm => "⛑",
+                EquipmentSlot.Body => "⛉",
+                EquipmentSlot.Legs => "⫍",
+                EquipmentSlot.Boots => "❧",
+                EquipmentSlot.Gloves => "✋",
+                EquipmentSlot.Amulet => "❀",
+                EquipmentSlot.Ring => "◎",
+                EquipmentSlot.Ring2 => "◎",
+                EquipmentSlot.Cape => "⁂",
+                _ => "■"
+            };
+        }
+
+        private void CreateSlotIcon(Transform parent, EquipmentSlot slot, string icon)
         {
             if (parent == null) return;
             var item = inventory?.GetEquipped(slot);
             var captured = slot;
+
+            Color slotColor = item != null
+                ? RarityVisualEffects.GetRarityColor(item.rarity)
+                : EmptyBorderColor;
+            Color iconColor = item != null
+                ? RarityVisualEffects.GetRarityColor(item.rarity)
+                : EmptyIconColor;
 
             var obj = new GameObject(slot.ToString());
             obj.transform.SetParent(parent, false);
@@ -102,46 +136,49 @@ namespace VoidBound.UI
             le.preferredWidth = 52f;
 
             var bg = obj.AddComponent<Image>();
-            bg.color = new Color(0.15f, 0.15f, 0.2f, 0.9f);
+            bg.color = new Color(0.12f, 0.12f, 0.15f, 0.95f);
 
-            if (item != null)
-            {
-                var border = new GameObject("Border");
-                border.transform.SetParent(obj.transform, false);
-                var bRect = border.AddComponent<RectTransform>();
-                bRect.anchorMin = Vector2.zero;
-                bRect.anchorMax = Vector2.one;
-                bRect.offsetMin = Vector2.zero;
-                bRect.offsetMax = Vector2.zero;
-                var bImg = border.AddComponent<Image>();
-                bImg.color = RarityVisualEffects.GetRarityColor(item.rarity);
-                var outline = border.AddComponent<Outline>();
-                outline.effectColor = RarityVisualEffects.GetRarityColor(item.rarity);
-                outline.effectDistance = new Vector2(2f, 2f);
+            var border = new GameObject("Border");
+            border.transform.SetParent(obj.transform, false);
+            var bRect = border.AddComponent<RectTransform>();
+            bRect.anchorMin = Vector2.zero;
+            bRect.anchorMax = Vector2.one;
+            bRect.offsetMin = Vector2.zero;
+            bRect.offsetMax = Vector2.zero;
+            var bImg = border.AddComponent<Image>();
+            bImg.color = Color.clear;
+            var outline = border.AddComponent<Outline>();
+            outline.effectColor = slotColor;
+            outline.effectDistance = new Vector2(2f, 2f);
 
-                var inner = new GameObject("Inner");
-                inner.transform.SetParent(border.transform, false);
-                var iRect = inner.AddComponent<RectTransform>();
-                iRect.anchorMin = Vector2.zero;
-                iRect.anchorMax = Vector2.one;
-                iRect.offsetMin = new Vector2(3f, 3f);
-                iRect.offsetMax = new Vector2(-3f, -3f);
-                inner.AddComponent<Image>().color = new Color(0.12f, 0.12f, 0.16f, 1f);
-            }
+            var iconObj = new GameObject("Icon");
+            iconObj.transform.SetParent(obj.transform, false);
+            var iRect = iconObj.AddComponent<RectTransform>();
+            iRect.anchorMin = new Vector2(0.1f, 0.2f);
+            iRect.anchorMax = new Vector2(0.9f, 0.85f);
+            iRect.offsetMin = Vector2.zero;
+            iRect.offsetMax = Vector2.zero;
+            var iconText = iconObj.AddComponent<Text>();
+            iconText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            iconText.fontSize = 18;
+            iconText.alignment = TextAnchor.MiddleCenter;
+            iconText.color = iconColor;
+            iconText.text = icon;
 
             var label = new GameObject("Label");
             label.transform.SetParent(obj.transform, false);
             var lRect = label.AddComponent<RectTransform>();
             lRect.anchorMin = Vector2.zero;
-            lRect.anchorMax = Vector2.one;
-            lRect.offsetMin = new Vector2(2f, 2f);
-            lRect.offsetMax = new Vector2(-2f, -2f);
+            lRect.anchorMax = new Vector2(1f, 0.25f);
+            lRect.offsetMin = new Vector2(2f, 0f);
+            lRect.offsetMax = new Vector2(-2f, 0f);
             var t = label.AddComponent<Text>();
             t.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            t.fontSize = 9;
+            t.fontSize = 8;
             t.alignment = TextAnchor.LowerCenter;
-            t.color = item != null ? Color.white : new Color(0.5f, 0.5f, 0.5f);
-            t.text = item != null ? item.displayName : slot.ToString();
+            t.color = item != null ? Color.white : new Color(0.45f, 0.45f, 0.45f);
+            string slotName = slot == EquipmentSlot.Ring2 ? "Ring" : slot.ToString();
+            t.text = item != null ? item.displayName : slotName;
 
             var btn = obj.AddComponent<Button>();
             btn.onClick.AddListener(() => ShowDetail(captured));
@@ -181,7 +218,8 @@ namespace VoidBound.UI
             }
             else
             {
-                if (detailName != null) detailName.text = slot.ToString();
+                string slotName = slot == EquipmentSlot.Ring2 ? "Ring" : slot.ToString();
+                if (detailName != null) detailName.text = slotName;
                 if (detailRarity != null) { detailRarity.text = "Empty"; detailRarity.color = Color.gray; }
                 if (detailSlot != null) detailSlot.text = "";
                 if (detailStats != null) detailStats.text = "---";

@@ -129,9 +129,6 @@ namespace VoidBound.UI
 
         private void ResolvePlayerReferences()
         {
-            if (playerStats != null && playerHealth != null && inventory != null && playerCurrency != null)
-                return;
-
             var player = GameObject.FindGameObjectWithTag("Player");
             if (player == null)
             {
@@ -146,6 +143,58 @@ namespace VoidBound.UI
 
             if (playerStats == null) Debug.LogError("[HUDManager] Player missing StatsComponent.");
             if (playerHealth == null) Debug.LogError("[HUDManager] Player missing Health.");
+
+            ResolveUIReferences();
+        }
+
+        private void ResolveUIReferences()
+        {
+            var canvas = GetComponent<Canvas>();
+            if (canvas == null) return;
+
+            if (statsText == null) statsText = FindTextInChildren(transform, "StatsText");
+            if (levelText == null) levelText = FindTextInChildren(transform, "LevelText");
+            if (hpText == null) hpText = FindTextInChildren(transform, "HPText");
+            if (currencyText == null) currencyText = FindTextInChildren(transform, "CurrencyText");
+
+            if (hpFill == null)
+            {
+                var hpBar = FindInChildren(transform, "HPBar") ?? FindInChildren(transform, "HPBarBG");
+                if (hpBar != null)
+                {
+                    var fill = hpBar.Find("Fill") ?? hpBar.Find("HPFill");
+                    if (fill != null) hpFill = fill.GetComponent<Image>();
+                }
+            }
+            if (xpFill == null)
+            {
+                var xpBar = FindInChildren(transform, "XPBar");
+                if (xpBar != null)
+                {
+                    var fill = xpBar.Find("Fill");
+                    if (fill != null) xpFill = fill.GetComponent<Image>();
+                }
+            }
+
+            if (statsText == null) Debug.LogError("[HUDManager] Could not find StatsText in HUD hierarchy.");
+            if (levelText == null) Debug.LogError("[HUDManager] Could not find LevelText in HUD hierarchy.");
+        }
+
+        private static Text FindTextInChildren(Transform root, string name)
+        {
+            var t = FindInChildren(root, name);
+            return t != null ? t.GetComponent<Text>() : null;
+        }
+
+        private static Transform FindInChildren(Transform root, string name)
+        {
+            foreach (Transform child in root)
+            {
+                if (child.name == name) return child;
+                var found = FindInChildren(child, name);
+                if (found != null) return found;
+            }
+            return null;
         }
 
         private void RefreshStats()
@@ -165,19 +214,11 @@ namespace VoidBound.UI
 
             if (statsText != null)
             {
-                if (skills != null)
-                {
-                    int vig = skills.GetLevel(SkillType.CombatVIG);
-                    int str = skills.GetLevel(SkillType.CombatSTR);
-                    int dex = skills.GetLevel(SkillType.CombatDEX);
-                    int intel = skills.GetLevel(SkillType.CombatINT);
-                    statsText.text = $"VIG {vig}  STR {str}\nDEX {dex}  INT {intel}";
-                }
-                else
-                {
-                    var s = playerStats.EffectiveStats;
-                    statsText.text = $"VIG {s.vig}  STR {s.str}\nDEX {s.dex}  INT {s.intel}";
-                }
+                var s = playerStats.EffectiveStats;
+                statsText.supportRichText = true;
+                statsText.text =
+                    $"<color=#E24B4A>VIG {s.vig}</color>  <color=#FAC775>STR {s.str}</color>\n" +
+                    $"<color=#97C459>DEX {s.dex}</color>  <color=#378ADD>INT {s.intel}</color>";
             }
             else
             {

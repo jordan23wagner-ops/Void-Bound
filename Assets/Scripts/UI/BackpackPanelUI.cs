@@ -21,7 +21,7 @@ namespace VoidBound.UI
         [SerializeField] private Button equipButton;
         [SerializeField] private Button closeButton;
 
-        [SerializeField] private int maxSlots = 30;
+        [SerializeField] private int maxSlots = 24;
 
         private GearItemSO selectedItem;
 

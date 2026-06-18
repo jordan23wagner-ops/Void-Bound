@@ -169,7 +169,7 @@ namespace VoidBound.Editor
             gridLayout.constraintCount = 5;
             gridLayout.childAlignment = TextAnchor.UpperLeft;
 
-            var capacityText = MakeText(panel.transform, "CapacityText", "0/30", 12,
+            var capacityText = MakeText(panel.transform, "CapacityText", "0/24", 12,
                 new Vector2(0.6f, 0.89f), new Vector2(0.95f, 0.97f), TextAnchor.MiddleRight);
             capacityText.GetComponent<RectTransform>().anchorMin = new Vector2(0.6f, 0.89f);
             capacityText.GetComponent<RectTransform>().anchorMax = new Vector2(0.95f, 0.97f);
