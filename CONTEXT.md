@@ -3,7 +3,7 @@
 
 ## Project State
 - **Engine:** Unity 6.5 (6000.5.0f1), URP, mobile-first
-- **Status:** Phase 3 (Gear & Inventory) complete
+- **Status:** Phase 3b (HUD & Menus) complete
 - **GDD:** See `Void_Bound_GDD.md` in repo root — full design spec, all systems locked
 - **MCP connections live:** Unity MCP (scene/asset control) + Blender MCP (procedural low-poly model generation)
 
@@ -25,6 +25,16 @@ Void Bound evolved from RunePortal (a Three.js browser ARPG). All gameplay syste
 
 ## Current Phase
 **Phase 4: Loot & Drop Tables** — see `PHASES/phase4_loot_drops.md`
+
+## Phase 3b Log (completed 2026-06-17)
+- **HUDManager:** `Scripts/UI/HUDManager.cs` — persistent Screen Space Overlay canvas, manages all panel toggles
+- **Layout:** Top-left: level (stubbed Lv 1), XP bar (stubbed at 0%), HP bar (live from Health component), STR/DEX/VIG/INT readout. Top-right: minimap + 3 buttons (Equip/Bag/Dev, 44px each). Bottom-left: existing joystick (no overlap).
+- **EquipmentPanelUI:** `Scripts/UI/EquipmentPanelUI.cs` — shows all 11 slots with rarity-colored borders, tap slot → detail view showing name/rarity/slot/stat modifiers/set, Unequip button
+- **BackpackPanelUI:** `Scripts/UI/BackpackPanelUI.cs` — scrollable item list with rarity colors, tap item → detail view, Equip button
+- **DevToolsPanel:** `Scripts/UI/DevToolsPanel.cs` — Give Test Gear, Kill All Enemies, Toggle God Mode (god mode blocks damage via GodModeFlag in Health.cs)
+- **Minimap:** `Scripts/UI/Minimap.cs` — orthographic camera above player (30 units up), renders to 256x256 RenderTexture, displayed in top-right UI panel
+- **Stubbed systems:** Level/XP bar shows placeholder values — no leveling system built yet, flagged for future phase
+- **Keyboard shortcuts:** Tab = Equipment, B = Backpack (secondary to on-screen buttons)
 
 ## Phase 3 Log (completed 2026-06-17)
 - **Weapon Types Resolved:** Sword, Sword2H, Dagger, Mace, Bow, Crossbow, Staff, Wand (from RunePortal `WEAPON_TYPES`). Replaced Axe/Spear with Sword2H/Dagger per source.

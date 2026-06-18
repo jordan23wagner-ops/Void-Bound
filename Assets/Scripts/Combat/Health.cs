@@ -28,6 +28,7 @@ namespace VoidBound.Combat
         public void TakeDamage(int damage)
         {
             if (IsDead) return;
+            if (CompareTag("Player") && VoidBound.UI.GodModeFlag.IsActive) return;
 
             currentHP = Mathf.Max(0, currentHP - damage);
             OnHealthChanged?.Invoke(currentHP, maxHP);

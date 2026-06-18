@@ -27,11 +27,11 @@ namespace VoidBound.Editor
             SetupGround();
             SetupMobileControls();
             SetupTestEnemy();
-            SetupInventoryUI(player);
             CreateTestGearAssets(player);
+            SetupHUD(player);
 
             EditorSceneManager.SaveScene(scene, "Assets/Scenes/Homestead.unity");
-            Debug.Log("[Phase 3] Homestead scene created with combat + inventory.");
+            Debug.Log("[Phase 3b] Homestead scene created with HUD + combat + inventory.");
         }
 
         private static void SetupLighting()
@@ -318,73 +318,338 @@ namespace VoidBound.Editor
                 r.sharedMaterial = mat;
         }
 
-        private static void SetupInventoryUI(GameObject player)
+        private static void SetupHUD(GameObject player)
         {
-            var canvasObj = new GameObject("InventoryCanvas");
+            var canvasObj = new GameObject("HUDCanvas");
             var canvas = canvasObj.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.sortingOrder = 200;
-
             var scaler = canvasObj.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1920, 1080);
             scaler.matchWidthOrHeight = 0.5f;
-
             canvasObj.AddComponent<GraphicRaycaster>();
 
-            var panel = new GameObject("InventoryPanel");
-            panel.transform.SetParent(canvasObj.transform, false);
-            var panelImage = panel.AddComponent<Image>();
-            panelImage.color = new Color(0.1f, 0.1f, 0.15f, 0.9f);
-            var panelRect = panel.GetComponent<RectTransform>();
-            panelRect.anchorMin = new Vector2(0.05f, 0.05f);
-            panelRect.anchorMax = new Vector2(0.95f, 0.95f);
-            panelRect.offsetMin = Vector2.zero;
-            panelRect.offsetMax = Vector2.zero;
+            // === TOP-LEFT: Stats panel ===
+            var statsPanel = CreateAnchoredPanel(canvasObj.transform, "StatsPanel",
+                new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(10f, -10f), new Vector2(220f, 130f));
+            statsPanel.AddComponent<Image>().color = new Color(0.1f, 0.1f, 0.15f, 0.75f);
 
-            var slotsHeader = CreateUIText(panel.transform, "Equipment", new Vector2(0.02f, 0.9f), new Vector2(0.48f, 0.98f));
+            var levelText = CreateTextElement(statsPanel.transform, "LevelText", "Lv 1", 18,
+                new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(5f, -5f), new Vector2(-5f, -25f));
+            var xpBg = CreateFillBar(statsPanel.transform, "XPBar", new Color(0.2f, 0.2f, 0.3f), new Color(0.3f, 0.5f, 1f),
+                new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(5f, -28f), new Vector2(-5f, -40f));
+            var hpBg = CreateFillBar(statsPanel.transform, "HPBar", new Color(0.3f, 0.1f, 0.1f), new Color(0.2f, 0.8f, 0.2f),
+                new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(5f, -44f), new Vector2(-5f, -62f));
+            var hpText = CreateTextElement(statsPanel.transform, "HPText", "200/200", 12,
+                new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(8f, -44f), new Vector2(-8f, -62f));
+            var statsText = CreateTextElement(statsPanel.transform, "StatsText", "STR 10  DEX 10\nVIG 10  INT 10", 12,
+                new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(5f, -66f), new Vector2(-5f, -130f));
 
-            var slotsParent = new GameObject("SlotsParent");
-            slotsParent.transform.SetParent(panel.transform, false);
-            var slotsRect = slotsParent.AddComponent<RectTransform>();
-            slotsRect.anchorMin = new Vector2(0.02f, 0.05f);
-            slotsRect.anchorMax = new Vector2(0.48f, 0.9f);
-            slotsRect.offsetMin = Vector2.zero;
-            slotsRect.offsetMax = Vector2.zero;
-            var slotsLayout = slotsParent.AddComponent<VerticalLayoutGroup>();
-            slotsLayout.spacing = 4f;
-            slotsLayout.childForceExpandWidth = true;
-            slotsLayout.childForceExpandHeight = false;
-            slotsLayout.childControlHeight = true;
-            slotsLayout.childControlWidth = true;
-            var slotsFitter = slotsParent.AddComponent<ContentSizeFitter>();
-            slotsFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            // === TOP-RIGHT: Minimap + buttons ===
+            var minimapPanel = CreateAnchoredPanel(canvasObj.transform, "MinimapPanel",
+                new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-140f, -10f), new Vector2(130f, 130f));
+            var minimapBg = minimapPanel.AddComponent<Image>();
+            minimapBg.color = new Color(0.15f, 0.12f, 0.1f, 1f);
+            var minimapComp = minimapPanel.AddComponent<Minimap>();
+            var minimapDisplay = new GameObject("MinimapDisplay");
+            minimapDisplay.transform.SetParent(minimapPanel.transform, false);
+            var mmDisplayRect = minimapDisplay.AddComponent<RectTransform>();
+            mmDisplayRect.anchorMin = Vector2.zero;
+            mmDisplayRect.anchorMax = Vector2.one;
+            mmDisplayRect.offsetMin = new Vector2(3f, 3f);
+            mmDisplayRect.offsetMax = new Vector2(-3f, -3f);
+            var mmRawImage = minimapDisplay.AddComponent<RawImage>();
 
-            var bpHeader = CreateUIText(panel.transform, "Backpack", new Vector2(0.52f, 0.9f), new Vector2(0.98f, 0.98f));
+            // Buttons below minimap (44px each, stacked)
+            var hudManager = canvasObj.AddComponent<HUDManager>();
+            var equipBtn = CreateHUDButton(canvasObj.transform, "EquipBtn", "Equip",
+                new Vector2(1f, 1f), new Vector2(-140f, -148f), new Vector2(130f, 44f));
+            var bpBtn = CreateHUDButton(canvasObj.transform, "BagBtn", "Bag",
+                new Vector2(1f, 1f), new Vector2(-140f, -196f), new Vector2(130f, 44f));
+            var devBtn = CreateHUDButton(canvasObj.transform, "DevBtn", "Dev",
+                new Vector2(1f, 1f), new Vector2(-140f, -244f), new Vector2(130f, 44f));
 
-            var bpParent = new GameObject("BackpackParent");
-            bpParent.transform.SetParent(panel.transform, false);
-            var bpRect = bpParent.AddComponent<RectTransform>();
-            bpRect.anchorMin = new Vector2(0.52f, 0.05f);
-            bpRect.anchorMax = new Vector2(0.98f, 0.9f);
-            bpRect.offsetMin = Vector2.zero;
-            bpRect.offsetMax = Vector2.zero;
-            var bpLayout = bpParent.AddComponent<VerticalLayoutGroup>();
-            bpLayout.spacing = 4f;
-            bpLayout.childForceExpandWidth = true;
-            bpLayout.childForceExpandHeight = false;
-            bpLayout.childControlHeight = true;
-            bpLayout.childControlWidth = true;
-            var bpFitter = bpParent.AddComponent<ContentSizeFitter>();
-            bpFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            // === EQUIPMENT PANEL ===
+            var equipPanel = CreateMenuPanel(canvasObj.transform, "EquipmentPanel");
+            var eqSlotsParent = CreateScrollableList(equipPanel.transform, "EqSlots",
+                new Vector2(0.02f, 0.05f), new Vector2(0.55f, 0.92f));
+            var eqDetailPanel = CreateDetailPanel(equipPanel.transform, "EqDetail",
+                new Vector2(0.57f, 0.05f), new Vector2(0.98f, 0.92f), true);
+            var eqUI = equipPanel.AddComponent<EquipmentPanelUI>();
 
-            var invUI = canvasObj.AddComponent<InventoryUI>();
-            var so = new SerializedObject(invUI);
-            so.FindProperty("inventory").objectReferenceValue = player.GetComponent<PlayerInventory>();
-            so.FindProperty("panel").objectReferenceValue = panel;
-            so.FindProperty("slotsParent").objectReferenceValue = slotsParent.transform;
-            so.FindProperty("backpackParent").objectReferenceValue = bpParent.transform;
-            so.ApplyModifiedPropertiesWithoutUndo();
+            // === BACKPACK PANEL ===
+            var bpPanel = CreateMenuPanel(canvasObj.transform, "BackpackPanel");
+            var bpItemsParent = CreateScrollableList(bpPanel.transform, "BpItems",
+                new Vector2(0.02f, 0.05f), new Vector2(0.55f, 0.92f));
+            var bpDetailPanel = CreateDetailPanel(bpPanel.transform, "BpDetail",
+                new Vector2(0.57f, 0.05f), new Vector2(0.98f, 0.92f), false);
+            var bpUI = bpPanel.AddComponent<BackpackPanelUI>();
+
+            // === DEV TOOLS PANEL ===
+            var devPanel = CreateMenuPanel(canvasObj.transform, "DevToolsPanel");
+            var devContent = CreateScrollableList(devPanel.transform, "DevContent",
+                new Vector2(0.1f, 0.1f), new Vector2(0.9f, 0.9f));
+            var devComp = devPanel.AddComponent<DevToolsPanel>();
+
+            // Create dev buttons inside panel
+            CreateDevButton(devContent.transform, "Give Test Gear", 0);
+            CreateDevButton(devContent.transform, "Kill All Enemies", 1);
+            CreateDevButton(devContent.transform, "Toggle God Mode", 2);
+
+            // === Wire everything via SerializedObject ===
+            var inv = player.GetComponent<PlayerInventory>();
+            var health = player.GetComponent<Health>();
+            var stats = player.GetComponent<StatsComponent>();
+
+            var hmSO = new SerializedObject(hudManager);
+            hmSO.FindProperty("inventory").objectReferenceValue = inv;
+            hmSO.FindProperty("playerStats").objectReferenceValue = stats;
+            hmSO.FindProperty("playerHealth").objectReferenceValue = health;
+            hmSO.FindProperty("levelText").objectReferenceValue = levelText.GetComponent<Text>();
+            hmSO.FindProperty("xpFill").objectReferenceValue = xpBg.transform.Find("Fill")?.GetComponent<Image>();
+            hmSO.FindProperty("hpFill").objectReferenceValue = hpBg.transform.Find("Fill")?.GetComponent<Image>();
+            hmSO.FindProperty("hpText").objectReferenceValue = hpText.GetComponent<Text>();
+            hmSO.FindProperty("statsText").objectReferenceValue = statsText.GetComponent<Text>();
+            hmSO.FindProperty("equipmentPanel").objectReferenceValue = equipPanel;
+            hmSO.FindProperty("backpackPanel").objectReferenceValue = bpPanel;
+            hmSO.FindProperty("devToolsPanel").objectReferenceValue = devPanel;
+            hmSO.ApplyModifiedPropertiesWithoutUndo();
+
+            var eqSO = new SerializedObject(eqUI);
+            eqSO.FindProperty("inventory").objectReferenceValue = inv;
+            eqSO.FindProperty("slotsContainer").objectReferenceValue = eqSlotsParent.transform;
+            eqSO.FindProperty("detailPanel").objectReferenceValue = eqDetailPanel;
+            eqSO.FindProperty("detailName").objectReferenceValue = eqDetailPanel.transform.Find("DetailName")?.GetComponent<Text>();
+            eqSO.FindProperty("detailRarity").objectReferenceValue = eqDetailPanel.transform.Find("DetailRarity")?.GetComponent<Text>();
+            eqSO.FindProperty("detailSlot").objectReferenceValue = eqDetailPanel.transform.Find("DetailSlot")?.GetComponent<Text>();
+            eqSO.FindProperty("detailStats").objectReferenceValue = eqDetailPanel.transform.Find("DetailStats")?.GetComponent<Text>();
+            eqSO.FindProperty("detailSet").objectReferenceValue = eqDetailPanel.transform.Find("DetailSet")?.GetComponent<Text>();
+            eqSO.FindProperty("unequipButton").objectReferenceValue = eqDetailPanel.transform.Find("ActionButton")?.GetComponent<Button>();
+            eqSO.ApplyModifiedPropertiesWithoutUndo();
+
+            var bpSO = new SerializedObject(bpUI);
+            bpSO.FindProperty("inventory").objectReferenceValue = inv;
+            bpSO.FindProperty("itemsContainer").objectReferenceValue = bpItemsParent.transform;
+            bpSO.FindProperty("detailPanel").objectReferenceValue = bpDetailPanel;
+            bpSO.FindProperty("detailName").objectReferenceValue = bpDetailPanel.transform.Find("DetailName")?.GetComponent<Text>();
+            bpSO.FindProperty("detailRarity").objectReferenceValue = bpDetailPanel.transform.Find("DetailRarity")?.GetComponent<Text>();
+            bpSO.FindProperty("detailSlot").objectReferenceValue = bpDetailPanel.transform.Find("DetailSlot")?.GetComponent<Text>();
+            bpSO.FindProperty("detailStats").objectReferenceValue = bpDetailPanel.transform.Find("DetailStats")?.GetComponent<Text>();
+            bpSO.FindProperty("equipButton").objectReferenceValue = bpDetailPanel.transform.Find("ActionButton")?.GetComponent<Button>();
+            bpSO.ApplyModifiedPropertiesWithoutUndo();
+
+            var devSO = new SerializedObject(devComp);
+            devSO.FindProperty("inventory").objectReferenceValue = inv;
+            devSO.FindProperty("playerHealth").objectReferenceValue = health;
+            var poolProp = devSO.FindProperty("testGearPool");
+            string soDir = "Assets/ScriptableObjects/TestGear";
+            var allGear = new[] {
+                AssetDatabase.LoadAssetAtPath<GearItemSO>($"{soDir}/Rusty_Sword_Common.asset"),
+                AssetDatabase.LoadAssetAtPath<GearItemSO>($"{soDir}/Arcane_Blade_Rare.asset"),
+                AssetDatabase.LoadAssetAtPath<GearItemSO>($"{soDir}/Flamecleaver_Legendary.asset"),
+                AssetDatabase.LoadAssetAtPath<GearItemSO>($"{soDir}/Voidreaver_Voidforged.asset")
+            };
+            poolProp.arraySize = allGear.Length;
+            for (int i = 0; i < allGear.Length; i++)
+                poolProp.GetArrayElementAtIndex(i).objectReferenceValue = allGear[i];
+            devSO.ApplyModifiedPropertiesWithoutUndo();
+
+            // Wire buttons to HUDManager
+            equipBtn.GetComponent<Button>().onClick.AddListener(() => hudManager.ToggleEquipment());
+            bpBtn.GetComponent<Button>().onClick.AddListener(() => hudManager.ToggleBackpack());
+            devBtn.GetComponent<Button>().onClick.AddListener(() => hudManager.ToggleDevTools());
+
+            // Wire dev buttons
+            var devButtons = devContent.GetComponentsInChildren<Button>();
+            if (devButtons.Length > 0) devButtons[0].onClick.AddListener(() => devComp.GiveTestGear());
+            if (devButtons.Length > 1) devButtons[1].onClick.AddListener(() => devComp.KillAllEnemies());
+            if (devButtons.Length > 2) devButtons[2].onClick.AddListener(() => devComp.ToggleGodMode());
+
+            // Wire minimap RenderTexture after Start runs (deferred)
+            var mmWirer = minimapDisplay.AddComponent<MinimapWirer>();
+            var mmSO = new SerializedObject(mmWirer);
+            mmSO.FindProperty("minimap").objectReferenceValue = minimapComp;
+            mmSO.FindProperty("display").objectReferenceValue = mmRawImage;
+            mmSO.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static GameObject CreateAnchoredPanel(Transform parent, string name,
+            Vector2 anchorMin, Vector2 anchorMax, Vector2 anchoredPos, Vector2 sizeDelta)
+        {
+            var obj = new GameObject(name);
+            obj.transform.SetParent(parent, false);
+            var rect = obj.AddComponent<RectTransform>();
+            rect.anchorMin = anchorMin;
+            rect.anchorMax = anchorMax;
+            rect.pivot = anchorMin;
+            rect.anchoredPosition = anchoredPos;
+            rect.sizeDelta = sizeDelta;
+            return obj;
+        }
+
+        private static GameObject CreateTextElement(Transform parent, string name, string text, int fontSize,
+            Vector2 anchorMin, Vector2 anchorMax, Vector2 offsetMin, Vector2 offsetMax)
+        {
+            var obj = new GameObject(name);
+            obj.transform.SetParent(parent, false);
+            var rect = obj.AddComponent<RectTransform>();
+            rect.anchorMin = anchorMin;
+            rect.anchorMax = anchorMax;
+            rect.offsetMin = offsetMin;
+            rect.offsetMax = offsetMax;
+            var t = obj.AddComponent<Text>();
+            t.text = text;
+            t.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            t.fontSize = fontSize;
+            t.color = Color.white;
+            t.alignment = TextAnchor.MiddleLeft;
+            return obj;
+        }
+
+        private static GameObject CreateFillBar(Transform parent, string name, Color bgColor, Color fillColor,
+            Vector2 anchorMin, Vector2 anchorMax, Vector2 offsetMin, Vector2 offsetMax)
+        {
+            var bg = new GameObject(name);
+            bg.transform.SetParent(parent, false);
+            var bgRect = bg.AddComponent<RectTransform>();
+            bgRect.anchorMin = anchorMin;
+            bgRect.anchorMax = anchorMax;
+            bgRect.offsetMin = offsetMin;
+            bgRect.offsetMax = offsetMax;
+            bg.AddComponent<Image>().color = bgColor;
+
+            var fill = new GameObject("Fill");
+            fill.transform.SetParent(bg.transform, false);
+            var fillRect = fill.AddComponent<RectTransform>();
+            fillRect.anchorMin = Vector2.zero;
+            fillRect.anchorMax = Vector2.one;
+            fillRect.offsetMin = Vector2.zero;
+            fillRect.offsetMax = Vector2.zero;
+            var fillImg = fill.AddComponent<Image>();
+            fillImg.color = fillColor;
+            fillImg.type = Image.Type.Filled;
+            fillImg.fillMethod = Image.FillMethod.Horizontal;
+            fillImg.fillAmount = 1f;
+            return bg;
+        }
+
+        private static GameObject CreateHUDButton(Transform parent, string name, string label,
+            Vector2 anchor, Vector2 anchoredPos, Vector2 sizeDelta)
+        {
+            var obj = new GameObject(name);
+            obj.transform.SetParent(parent, false);
+            var rect = obj.AddComponent<RectTransform>();
+            rect.anchorMin = anchor;
+            rect.anchorMax = anchor;
+            rect.pivot = new Vector2(0f, 1f);
+            rect.anchoredPosition = anchoredPos;
+            rect.sizeDelta = sizeDelta;
+            obj.AddComponent<Image>().color = new Color(0.2f, 0.2f, 0.25f, 0.85f);
+            obj.AddComponent<Button>();
+            var textObj = CreateTextElement(obj.transform, "Label", label, 16,
+                Vector2.zero, Vector2.one, new Vector2(4f, 0f), new Vector2(-4f, 0f));
+            textObj.GetComponent<Text>().alignment = TextAnchor.MiddleCenter;
+            return obj;
+        }
+
+        private static GameObject CreateMenuPanel(Transform parent, string name)
+        {
+            var panel = new GameObject(name);
+            panel.transform.SetParent(parent, false);
+            panel.AddComponent<Image>().color = new Color(0.08f, 0.08f, 0.12f, 0.92f);
+            var rect = panel.GetComponent<RectTransform>();
+            rect.anchorMin = new Vector2(0.08f, 0.08f);
+            rect.anchorMax = new Vector2(0.92f, 0.92f);
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+
+            CreateTextElement(panel.transform, "Title", name.Replace("Panel", ""), 22,
+                new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(10f, -35f), new Vector2(-10f, -5f))
+                .GetComponent<Text>().alignment = TextAnchor.MiddleCenter;
+
+            return panel;
+        }
+
+        private static GameObject CreateScrollableList(Transform parent, string name,
+            Vector2 anchorMin, Vector2 anchorMax)
+        {
+            var obj = new GameObject(name);
+            obj.transform.SetParent(parent, false);
+            var rect = obj.AddComponent<RectTransform>();
+            rect.anchorMin = anchorMin;
+            rect.anchorMax = anchorMax;
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+            var layout = obj.AddComponent<VerticalLayoutGroup>();
+            layout.spacing = 4f;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = false;
+            layout.childControlHeight = true;
+            layout.childControlWidth = true;
+            obj.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            return obj;
+        }
+
+        private static GameObject CreateDetailPanel(Transform parent, string name,
+            Vector2 anchorMin, Vector2 anchorMax, bool isUnequip)
+        {
+            var panel = new GameObject(name);
+            panel.transform.SetParent(parent, false);
+            panel.AddComponent<Image>().color = new Color(0.12f, 0.12f, 0.18f, 0.95f);
+            var rect = panel.GetComponent<RectTransform>();
+            rect.anchorMin = anchorMin;
+            rect.anchorMax = anchorMax;
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+
+            float y = -10f;
+            CreateTextElement(panel.transform, "DetailName", "Item Name", 18,
+                new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(8f, y - 22f), new Vector2(-8f, y));
+            y -= 28f;
+            CreateTextElement(panel.transform, "DetailRarity", "Rarity", 14,
+                new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(8f, y - 20f), new Vector2(-8f, y));
+            y -= 24f;
+            CreateTextElement(panel.transform, "DetailSlot", "Slot", 14,
+                new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(8f, y - 20f), new Vector2(-8f, y));
+            y -= 24f;
+            CreateTextElement(panel.transform, "DetailStats", "Stats", 13,
+                new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(8f, y - 50f), new Vector2(-8f, y));
+            y -= 54f;
+            CreateTextElement(panel.transform, "DetailSet", "", 12,
+                new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(8f, y - 18f), new Vector2(-8f, y));
+            y -= 28f;
+
+            var actionBtn = new GameObject("ActionButton");
+            actionBtn.transform.SetParent(panel.transform, false);
+            var abRect = actionBtn.AddComponent<RectTransform>();
+            abRect.anchorMin = new Vector2(0.1f, 0f);
+            abRect.anchorMax = new Vector2(0.9f, 0f);
+            abRect.pivot = new Vector2(0.5f, 0f);
+            abRect.anchoredPosition = new Vector2(0f, 12f);
+            abRect.sizeDelta = new Vector2(0f, 40f);
+            actionBtn.AddComponent<Image>().color = isUnequip
+                ? new Color(0.7f, 0.2f, 0.2f, 1f)
+                : new Color(0.2f, 0.6f, 0.2f, 1f);
+            actionBtn.AddComponent<Button>();
+            var abText = CreateTextElement(actionBtn.transform, "Label", isUnequip ? "Unequip" : "Equip", 16,
+                Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            abText.GetComponent<Text>().alignment = TextAnchor.MiddleCenter;
+
+            panel.SetActive(false);
+            return panel;
+        }
+
+        private static void CreateDevButton(Transform parent, string label, int index)
+        {
+            var btn = new GameObject(label);
+            btn.transform.SetParent(parent, false);
+            btn.AddComponent<LayoutElement>().preferredHeight = 44f;
+            btn.AddComponent<Image>().color = new Color(0.25f, 0.25f, 0.3f, 0.9f);
+            btn.AddComponent<Button>();
+            var text = CreateTextElement(btn.transform, "Label", label, 15,
+                Vector2.zero, Vector2.one, new Vector2(8f, 0f), new Vector2(-8f, 0f));
+            text.GetComponent<Text>().alignment = TextAnchor.MiddleCenter;
         }
 
         private static GameObject CreateUIText(Transform parent, string text, Vector2 anchorMin, Vector2 anchorMax)
