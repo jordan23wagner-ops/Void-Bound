@@ -14,7 +14,7 @@ using VoidBound.UI;
 
 namespace VoidBound.Editor
 {
-    public static class Phase1SceneSetup
+    public static class SceneSetupTools
     {
         [MenuItem("VoidBound/Setup Homestead Scene")]
         public static void SetupHomesteadScene()
@@ -484,22 +484,6 @@ namespace VoidBound.Editor
             var devBtn = CreateHUDButton(canvasObj.transform, "DevBtn", "Dev",
                 new Vector2(1f, 1f), new Vector2(-140f, -244f), new Vector2(130f, 44f));
 
-            // === EQUIPMENT PANEL ===
-            var equipPanel = CreateMenuPanel(canvasObj.transform, "EquipmentPanel");
-            var eqSlotsParent = CreateScrollableList(equipPanel.transform, "EqSlots",
-                new Vector2(0.02f, 0.05f), new Vector2(0.55f, 0.92f));
-            var eqDetailPanel = CreateDetailPanel(equipPanel.transform, "EqDetail",
-                new Vector2(0.57f, 0.05f), new Vector2(0.98f, 0.92f), true);
-            var eqUI = equipPanel.AddComponent<EquipmentPanelUI>();
-
-            // === BACKPACK PANEL ===
-            var bpPanel = CreateMenuPanel(canvasObj.transform, "BackpackPanel");
-            var bpItemsParent = CreateScrollableList(bpPanel.transform, "BpItems",
-                new Vector2(0.02f, 0.05f), new Vector2(0.55f, 0.92f));
-            var bpDetailPanel = CreateDetailPanel(bpPanel.transform, "BpDetail",
-                new Vector2(0.57f, 0.05f), new Vector2(0.98f, 0.92f), false);
-            var bpUI = bpPanel.AddComponent<BackpackPanelUI>();
-
             // === DEV TOOLS PANEL ===
             var devPanel = CreateMenuPanel(canvasObj.transform, "DevToolsPanel");
             var devContent = CreateScrollableList(devPanel.transform, "DevContent",
@@ -527,33 +511,8 @@ namespace VoidBound.Editor
             hmSO.FindProperty("statsText").objectReferenceValue = statsText.GetComponent<Text>();
             hmSO.FindProperty("currencyText").objectReferenceValue = currencyText.GetComponent<Text>();
             hmSO.FindProperty("playerCurrency").objectReferenceValue = player.GetComponent<PlayerCurrency>();
-            hmSO.FindProperty("equipmentPanel").objectReferenceValue = equipPanel;
-            hmSO.FindProperty("backpackPanel").objectReferenceValue = bpPanel;
             hmSO.FindProperty("devToolsPanel").objectReferenceValue = devPanel;
             hmSO.ApplyModifiedPropertiesWithoutUndo();
-
-            var eqSO = new SerializedObject(eqUI);
-            eqSO.FindProperty("inventory").objectReferenceValue = inv;
-            eqSO.FindProperty("slotsContainer").objectReferenceValue = eqSlotsParent.transform;
-            eqSO.FindProperty("detailPanel").objectReferenceValue = eqDetailPanel;
-            eqSO.FindProperty("detailName").objectReferenceValue = eqDetailPanel.transform.Find("DetailName")?.GetComponent<Text>();
-            eqSO.FindProperty("detailRarity").objectReferenceValue = eqDetailPanel.transform.Find("DetailRarity")?.GetComponent<Text>();
-            eqSO.FindProperty("detailSlot").objectReferenceValue = eqDetailPanel.transform.Find("DetailSlot")?.GetComponent<Text>();
-            eqSO.FindProperty("detailStats").objectReferenceValue = eqDetailPanel.transform.Find("DetailStats")?.GetComponent<Text>();
-            eqSO.FindProperty("detailSet").objectReferenceValue = eqDetailPanel.transform.Find("DetailSet")?.GetComponent<Text>();
-            eqSO.FindProperty("unequipButton").objectReferenceValue = eqDetailPanel.transform.Find("ActionButton")?.GetComponent<Button>();
-            eqSO.ApplyModifiedPropertiesWithoutUndo();
-
-            var bpSO = new SerializedObject(bpUI);
-            bpSO.FindProperty("inventory").objectReferenceValue = inv;
-            bpSO.FindProperty("itemsContainer").objectReferenceValue = bpItemsParent.transform;
-            bpSO.FindProperty("detailPanel").objectReferenceValue = bpDetailPanel;
-            bpSO.FindProperty("detailName").objectReferenceValue = bpDetailPanel.transform.Find("DetailName")?.GetComponent<Text>();
-            bpSO.FindProperty("detailRarity").objectReferenceValue = bpDetailPanel.transform.Find("DetailRarity")?.GetComponent<Text>();
-            bpSO.FindProperty("detailSlot").objectReferenceValue = bpDetailPanel.transform.Find("DetailSlot")?.GetComponent<Text>();
-            bpSO.FindProperty("detailStats").objectReferenceValue = bpDetailPanel.transform.Find("DetailStats")?.GetComponent<Text>();
-            bpSO.FindProperty("equipButton").objectReferenceValue = bpDetailPanel.transform.Find("ActionButton")?.GetComponent<Button>();
-            bpSO.ApplyModifiedPropertiesWithoutUndo();
 
             var devSO = new SerializedObject(devComp);
             devSO.FindProperty("inventory").objectReferenceValue = inv;
@@ -588,6 +547,9 @@ namespace VoidBound.Editor
             mmSO.FindProperty("minimap").objectReferenceValue = minimapComp;
             mmSO.FindProperty("display").objectReferenceValue = mmRawImage;
             mmSO.ApplyModifiedPropertiesWithoutUndo();
+
+            // Build inventory panels via Phase5c (owns the current panel layout)
+            Phase5cInventoryUISetup.Setup();
         }
 
         private static GameObject CreateAnchoredPanel(Transform parent, string name,
