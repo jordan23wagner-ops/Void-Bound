@@ -21,11 +21,11 @@
 **Equipment Slots (11 — full RunePortal depth):**
 Weapon, Shield, Head, Cape, Neck, Body, Legs, Hands, Feet, Ring, Ammo
 
-**Weapon Types (8, confirmed from RunePortal WEAPON_TYPES):**
-Sword, Sword2H, Dagger, Mace, Bow, Crossbow, Staff, Wand
+**Weapon Types (8, carried from RunePortal):**
+Sword, Axe, Spear, Mace, Bow, Crossbow, Staff, Wand *(confirm/adjust during Phase 3)*
 
 **Rarity Tiers (9, full depth):**
-Common → Uncommon → Rare → Epic → Legendary → Mythic → Ascended → Eternal → Voidforged
+Common → Uncommon → Rare → Epic → Legendary → Mythic → Ascended → Eternal → *(top tier name TBD — pull from RunePortal GEAR_DB)*
 
 **Visual rarity language (Unity translation of Three.js glow system):**
 - Common/Uncommon: flat color, no emission
@@ -38,13 +38,26 @@ Common → Uncommon → Rare → Epic → Legendary → Mythic → Ascended → 
 
 ## 3. Character Stats
 
-Simplified RPG stat block (Portal Quest style):
-- **STR** — physical damage, carry capacity
-- **DEX** — attack speed, crit chance
-- **VIG** — health pool, defense
-- **INT** — magic damage, mana pool
+Each of the 4 core stats — **VIG, STR, DEX, INT** — is an individual leveled skill (not a flat modifier), following the same Level 99 / 3x XP curve as the 7 gathering/crafting skills (Section 5).
 
-Stats scale via gear, skill levels, and zone-based progression. Level cap: **99 per skill** (OSRS-style, matches RunePortal lineage). XP curve: **3x multiplier** as starting value (tunable, not final).
+**Display order (top to bottom): VIG, STR, DEX, INT** — matches RunePortal's original HUD layout.
+
+- **VIG** — health pool, defense. Levels passively off combat (see XP model below)
+- **STR** — physical damage with STR-style weapons (Sword, Axe, Mace — heavy melee)
+- **DEX** — physical damage with DEX-style weapons (Spear, Bow, Crossbow — agile/ranged), also influences attack speed/crit chance
+- **INT** — magic damage with INT-style weapons (Staff, Wand)
+
+*(Weapon-to-stat mapping above is a proposed default — confirm against RunePortal source if accessible, since RunePortal already implemented this exact 4-stat system.)*
+
+**XP Model — damage-based, hybrid/tribrid training:**
+- Dealing damage with a STR-style weapon grants STR XP (proportional to damage dealt)
+- Dealing damage with a DEX-style weapon grants DEX XP (proportional to damage dealt)
+- Dealing damage with an INT-style weapon/spell grants INT XP (proportional to damage dealt)
+- A player can mix weapon styles freely (hybrid/tribrid combat) — each style trains its own stat independently and simultaneously
+- **VIG levels passively**: whenever STR/DEX/INT gain XP from combat, VIG gains a fraction of that same XP (default 33%, mirrors OSRS's Hitpoints ratio) — this is *why* VIG levels slower, not an independent training method
+- Exact ratios/multipliers are tunable — confirm against RunePortal source if the original implementation is accessible
+
+**Character Level:** Derived from all 4 combat stat levels combined (default formula: average of VIG/STR/DEX/INT levels, rounded — confirm against RunePortal source if a different formula was used there).
 
 ---
 
@@ -83,27 +96,16 @@ Each skill needs: XP curve, level-gated recipes/resources, associated Homestead 
 
 ## 6. Homestead Hub
 
-12-structure hub carried from RunePortal (9 original buildings + 3 utility structures), re-skinned in low-poly Unity style:
+Full 9-building hub carried from RunePortal, re-skinned in low-poly Unity style:
 
-**Core Buildings (9, skill mapping confirmed from RunePortal source):**
-- **Campfire** → Cooking station + Rest/Recover
-- **Forge** → Smithing station (smelting + gear crafting)
-- **Shrine** → Blessings (buffs, gold cost)
-- **Garden** → Gathering + Alchemy (potion crafting, GROW/BREW tabs)
-- **Watchtower** → Survey the Land (zone info/map) — stub
-- **Merchant** → Browse Wares (buy/sell) — stub
-- **Warriors' Guild** → STR training (confirmed: stat training, not gear crafting)
-- **Rangers' Guild** → DEX training
-- **Mages' Guild** → INT training
-
-**Field-Based Skills (not tied to a building):**
-- **Fishing** → Resource nodes in zones/near water
-- **Mining** → Rock deposits in zones
-
-**Utility Structures (3):**
+- **Forge** → Smithing
+- **Workshop** → Crafting
+- **Garden** → Gathering, Alchemy (potion crafting)
 - **Pool of Refreshment** → buff/recovery station (4 upgrade tiers, cooldown system carried over)
-- **Fast Travel Portal** → Teleport to discovered waypoints
-- **Storage Chest** → 20-slot persistent homestead storage
+- **Cooking station** → Cooking
+- **Fishing dock/pond** → Fishing access point
+- **Mining node area** → Mining (or routed through world zones — confirm in Phase 6)
+- *(Remaining 2-3 buildings: confirm exact list from RunePortal CONTEXT.md during Phase 0)*
 
 Homestead = safe zone, no combat, full crafting/progression hub. This is the player's persistent base between runs.
 
@@ -123,6 +125,7 @@ Homestead = safe zone, no combat, full crafting/progression hub. This is the pla
 
 ## 8. Currency & Economy
 
+*(Recommend, confirm during Phase 0):*
 - **Gold** — primary currency, dropped by enemies, used for vendor trades/repairs
 - **Void Shards** — secondary currency, earned from Elite+ tier kills and bosses, used for premium crafting/upgrades (thematically ties to "Void Bound"/"Void Throne")
 
@@ -160,10 +163,10 @@ This mirrors RunePortal's data-driven gear/drop table approach almost exactly �
 
 ---
 
-## 11. Open Items
+## 11. Open Items (resolve before/during Phase 0)
 
-- ~~Confirm 9th rarity tier name~~ → **Voidforged** (resolved Phase 0)
-- ~~Confirm remaining Homestead buildings~~ → **12 structures total** (resolved Phase 0, pulled from RunePortal HS_BUILDINGS)
-- ~~Lock level cap + XP curve~~ → **99 per skill, 3x curve** (resolved Phase 0, tunable)
-- ~~Confirm currency~~ → **Gold + Void Shards** (resolved Phase 0)
-- ~~Confirm exact 8 weapon types~~ → **Sword, Sword2H, Dagger, Mace, Bow, Crossbow, Staff, Wand** (resolved Phase 3, pulled from RunePortal WEAPON_TYPES)
+- Confirm exact 8 weapon types match RunePortal's GEAR_DB
+- Confirm 9th rarity tier name (top of ladder)
+- Confirm remaining 2-3 Homestead buildings
+- Lock level cap + XP curve values
+- Confirm currency names/icons (Gold + Void Shards proposed)
