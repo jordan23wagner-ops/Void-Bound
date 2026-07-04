@@ -36,7 +36,7 @@ namespace VoidBound.UI
             EquipmentSlot.Boots, EquipmentSlot.Gloves
         };
         private static readonly EquipmentSlot[] RightSlots = {
-            EquipmentSlot.Amulet, EquipmentSlot.Ring, EquipmentSlot.Ring2, EquipmentSlot.Cape
+            EquipmentSlot.Amulet, EquipmentSlot.Ring, EquipmentSlot.Ammo, EquipmentSlot.Cape
         };
 
         private EquipmentSlot selectedSlot;
@@ -113,7 +113,7 @@ namespace VoidBound.UI
                 EquipmentSlot.Gloves => "✋",
                 EquipmentSlot.Amulet => "❀",
                 EquipmentSlot.Ring => "◎",
-                EquipmentSlot.Ring2 => "◎",
+                EquipmentSlot.Ammo => "➶",
                 EquipmentSlot.Cape => "⁂",
                 _ => "■"
             };
@@ -180,7 +180,7 @@ namespace VoidBound.UI
             t.fontSize = 8;
             t.alignment = TextAnchor.LowerCenter;
             t.color = item != null ? Color.white : new Color(0.45f, 0.45f, 0.45f);
-            string slotName = slot == EquipmentSlot.Ring2 ? "Ring" : slot.ToString();
+            string slotName = slot.ToString();
             t.text = item != null ? item.displayName : slotName;
 
             var btn = obj.AddComponent<Button>();
@@ -221,7 +221,7 @@ namespace VoidBound.UI
             }
             else
             {
-                string slotName = slot == EquipmentSlot.Ring2 ? "Ring" : slot.ToString();
+                string slotName = slot.ToString();
                 if (detailName != null) detailName.text = slotName;
                 if (detailRarity != null) { detailRarity.text = "Empty"; detailRarity.color = Color.gray; }
                 if (detailSlot != null) detailSlot.text = "";

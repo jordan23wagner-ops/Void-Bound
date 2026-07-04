@@ -344,7 +344,7 @@ namespace VoidBound.Editor
             rightCol.anchoredPosition = Vector2.zero;
             rightCol.pivot = new Vector2(1, 0.5f);
 
-            string[] rightSlots = { "AMLT", "RING", "RING", "CAPE" };
+            string[] rightSlots = { "AMLT", "RING", "AMMO", "CAPE" };
             BuildSlotColumn(rightCol, rightSlots, 4);
 
             // Center stat card
@@ -664,6 +664,7 @@ namespace VoidBound.Editor
             "GLVS"  => "G",
             "AMLT"  => "A",
             "RING"  => "R",
+            "AMMO"  => "Am",
             "CAPE"  => "C",
             "WPGN"  => "W",
             "SHLD"  => "S",

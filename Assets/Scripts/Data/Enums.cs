@@ -11,7 +11,7 @@ namespace VoidBound.Data
         Gloves,
         Amulet,
         Ring,
-        Ring2,
+        Ammo,
         Cape
     }
 

@@ -242,7 +242,7 @@ namespace VoidBound.UI
             EquipmentSlot.Gloves => "G",
             EquipmentSlot.Amulet => "A",
             EquipmentSlot.Ring   => "R",
-            EquipmentSlot.Ring2  => "R",
+            EquipmentSlot.Ammo   => "Am",
             EquipmentSlot.Cape   => "C",
             _ => "-"
         };

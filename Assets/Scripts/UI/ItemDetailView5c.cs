@@ -149,7 +149,7 @@ namespace VoidBound.UI
             rarityTMP.color = RarityVisualEffects.GetRarityColor(item.rarity);
             slotTMP.text = item.slot == EquipmentSlot.Weapon
                 ? $"{item.slot} ({item.weaponType})"
-                : (item.slot == EquipmentSlot.Ring2 ? "Ring" : item.slot.ToString());
+                : item.slot.ToString();
 
             var m = item.statModifiers;
             statsTMP.text = $"STR +{m.str}   DEX +{m.dex}\nVIG +{m.vig}   INT +{m.intel}";

@@ -25,7 +25,7 @@ namespace VoidBound.UI
             EquipmentSlot.Boots, EquipmentSlot.Gloves
         };
         private static readonly EquipmentSlot[] RightSlots = {
-            EquipmentSlot.Amulet, EquipmentSlot.Ring, EquipmentSlot.Ring2, EquipmentSlot.Cape
+            EquipmentSlot.Amulet, EquipmentSlot.Ring, EquipmentSlot.Ammo, EquipmentSlot.Cape
         };
         private static readonly EquipmentSlot[] DockSlots = {
             EquipmentSlot.Weapon, EquipmentSlot.Shield
@@ -238,8 +238,7 @@ namespace VoidBound.UI
             }
             else
             {
-                string slotName = slot == EquipmentSlot.Ring2 ? "Ring" : slot.ToString();
-                detailView.ShowEmpty(slotName);
+                detailView.ShowEmpty(slot.ToString());
             }
         }
     }
