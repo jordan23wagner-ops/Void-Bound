@@ -1,0 +1,260 @@
+# Void Bound - low-poly equipment + item models.
+# Run headless:
+#   & "C:\Program Files\Blender Foundation\Blender 5.1\blender.exe" -b -P Tools\build_equipment_models.py
+# Exports one FBX per model to Assets/Resources/Equipment/ using the
+# CODING_STANDARDS.md FBX settings. Material NAMES are the contract with
+# EquipmentVisuals.cs: "Main" is rarity-tinted at runtime, "Accent" stays neutral.
+#
+# Authoring frames (Blender Z-up, feet/ground at z=0, exported axis_up=Y so
+# Blender +Z -> Unity +Y, Blender +Y -> Unity -Z):
+#   Weapons + Shield: GRIP-space, grip at origin, blade/face along +Z. Parented
+#     at the hand socket.
+#   Armor (helm/body/legs/boots/gloves/cape/amulet): HERO-BODY space (same coords
+#     as build_character_models.py's hero), parented at the character root so it
+#     lands over the body. Goblin root carries a downscale to fit.
+#   Materials: centered small props for world pickups.
+
+import bpy
+import math
+import os
+
+OUT_DIR = r"C:\Users\Jordon\Void Bound\Assets\Resources\Equipment"
+
+FBX_SETTINGS = dict(
+    use_selection=True,
+    apply_scale_options='FBX_SCALE_ALL',
+    axis_forward='-Z',
+    axis_up='Y',
+    bake_space_transform=True,
+    mesh_smooth_type='OFF',
+    use_mesh_modifiers=True,
+    bake_anim=False,
+)
+
+# Placeholder colors (Unity reassigns Main by rarity; Accent stays ~this)
+COLORS = {
+    "Main":   (0.60, 0.62, 0.66, 1.0),
+    "Accent": (0.28, 0.22, 0.15, 1.0),
+}
+
+def rad(d):
+    return math.radians(d)
+
+def mat(name):
+    m = bpy.data.materials.get(name)
+    if m is None:
+        m = bpy.data.materials.new(name)
+        m.diffuse_color = COLORS[name]
+    return m
+
+def box(mname, location, scale, rotation=(0, 0, 0)):
+    bpy.ops.mesh.primitive_cube_add(size=1, location=location, scale=scale, rotation=rotation)
+    ob = bpy.context.active_object
+    ob.data.materials.append(mat(mname))
+    return ob
+
+def cyl(mname, radius, depth, location, rotation=(0, 0, 0), vertices=8):
+    bpy.ops.mesh.primitive_cylinder_add(vertices=vertices, radius=radius, depth=depth,
+                                        location=location, rotation=rotation)
+    ob = bpy.context.active_object
+    ob.data.materials.append(mat(mname))
+    return ob
+
+def cone(mname, r1, r2, depth, location, rotation=(0, 0, 0), vertices=8):
+    bpy.ops.mesh.primitive_cone_add(vertices=vertices, radius1=r1, radius2=r2, depth=depth,
+                                    location=location, rotation=rotation)
+    ob = bpy.context.active_object
+    ob.data.materials.append(mat(mname))
+    return ob
+
+def sphere(mname, radius, location, scale=(1, 1, 1), segments=8, rings=6):
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=segments, ring_count=rings, radius=radius,
+                                         location=location, scale=scale)
+    ob = bpy.context.active_object
+    ob.data.materials.append(mat(mname))
+    return ob
+
+def torus(mname, major, minor, location, rotation=(0, 0, 0)):
+    bpy.ops.mesh.primitive_torus_add(major_radius=major, minor_radius=minor,
+                                     location=location, rotation=rotation,
+                                     major_segments=12, minor_segments=6)
+    ob = bpy.context.active_object
+    ob.data.materials.append(mat(mname))
+    return ob
+
+def export(parts, name):
+    bpy.ops.object.select_all(action='DESELECT')
+    for o in parts:
+        o.select_set(True)
+    bpy.context.view_layer.objects.active = parts[0]
+    bpy.ops.object.join()
+    ob = bpy.context.active_object
+    ob.name = name
+    bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+    path = os.path.join(OUT_DIR, name + ".fbx")
+    bpy.ops.export_scene.fbx(filepath=path, **FBX_SETTINGS)
+    print(f"[Equip] Exported {path}")
+    bpy.ops.wm.read_factory_settings(use_empty=True)
+
+
+# ── WEAPONS (grip at origin, blade along +Z) ──────────────────
+def sword():
+    p = []
+    p.append(box("Main", (0, 0, 0.34), (0.05, 0.015, 0.58)))     # blade
+    p.append(cone("Main", 0.035, 0.002, 0.10, (0, 0, 0.68)))     # tip
+    p.append(box("Accent", (0, 0, 0.04), (0.20, 0.05, 0.04)))    # guard
+    p.append(cyl("Accent", 0.028, 0.16, (0, 0, -0.05)))          # grip
+    p.append(sphere("Accent", 0.04, (0, 0, -0.15)))              # pommel
+    export(p, "Sword")
+
+def sword2h():
+    p = []
+    p.append(box("Main", (0, 0, 0.50), (0.07, 0.02, 0.85)))
+    p.append(cone("Main", 0.05, 0.002, 0.14, (0, 0, 0.99)))
+    p.append(box("Accent", (0, 0, 0.05), (0.30, 0.06, 0.05)))
+    p.append(cyl("Accent", 0.032, 0.30, (0, 0, -0.12)))
+    p.append(sphere("Accent", 0.05, (0, 0, -0.29)))
+    export(p, "Sword2H")
+
+def dagger():
+    p = []
+    p.append(box("Main", (0, 0, 0.20), (0.045, 0.014, 0.30)))
+    p.append(cone("Main", 0.03, 0.002, 0.08, (0, 0, 0.38)))
+    p.append(box("Accent", (0, 0, 0.03), (0.13, 0.04, 0.03)))
+    p.append(cyl("Accent", 0.025, 0.12, (0, 0, -0.05)))
+    export(p, "Dagger")
+
+def mace():
+    p = []
+    p.append(cyl("Accent", 0.03, 0.42, (0, 0, 0.10)))            # haft
+    p.append(sphere("Main", 0.10, (0, 0, 0.36)))                 # head
+    for i in range(4):
+        a = rad(i * 90)
+        p.append(cone("Main", 0.04, 0.005, 0.09,
+                      (0.11 * math.cos(a), 0.11 * math.sin(a), 0.36),
+                      rotation=(rad(90) if i % 2 else -rad(90), 0, 0) if False else (0, 0, 0)))
+    export(p, "Mace")
+
+def bow():
+    p = []
+    p.append(torus("Main", 0.34, 0.02, (0, 0.05, 0.30), rotation=(rad(90), 0, 0)))  # arc (front half visible)
+    p.append(cyl("Accent", 0.025, 0.14, (0, 0, 0.30)))          # grip wrap
+    p.append(box("Accent", (0, 0.02, 0.30), (0.006, 0.02, 0.66)))  # string
+    export(p, "Bow")
+
+def crossbow():
+    p = []
+    p.append(box("Accent", (0, 0.14, 0.14), (0.06, 0.42, 0.06)))   # stock
+    p.append(box("Main", (0, 0.30, 0.14), (0.60, 0.05, 0.05)))     # limbs
+    p.append(cyl("Accent", 0.03, 0.14, (0, -0.02, 0.06), rotation=(rad(90), 0, 0)))  # grip
+    export(p, "Crossbow")
+
+def staff():
+    p = []
+    p.append(cyl("Accent", 0.028, 1.05, (0, 0, 0.45)))          # pole
+    p.append(cone("Main", 0.10, 0.01, 0.22, (0, 0, 1.05), vertices=6))   # crystal top
+    p.append(cone("Main", 0.10, 0.01, 0.22, (0, 0, 0.83), rotation=(rad(180), 0, 0), vertices=6))
+    export(p, "Staff")
+
+def wand():
+    p = []
+    p.append(cyl("Accent", 0.02, 0.34, (0, 0, 0.15)))
+    p.append(sphere("Main", 0.05, (0, 0, 0.36)))
+    export(p, "Wand")
+
+def shield():
+    # GRIP-space (attaches at off-hand socket): boss at origin, face toward -Y
+    p = []
+    p.append(cyl("Main", 0.26, 0.05, (0, 0, 0), rotation=(rad(90), 0, 0), vertices=12))  # round face
+    p.append(torus("Accent", 0.26, 0.025, (0, 0, 0), rotation=(rad(90), 0, 0)))          # rim
+    p.append(sphere("Accent", 0.06, (0, -0.04, 0)))             # central boss
+    export(p, "Shield")
+
+
+# ── ARMOR (hero-body space; parented at character root) ───────
+def helm():
+    p = []
+    p.append(sphere("Main", 0.155, (0, 0, 1.63), scale=(1.05, 1.05, 0.85)))  # dome
+    p.append(box("Accent", (0, 0.12, 1.56), (0.30, 0.06, 0.06)))             # brow band
+    p.append(cone("Main", 0.03, 0.005, 0.12, (0, 0, 1.80), vertices=6))      # spike
+    export(p, "Helm")
+
+def body_armor():
+    p = []
+    p.append(box("Main", (0, 0.16, 1.14), (0.34, 0.10, 0.42)))   # chest plate
+    p.append(sphere("Main", 0.13, (0.28, 0, 1.38)))              # shoulder L
+    p.append(sphere("Main", 0.13, (-0.28, 0, 1.38)))            # shoulder R
+    p.append(box("Accent", (0, 0.20, 1.30), (0.10, 0.04, 0.12)))  # emblem
+    export(p, "Body")
+
+def legs_armor():
+    p = []
+    p.append(box("Main", (0.12, 0.10, 0.55), (0.14, 0.16, 0.36)))
+    p.append(box("Main", (-0.12, 0.10, 0.55), (0.14, 0.16, 0.36)))
+    p.append(box("Accent", (0, 0.12, 0.80), (0.34, 0.14, 0.10)))  # belt
+    export(p, "Legs")
+
+def boots():
+    p = []
+    for sx in (0.12, -0.12):
+        p.append(box("Main", (sx, 0.05, 0.10), (0.15, 0.26, 0.20)))   # shin
+        p.append(box("Accent", (sx, 0.10, 0.03), (0.15, 0.34, 0.08)))  # foot
+    export(p, "Boots")
+
+def gloves():
+    p = []
+    for sx in (0.30, -0.30):
+        p.append(sphere("Main", 0.075, (sx, 0, 0.74)))            # hand
+        p.append(cyl("Main", 0.07, 0.16, (sx, 0, 0.90)))          # bracer up forearm
+    export(p, "Gloves")
+
+def cape():
+    p = []
+    p.append(box("Main", (0, -0.17, 1.30), (0.44, 0.04, 0.16)))   # collar
+    p.append(box("Main", (0, -0.20, 0.92), (0.50, 0.03, 0.72), rotation=(rad(-6), 0, 0)))  # drape
+    export(p, "Cape")
+
+def amulet():
+    p = []
+    p.append(torus("Accent", 0.09, 0.012, (0, 0.06, 1.44), rotation=(rad(90), 0, 0)))  # cord
+    p.append(sphere("Main", 0.05, (0, 0.13, 1.36)))              # pendant
+    export(p, "Amulet")
+
+
+# ── MATERIALS (centered props for world pickups) ──────────────
+def ore_chunk():
+    p = []
+    p.append(sphere("Main", 0.16, (0, 0, 0.14), scale=(1.1, 0.9, 0.8), segments=6, rings=5))
+    p.append(box("Accent", (0.08, 0.05, 0.20), (0.06, 0.06, 0.06), rotation=(0, 0, rad(20))))
+    p.append(box("Accent", (-0.06, -0.04, 0.16), (0.05, 0.05, 0.05)))
+    export(p, "OreChunk")
+
+def ingot():
+    p = []
+    p.append(cone("Main", 0.20, 0.12, 0.12, (0, 0, 0.06), vertices=4, rotation=(0, 0, rad(45))))
+    export(p, "Ingot")
+
+def herb():
+    p = []
+    p.append(cyl("Accent", 0.012, 0.20, (0, 0, 0.10)))
+    for a in (0, 120, 240):
+        p.append(cone("Main", 0.05, 0.005, 0.16,
+                      (0.05 * math.cos(rad(a)), 0.05 * math.sin(rad(a)), 0.20),
+                      rotation=(rad(35), 0, rad(a)), vertices=5))
+    export(p, "Herb")
+
+def fish():
+    p = []
+    p.append(sphere("Main", 0.10, (0, 0, 0.10), scale=(2.2, 0.9, 0.8)))
+    p.append(cone("Main", 0.09, 0.005, 0.12, (0.24, 0, 0.10), rotation=(0, rad(90), 0), vertices=4))
+    export(p, "Fish")
+
+
+if __name__ == "__main__":
+    os.makedirs(OUT_DIR, exist_ok=True)
+    bpy.ops.wm.read_factory_settings(use_empty=True)
+    for fn in (sword, sword2h, dagger, mace, bow, crossbow, staff, wand, shield,
+               helm, body_armor, legs_armor, boots, gloves, cape, amulet,
+               ore_chunk, ingot, herb, fish):
+        fn()
+    print("[Equip] Done - all equipment/item models exported.")
