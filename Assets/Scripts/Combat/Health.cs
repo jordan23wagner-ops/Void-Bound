@@ -12,6 +12,7 @@ namespace VoidBound.Combat
         public int MaxHP => maxHP;
         public bool IsDead => currentHP <= 0;
         public event Action<int, int> OnHealthChanged;
+        public event Action OnDamaged; // fired when damage is actually applied
         public event Action OnDeath;
 
         private void Start()
@@ -32,6 +33,7 @@ namespace VoidBound.Combat
 
             currentHP = Mathf.Max(0, currentHP - damage);
             OnHealthChanged?.Invoke(currentHP, maxHP);
+            if (damage > 0) OnDamaged?.Invoke();
 
             if (IsDead)
             {

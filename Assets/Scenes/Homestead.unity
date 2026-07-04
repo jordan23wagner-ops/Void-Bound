@@ -3544,6 +3544,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
       insertIndex: -1
       addedObject: {fileID: 378238807}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 378238808}
   m_SourcePrefab: {fileID: 100100000, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
 --- !u!1 &378238800 stripped
 GameObject:
@@ -3662,6 +3665,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Combat.EquipmentVisuals
   bodyType: 1
   enemyDefinition: {fileID: 11400000, guid: b44fc003d28847445b2094dd6eb3b718, type: 2}
+--- !u!114 &378238808
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 378238800}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47a822c2438d4894bb4f69b56e2bfddd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Combat.CombatAnimator
+  hitFlashColor: {r: 1, g: 0.3, b: 0.25, a: 1}
+  attackDuration: 0.24
+  hitDuration: 0.22
+  swingAngle: 100
 --- !u!1 &379249750
 GameObject:
   m_ObjectHideFlags: 0
@@ -7121,6 +7140,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7983d41f5b490ab49b8cd8f7fccc2df6, type: 3}
       insertIndex: -1
       addedObject: {fileID: 751173375}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7983d41f5b490ab49b8cd8f7fccc2df6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 751173376}
   m_SourcePrefab: {fileID: 100100000, guid: 7983d41f5b490ab49b8cd8f7fccc2df6, type: 3}
 --- !u!1 &751173360 stripped
 GameObject:
@@ -7357,6 +7379,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Combat.EquipmentVisuals
   bodyType: 0
   enemyDefinition: {fileID: 0}
+--- !u!114 &751173376
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 751173360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47a822c2438d4894bb4f69b56e2bfddd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Combat.CombatAnimator
+  hitFlashColor: {r: 1, g: 0.3, b: 0.25, a: 1}
+  attackDuration: 0.24
+  hitDuration: 0.22
+  swingAngle: 100
 --- !u!1 &772804200
 GameObject:
   m_ObjectHideFlags: 0
@@ -8234,6 +8272,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
       insertIndex: -1
       addedObject: {fileID: 906342364}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 906342365}
   m_SourcePrefab: {fileID: 100100000, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
 --- !u!1 &906342357 stripped
 GameObject:
@@ -8352,6 +8393,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Combat.EquipmentVisuals
   bodyType: 1
   enemyDefinition: {fileID: 11400000, guid: 5f41ecd37c8727d4fa7bea4f33509ee9, type: 2}
+--- !u!114 &906342365
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 906342357}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47a822c2438d4894bb4f69b56e2bfddd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Combat.CombatAnimator
+  hitFlashColor: {r: 1, g: 0.3, b: 0.25, a: 1}
+  attackDuration: 0.24
+  hitDuration: 0.22
+  swingAngle: 100
 --- !u!1001 &924589952
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8454,9 +8511,14 @@ MonoBehaviour:
   playerHealth: {fileID: 751173363}
   testGearPool:
   - {fileID: 11400000, guid: a929355f9f972f24ea0ddced663411a2, type: 2}
-  - {fileID: 11400000, guid: ec94fc0ecbc82184b882ba7284200c30, type: 2}
-  - {fileID: 11400000, guid: 3a85fc9a22400ff47aa7e8ee93823448, type: 2}
-  - {fileID: 11400000, guid: 3952da1cff65b6240a6cf711eefd708d, type: 2}
+  - {fileID: 11400000, guid: d8da16cbd8f748145933c2ae2ddd4a40, type: 2}
+  - {fileID: 11400000, guid: 173043dc12af24146bffb7e8c0f50911, type: 2}
+  - {fileID: 11400000, guid: 6faa2431b16de4047b11900b027c284b, type: 2}
+  - {fileID: 11400000, guid: 1c3a2568b4f178548922366d3c263191, type: 2}
+  - {fileID: 11400000, guid: 9aae28830d721884b932d73ca1bf07f8, type: 2}
+  - {fileID: 11400000, guid: aaedc53b2a986e74fa23b3d99674a425, type: 2}
+  - {fileID: 11400000, guid: 8380ee35370b9a441befd274a38efa42, type: 2}
+  - {fileID: 11400000, guid: 60ec0b8f632ff9046bed5c97988dcd12, type: 2}
   giveGearButton: {fileID: 1352801161}
   killAllButton: {fileID: 1460916911}
   godModeButton: {fileID: 2025708961}
@@ -11088,6 +11150,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1236574570}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1236574571}
   m_SourcePrefab: {fileID: 100100000, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
 --- !u!1 &1236574563 stripped
 GameObject:
@@ -11206,6 +11271,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Combat.EquipmentVisuals
   bodyType: 1
   enemyDefinition: {fileID: 11400000, guid: f3630805160b475409c6514f05caeef6, type: 2}
+--- !u!114 &1236574571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1236574563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47a822c2438d4894bb4f69b56e2bfddd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Combat.CombatAnimator
+  hitFlashColor: {r: 1, g: 0.3, b: 0.25, a: 1}
+  attackDuration: 0.24
+  hitDuration: 0.22
+  swingAngle: 100
 --- !u!1 &1241291024
 GameObject:
   m_ObjectHideFlags: 0

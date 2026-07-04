@@ -24,6 +24,7 @@ namespace VoidBound.Combat
         private StatsComponent playerStats;
         private Health playerHealth;
         private CharacterController controller;
+        private CombatAnimator animator;
         private float lastAttackTime;
         private float verticalVelocity;
 
@@ -32,6 +33,7 @@ namespace VoidBound.Combat
             health = GetComponent<Health>();
             stats = GetComponent<StatsComponent>();
             controller = GetComponent<CharacterController>();
+            animator = GetComponent<CombatAnimator>();
             health.OnDeath += HandleDeath;
         }
 
@@ -122,6 +124,7 @@ namespace VoidBound.Combat
             lastAttackTime = Time.time;
             int damage = DamageCalculator.CalculateDamage(stats, playerStats, baseDamage);
             playerHealth.TakeDamage(damage);
+            animator?.PlayAttack();
             Debug.Log($"{gameObject.name} attacks Player for {damage} damage.");
         }
 

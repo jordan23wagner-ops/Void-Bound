@@ -281,6 +281,11 @@ namespace VoidBound.Editor
 
             var dropper = go.AddComponent<LootDropper>();
             dropper.SetLootTable(lootTable, tier);
+
+            // World-space health bar (child, finds Health via GetComponentInParent)
+            var hb = new GameObject("HealthBar");
+            hb.transform.SetParent(go.transform, false);
+            hb.AddComponent<VoidBound.Combat.HealthBar>();
         }
     }
 }
