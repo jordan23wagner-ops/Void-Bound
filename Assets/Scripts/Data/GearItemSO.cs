@@ -16,5 +16,8 @@ namespace VoidBound.Data
 
         [Header("Combat")]
         public int baseDamage;
+
+        [Header("Economy")]
+        public int goldValue; // 0 = unsellable; merchant sell price is a ratio of this
     }
 }

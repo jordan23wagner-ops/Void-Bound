@@ -16,3 +16,4 @@ MonoBehaviour:
   displayName: Wild Herb
   description: 
   icon: {fileID: 0}
+  goldValue: 5

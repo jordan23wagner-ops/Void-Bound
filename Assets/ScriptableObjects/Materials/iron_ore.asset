@@ -16,3 +16,4 @@ MonoBehaviour:
   displayName: Iron Ore
   description: 
   icon: {fileID: 0}
+  goldValue: 5

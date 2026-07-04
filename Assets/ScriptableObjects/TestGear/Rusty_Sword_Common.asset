@@ -25,3 +25,4 @@ MonoBehaviour:
   visualPrefab: {fileID: 0}
   setId: 
   baseDamage: 8
+  goldValue: 20

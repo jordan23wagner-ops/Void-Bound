@@ -3,7 +3,7 @@
 
 ## Project State
 - **Engine:** Unity 6.5 (6000.5.0f1), URP, mobile-first
-- **Status:** Phase 5c (Equipment & Inventory UI) complete
+- **Status:** Phase 6 (Homestead Full Build-out) complete
 - **GDD:** See `Void_Bound_GDD.md` in repo root — full design spec, all systems locked
 - **MCP connections live:** Unity MCP (scene/asset control) + Blender MCP (procedural low-poly model generation)
 
@@ -24,7 +24,23 @@ Void Bound evolved from RunePortal (a Three.js browser ARPG). All gameplay syste
 6. **Update this CONTEXT.md** after each phase completes — log what was built, file locations, and any decisions made.
 
 ## Current Phase
-**Phase 6: Homestead Full Build-out** — see `PHASES/phase6_homestead.md` (written 2026-07-04, not yet started). Turns the 7 stubbed buildings into functional systems: Merchant shop, Storage bank, Pool heal/buff, Shrine blessing, Guild stat training, Portal UI stub, Watchtower confirm-or-defer. Phase 5c completed and verified 2026-07-03.
+**Phase 7: Zone 2 — Ashfields** (not yet started). Phase 6 completed and play-mode verified 2026-07-04.
+
+## Phase 6 Log (completed & play-mode verified 2026-07-04)
+- **Task 1 (RunePortal source resolution):** RunePortal source is no longer available locally (`C:\Users\Jordon\RunePortal` now contains only a `sprites/` folder) — Shrine, Watchtower, Pool tier effects/costs, and Guild training cost/XP model all use the documented fallback designs from `PHASES/phase6_homestead.md`, flagged as unconfirmed in code comments on each station script. GDD Section 6 corrected: 9→12 buildings (stale count from before Phase 0's RunePortal `HS_BUILDINGS` resolution), per-building status added.
+- **7 stations, all `Assets/Scripts/Homestead/`, all `Interactable` subclasses (Phase 5 pattern, proximity-triggered via `PlayerInteractor`):**
+  - `MerchantStation` → `MerchantUI` (buy/sell, data-driven via `ShopInventorySO`). Sell price = 40% of `goldValue` (`MerchantUI.SellRatio`, tunable). Test gold values assigned by rarity: Common 20, Uncommon 45, Rare 120, Epic 300, Legendary 600, Voidforged 2000 (materials flat 5) — all tunable, set by `Phase6HomesteadSetup.AssignTestItemGoldValues`.
+  - `StorageStation` → `StorageUI` + `PlayerStorage` (48-slot bank, mirrors `PlayerInventory` add/remove semantics; withdraw respects the 24-slot backpack cap).
+  - `PoolStation` → full heal + timed all-stat buff (tier 1 live: +2 all stats, 120s, 60s cooldown; tiers 2-4 stored as data in `PoolStation.tiers` with upgrade costs). **Upgrade purchasing is a TODO for a later phase** (flagged in code).
+  - `ShrineStation` → 25g offering → +5 STR/+5 INT blessing, 180s, 120s cooldown. GDD's "+% damage" isn't representable in the `CharacterStats` pipeline, so this is a deliberate flat-stat deviation (documented in-code).
+  - `GuildStation` (one script, 3 configured instances: Warriors'→STR, Rangers'→DEX, Mages'→INT) → `TrainingUI`. Cost = `10g × current level` (tunable), +50 stat XP + 25 VIG XP per session (50% VIG ratio mirrors `CombatXPCalculator`).
+  - `PortalStation` → `PortalUI`, destination list UI only (Homestead/Ashfields/Bleakwood, latter two locked "Coming soon"). No scene travel this phase, as specified.
+  - `WatchtowerStation` → flavor-text stub ("The wastes are quiet.") — real function deferred, not invented, per spec.
+- **`TimedBuff`** (`Scripts/Homestead/TimedBuff.cs`): the shared buff mechanism for Pool/Shrine. Applies/reverts a `CharacterStats` bonus through the existing `StatsComponent.AddGearBonus/RemoveGearBonus` pipeline, calls `Health.RefreshMaxHP()` on change. Buffs stack by distinct id (`pool_refresh`, `shrine_blessing`); re-applying the same id refreshes rather than stacks with itself.
+- **UI:** `MerchantUI`, `StorageUI`, `TrainingUI`, `PortalUI` all live as components on `HUDCanvas` and self-build their panel hierarchy at first `Open()` via a new shared helper, `Panel5cFactory` (`Scripts/UI/Panel5cFactory.cs`) — extracts the Phase 5c color palette/header/close-button/scroll-list patterns from `Phase5cUIBuilder` into reusable static methods so these 4 new panels match the approved visual language without duplicating it. `BuffIndicatorUI` adds a minimal ASCII buff-timer readout below the Player Info Bar (Task 10).
+- **Bug found & fixed during self-test:** the 4 new overlay panels didn't coordinate with each other — opening one (e.g. Portal) left a previously-open one (e.g. Storage) visible underneath, since each panel is an independent full-screen overlay at the same anchor (unlike Phase 5c's deliberate side-by-side Equipment/Inventory layout). Fixed with `Panel5cFactory.CloseOtherHomesteadPanels()`, called at the top of each panel's `Open()`.
+- **Self-test methodology note:** Unity Editor did not have OS focus during the automated MCP session, which throttles the Player Loop (confirmed via `editor/state`'s `is_changing` flag staying stuck) — physical player movement + `PlayerInteractor`'s proximity `OverlapSphere` detection wasn't reliable under those conditions. Verification instead called each station's `OnInteract()` directly (same code path a real interaction takes) via Unity MCP's `execute_code`, confirming: Merchant buy/sell (gold + item counts correct), Storage deposit/withdraw round-trip, Pool full heal + buff + cooldown block, Shrine offering + stacking with Pool, Guild training (gold spent, STR/VIG XP granted), Portal panel + locked destinations, Watchtower flavor popup — all with 0 console errors/warnings. Buff expiry (stat/MaxHP revert) verified by forcing `expiresAt` into the past and invoking `TimedBuff.Update()` directly, rather than waiting out the real 120-180s durations.
+- **Deferred:** Task 9 (low-poly art pass for the 7 buildings) — not attempted this session, buildings remain the Phase 5 placeholder meshes. Time-boxed/deferrable per spec; revisit when picking up art work generally.
 
 ## Phase 5c Log (completed & play-mode verified 2026-07-03)
 *(An earlier 5c log dated 2026-06-17 claimed completion prematurely — that build was mockup visuals only, never verified in Play Mode. The 2026-07-03 session finished the runtime wiring and ran the full self-test.)*

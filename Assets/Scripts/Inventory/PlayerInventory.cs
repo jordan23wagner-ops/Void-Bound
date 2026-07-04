@@ -29,6 +29,15 @@ namespace VoidBound.Inventory
             OnInventoryChanged?.Invoke();
         }
 
+        // Removes one instance from the backpack without equipping it
+        // (merchant sell, bank deposit). Returns false if not present.
+        public bool RemoveItem(GearItemSO item)
+        {
+            if (!backpack.Remove(item)) return false;
+            OnInventoryChanged?.Invoke();
+            return true;
+        }
+
         public bool EquipItem(GearItemSO item)
         {
             if (item == null) return false;

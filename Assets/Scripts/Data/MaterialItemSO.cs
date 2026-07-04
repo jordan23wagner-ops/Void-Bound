@@ -9,5 +9,8 @@ namespace VoidBound.Data
         public string displayName;
         public string description;
         public Sprite icon;
+
+        [Header("Economy")]
+        public int goldValue; // 0 = unsellable; merchant sell price is a ratio of this
     }
 }

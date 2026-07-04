@@ -14,6 +14,7 @@ namespace VoidBound.UI
         [SerializeField] private Button giveGearButton;
         [SerializeField] private Button killAllButton;
         [SerializeField] private Button godModeButton;
+        [SerializeField] private Button giveGoldButton;
 
         private bool godMode;
 
@@ -22,6 +23,7 @@ namespace VoidBound.UI
             if (giveGearButton != null) giveGearButton.onClick.AddListener(GiveTestGear);
             if (killAllButton != null) killAllButton.onClick.AddListener(KillAllEnemies);
             if (godModeButton != null) godModeButton.onClick.AddListener(ToggleGodMode);
+            if (giveGoldButton != null) giveGoldButton.onClick.AddListener(GiveGold);
         }
 
         public void GiveTestGear()
@@ -33,6 +35,14 @@ namespace VoidBound.UI
                     inventory.AddItem(item);
             }
             Debug.Log("[DevTools] Test gear added to backpack.");
+        }
+
+        public void GiveGold()
+        {
+            var currency = inventory != null ? inventory.GetComponent<PlayerCurrency>() : null;
+            if (currency == null) return;
+            currency.AddGold(500);
+            Debug.Log("[DevTools] +500 gold.");
         }
 
         public void KillAllEnemies()

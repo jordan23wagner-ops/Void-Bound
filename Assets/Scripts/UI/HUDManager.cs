@@ -126,11 +126,12 @@ namespace VoidBound.UI
 
         public void ToggleDevTools()
         {
-            if (devToolsPanel != null)
-            {
-                CloseAllPanels();
-                devToolsPanel.SetActive(!devToolsPanel.activeSelf);
-            }
+            if (devToolsPanel == null) return;
+            // Capture intent BEFORE CloseAllPanels — the old double-negation
+            // meant the panel could never be closed from its own button.
+            bool opening = !devToolsPanel.activeSelf;
+            CloseAllPanels();
+            devToolsPanel.SetActive(opening);
         }
 
         private void CloseAllPanels()

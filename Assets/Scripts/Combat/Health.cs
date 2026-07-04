@@ -46,5 +46,16 @@ namespace VoidBound.Combat
             currentHP = Mathf.Min(maxHP, currentHP + amount);
             OnHealthChanged?.Invoke(currentHP, maxHP);
         }
+
+        // Re-derive maxHP from StatsComponent after a VIG change (timed buff,
+        // gear swap). maxHP is otherwise only read once at Start.
+        public void RefreshMaxHP()
+        {
+            var stats = GetComponent<StatsComponent>();
+            if (stats == null) return;
+            maxHP = stats.MaxHP;
+            currentHP = Mathf.Min(currentHP, maxHP);
+            OnHealthChanged?.Invoke(currentHP, maxHP);
+        }
     }
 }

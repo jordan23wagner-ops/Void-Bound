@@ -16,3 +16,4 @@ MonoBehaviour:
   displayName: Iron Ingot
   description: 
   icon: {fileID: 0}
+  goldValue: 5

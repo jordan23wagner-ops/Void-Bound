@@ -96,16 +96,20 @@ Each skill needs: XP curve, level-gated recipes/resources, associated Homestead 
 
 ## 6. Homestead Hub
 
-Full 9-building hub carried from RunePortal, re-skinned in low-poly Unity style:
+Full 12-building hub carried from RunePortal `HS_BUILDINGS` (list resolved Phase 0, count corrected Phase 6 — this section previously said 9), re-skinned in low-poly Unity style:
 
-- **Forge** → Smithing
-- **Workshop** → Crafting
-- **Garden** → Gathering, Alchemy (potion crafting)
-- **Pool of Refreshment** → buff/recovery station (4 upgrade tiers, cooldown system carried over)
-- **Cooking station** → Cooking
-- **Fishing dock/pond** → Fishing access point
-- **Mining node area** → Mining (or routed through world zones — confirm in Phase 6)
-- *(Remaining 2-3 buildings: confirm exact list from RunePortal CONTEXT.md during Phase 0)*
+- **Forge** → Smithing (functional Phase 5)
+- **Campfire** → Cooking (functional Phase 5)
+- **Garden** → Gathering + Alchemy (functional Phase 5)
+- **Merchant** → buy/sell shop, data-driven stock (functional Phase 6)
+- **Storage Chest** → bank: 48-slot gear storage with deposit/withdraw (functional Phase 6)
+- **Pool of Refreshment** → full heal + timed all-stat buff, cooldown; 4 upgrade tiers as data, tier 1 live (functional Phase 6)
+- **Shrine** → gold offering for a timed STR/INT blessing, cooldown (functional Phase 6; +% damage from RunePortal adapted to flat stats)
+- **Warriors' / Rangers' / Mages' Guilds** → combat stat training (STR / DEX / INT + 50% VIG side-XP), gold cost scaling with level (functional Phase 6)
+- **Fast Travel Portal** → destination UI in place; actual travel lands with the zone phases
+- **Watchtower** → flavor stub; real function TBD in a future phase (RunePortal source unavailable)
+
+Fishing and Mining are field-based resource nodes (Phase 5 resolution), not Homestead buildings.
 
 Homestead = safe zone, no combat, full crafting/progression hub. This is the player's persistent base between runs.
 
@@ -156,7 +160,7 @@ This mirrors RunePortal's data-driven gear/drop table approach almost exactly �
 | 3 | Gear & Inventory (11 slots, equip/unequip, stat application, rarity visual tiers) |
 | 4 | Loot & Drop tables (tier-weighted, zone-modified) |
 | 5 | Skilling systems (7 skills) + Homestead crafting stations |
-| 6 | Homestead full build-out (all 9 buildings, low-poly art pass) |
+| 6 | Homestead full build-out (all 12 buildings, low-poly art pass) |
 | 7 | Zone 2: Ashfields (Weak/Standard enemies, first loot loop) |
 | 8 | Zone 3: Bleakwood (Elite/Rare Elite tiers, first Mini Boss) |
 | 9 | Polish — animation, VFX, UI/UX, audio, mobile optimization |

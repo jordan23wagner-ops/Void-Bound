@@ -16,3 +16,4 @@ MonoBehaviour:
   displayName: Cooked Fish
   description: 
   icon: {fileID: 0}
+  goldValue: 5
