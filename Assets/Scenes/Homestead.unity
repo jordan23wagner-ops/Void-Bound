@@ -153,6 +153,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Skilling.ResourceNode
   interactPrompt: Gather Herb Patch 2
   interactRange: 2
+  tooltipDescription: Gather resources here.
   gatherMaterial: {fileID: 11400000, guid: 6028c60d9a466a04d8683ea7a8252cf3, type: 2}
   gatherQuantity: 1
   gatherSkill: 1
@@ -752,6 +753,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Skilling.ResourceNode
   interactPrompt: Gather Fishing Spot
   interactRange: 2
+  tooltipDescription: Gather resources here.
   gatherMaterial: {fileID: 11400000, guid: c74756883aa62c04b9b9e85a8c3dc00c, type: 2}
   gatherQuantity: 1
   gatherSkill: 0
@@ -1385,6 +1387,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Skilling.CraftingStation
   interactPrompt: Use Campfire
   interactRange: 3
+  tooltipDescription: Cook your catch into food. (Cooking)
   stationId: Campfire
   skillType: 5
   availableRecipes:
@@ -2513,6 +2516,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Skilling.CraftingStation
   interactPrompt: Use Forge
   interactRange: 3
+  tooltipDescription: Smelt ore and forge gear. (Smithing)
   stationId: Forge
   skillType: 3
   availableRecipes:
@@ -2838,6 +2842,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Homestead.MerchantStation
   interactPrompt: Trade
   interactRange: 3
+  tooltipDescription: Buy supplies and sell your loot for gold.
   shopInventory: {fileID: 11400000, guid: 30dcbe17dbee38143976e52c82ca7440, type: 2}
 --- !u!1 &251143644
 GameObject:
@@ -4346,6 +4351,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Skilling.ResourceNode
   interactPrompt: Gather Herb Patch 1
   interactRange: 2
+  tooltipDescription: Gather resources here.
   gatherMaterial: {fileID: 11400000, guid: 6028c60d9a466a04d8683ea7a8252cf3, type: 2}
   gatherQuantity: 1
   gatherSkill: 1
@@ -4572,9 +4578,21 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 673252195}
+      objectReference: {fileID: 2100000, guid: b4f45c112a97d124c8e31f3d16189a81, type: 2}
+    - target: {fileID: -7511558181221131132, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d8f5ef922e2579e43a28149fd7e982ac, type: 2}
+    - target: {fileID: -5754084199372789682, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 7336033297182201316, guid: 0d0abc24a43617944a847681fad4b083, type: 3}
     - target: {fileID: 919132149155446097, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
       propertyPath: m_Name
       value: Goblin Warrior
@@ -5168,6 +5186,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Homestead.WatchtowerStation
   interactPrompt: Look Out
   interactRange: 3
+  tooltipDescription: Keep an eye on the wastes.
   flavorText: The wastes are quiet.
   repeatDelay: 4
 --- !u!1 &486275244
@@ -5291,6 +5310,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Homestead.PoolStation
   interactPrompt: Refresh
   interactRange: 3
+  tooltipDescription: Full heal and a temporary all-stats boost.
   tiers:
   - healPercent: 100
     buffAllStats: 2
@@ -6235,6 +6255,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Skilling.ResourceNode
   interactPrompt: Gather Iron Deposit
   interactRange: 2
+  tooltipDescription: Gather resources here.
   gatherMaterial: {fileID: 11400000, guid: 2b39e7e012532e3408344ab7a1da7bb4, type: 2}
   gatherQuantity: 1
   gatherSkill: 2
@@ -6583,128 +6604,6 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
---- !u!21 &673252195
-Material:
-  serializedVersion: 8
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Universal Render Pipeline/Lit
-  m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
-  m_Parent: {fileID: 0}
-  m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
-  m_InvalidKeywords: []
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap:
-    RenderType: Opaque
-  disabledShaderPasses:
-  - MOTIONVECTORS
-  m_LockedProperties: 
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _BaseMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _BumpMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailAlbedoMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailMask:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailNormalMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _EmissionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MetallicGlossMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _OcclusionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _ParallaxMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _SpecGlossMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - unity_Lightmaps:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - unity_LightmapsInd:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - unity_ShadowMasks:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Ints: []
-    m_Floats:
-    - _AddPrecomputedVelocity: 0
-    - _AlphaClip: 0
-    - _AlphaToMask: 0
-    - _Blend: 0
-    - _BlendModePreserveSpecular: 1
-    - _BumpScale: 1
-    - _ClearCoatMask: 0
-    - _ClearCoatSmoothness: 0
-    - _Cull: 2
-    - _Cutoff: 0.5
-    - _DetailAlbedoMapScale: 1
-    - _DetailNormalMapScale: 1
-    - _DstBlend: 0
-    - _DstBlendAlpha: 0
-    - _EnvironmentReflections: 1
-    - _GlossMapScale: 0
-    - _Glossiness: 0
-    - _GlossyReflections: 0
-    - _Metallic: 0
-    - _OcclusionStrength: 1
-    - _Parallax: 0.005
-    - _QueueOffset: 0
-    - _ReceiveShadows: 1
-    - _Smoothness: 0.15
-    - _SmoothnessTextureChannel: 0
-    - _SpecularHighlights: 1
-    - _SrcBlend: 1
-    - _SrcBlendAlpha: 1
-    - _Surface: 0
-    - _WorkflowMode: 1
-    - _XRMotionVectorsPass: 1
-    - _ZWrite: 1
-    m_Colors:
-    - _BaseColor: {r: 0.5, g: 0.35, b: 0.15, a: 1}
-    - _Color: {r: 0.5, g: 0.34999996, b: 0.14999998, a: 1}
-    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
-  m_BuildTextureStacks: []
-  m_AllowLocking: 1
 --- !u!1 &673758019
 GameObject:
   m_ObjectHideFlags: 0
@@ -6882,6 +6781,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Homestead.PortalStation
   interactPrompt: Fast Travel
   interactRange: 3
+  tooltipDescription: Travel between discovered zones.
 --- !u!1 &713889206
 GameObject:
   m_ObjectHideFlags: 0
@@ -7397,9 +7297,25 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 7983d41f5b490ab49b8cd8f7fccc2df6, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 7983d41f5b490ab49b8cd8f7fccc2df6, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 81d4aa1c02a9a66499f1c18b0096f2ff, type: 2}
+      objectReference: {fileID: 2100000, guid: 84d88b559a62cf1438ade397f22f446e, type: 2}
+    - target: {fileID: -7511558181221131132, guid: 7983d41f5b490ab49b8cd8f7fccc2df6, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: c115a0204b3f880438aa9c4d9568f28c, type: 2}
+    - target: {fileID: -7511558181221131132, guid: 7983d41f5b490ab49b8cd8f7fccc2df6, type: 3}
+      propertyPath: 'm_Materials.Array.data[2]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 5e4ff05cd02b3324b89e41e6a5a7f695, type: 2}
+    - target: {fileID: -5754084199372789682, guid: 7983d41f5b490ab49b8cd8f7fccc2df6, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -1363730094555937548, guid: 38b064ff9f604394e8e4d244792ff44c, type: 3}
     - target: {fileID: 919132149155446097, guid: 7983d41f5b490ab49b8cd8f7fccc2df6, type: 3}
       propertyPath: m_Name
       value: Player
@@ -8715,9 +8631,21 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 1115971234}
+      objectReference: {fileID: 2100000, guid: 6827e7e1fa629904a9ce2f18cca82028, type: 2}
+    - target: {fileID: -7511558181221131132, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d8f5ef922e2579e43a28149fd7e982ac, type: 2}
+    - target: {fileID: -5754084199372789682, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 7336033297182201316, guid: 0d0abc24a43617944a847681fad4b083, type: 3}
     - target: {fileID: 919132149155446097, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
       propertyPath: m_Name
       value: Goblin Champion
@@ -9121,6 +9049,7 @@ GameObject:
   - component: {fileID: 925212596}
   - component: {fileID: 925212595}
   - component: {fileID: 925212594}
+  - component: {fileID: 925212599}
   m_Layer: 0
   m_Name: HUDCanvas
   m_TagString: Untagged
@@ -9311,6 +9240,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e1f3e1a857eabc47a9818a613ee1914, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.UI.MerchantUI
+--- !u!114 &925212599
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 925212588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6800045a9a4734947b41b7a0bba10736, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.UI.BuildingTooltipUI
 --- !u!1001 &954538961
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10465,128 +10406,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1068124811}
   m_CullTransparentMesh: 1
---- !u!21 &1115971234
-Material:
-  serializedVersion: 8
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Universal Render Pipeline/Lit
-  m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
-  m_Parent: {fileID: 0}
-  m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
-  m_InvalidKeywords: []
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap:
-    RenderType: Opaque
-  disabledShaderPasses:
-  - MOTIONVECTORS
-  m_LockedProperties: 
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _BaseMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _BumpMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailAlbedoMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailMask:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailNormalMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _EmissionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MetallicGlossMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _OcclusionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _ParallaxMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _SpecGlossMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - unity_Lightmaps:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - unity_LightmapsInd:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - unity_ShadowMasks:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Ints: []
-    m_Floats:
-    - _AddPrecomputedVelocity: 0
-    - _AlphaClip: 0
-    - _AlphaToMask: 0
-    - _Blend: 0
-    - _BlendModePreserveSpecular: 1
-    - _BumpScale: 1
-    - _ClearCoatMask: 0
-    - _ClearCoatSmoothness: 0
-    - _Cull: 2
-    - _Cutoff: 0.5
-    - _DetailAlbedoMapScale: 1
-    - _DetailNormalMapScale: 1
-    - _DstBlend: 0
-    - _DstBlendAlpha: 0
-    - _EnvironmentReflections: 1
-    - _GlossMapScale: 0
-    - _Glossiness: 0
-    - _GlossyReflections: 0
-    - _Metallic: 0
-    - _OcclusionStrength: 1
-    - _Parallax: 0.005
-    - _QueueOffset: 0
-    - _ReceiveShadows: 1
-    - _Smoothness: 0.15
-    - _SmoothnessTextureChannel: 0
-    - _SpecularHighlights: 1
-    - _SrcBlend: 1
-    - _SrcBlendAlpha: 1
-    - _Surface: 0
-    - _WorkflowMode: 1
-    - _XRMotionVectorsPass: 1
-    - _ZWrite: 1
-    m_Colors:
-    - _BaseColor: {r: 0.4, g: 0.12, b: 0.12, a: 1}
-    - _Color: {r: 0.39999998, g: 0.11999995, b: 0.11999995, a: 1}
-    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
-  m_BuildTextureStacks: []
-  m_AllowLocking: 1
 --- !u!1 &1119588961
 GameObject:
   m_ObjectHideFlags: 0
@@ -11844,9 +11663,21 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 1554792015}
+      objectReference: {fileID: 2100000, guid: 00b995c9c39ac85419c4e14b9f2f0c1e, type: 2}
+    - target: {fileID: -7511558181221131132, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d8f5ef922e2579e43a28149fd7e982ac, type: 2}
+    - target: {fileID: -5754084199372789682, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 7336033297182201316, guid: 0d0abc24a43617944a847681fad4b083, type: 3}
     - target: {fileID: 919132149155446097, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
       propertyPath: m_Name
       value: Goblin Scout
@@ -13296,6 +13127,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Homestead.GuildStation
   interactPrompt: Train
   interactRange: 3
+  tooltipDescription: Pay gold to train Strength.
   guildName: Warriors Guild
   trainedStat: 8
   baseCostPerLevel: 10
@@ -14328,6 +14160,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Skilling.CraftingStation
   interactPrompt: Use Garden
   interactRange: 3
+  tooltipDescription: Tend herbs and brew mixtures. (Gathering, Alchemy)
   stationId: Garden
   skillType: 1
   availableRecipes: []
@@ -14445,128 +14278,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1551441772}
   m_CullTransparentMesh: 1
---- !u!21 &1554792015
-Material:
-  serializedVersion: 8
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Universal Render Pipeline/Lit
-  m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
-  m_Parent: {fileID: 0}
-  m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
-  m_InvalidKeywords: []
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap:
-    RenderType: Opaque
-  disabledShaderPasses:
-  - MOTIONVECTORS
-  m_LockedProperties: 
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _BaseMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _BumpMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailAlbedoMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailMask:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailNormalMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _EmissionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MetallicGlossMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _OcclusionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _ParallaxMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _SpecGlossMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - unity_Lightmaps:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - unity_LightmapsInd:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - unity_ShadowMasks:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Ints: []
-    m_Floats:
-    - _AddPrecomputedVelocity: 0
-    - _AlphaClip: 0
-    - _AlphaToMask: 0
-    - _Blend: 0
-    - _BlendModePreserveSpecular: 1
-    - _BumpScale: 1
-    - _ClearCoatMask: 0
-    - _ClearCoatSmoothness: 0
-    - _Cull: 2
-    - _Cutoff: 0.5
-    - _DetailAlbedoMapScale: 1
-    - _DetailNormalMapScale: 1
-    - _DstBlend: 0
-    - _DstBlendAlpha: 0
-    - _EnvironmentReflections: 1
-    - _GlossMapScale: 0
-    - _Glossiness: 0
-    - _GlossyReflections: 0
-    - _Metallic: 0
-    - _OcclusionStrength: 1
-    - _Parallax: 0.005
-    - _QueueOffset: 0
-    - _ReceiveShadows: 1
-    - _Smoothness: 0.15
-    - _SmoothnessTextureChannel: 0
-    - _SpecularHighlights: 1
-    - _SrcBlend: 1
-    - _SrcBlendAlpha: 1
-    - _Surface: 0
-    - _WorkflowMode: 1
-    - _XRMotionVectorsPass: 1
-    - _ZWrite: 1
-    m_Colors:
-    - _BaseColor: {r: 0.65, g: 0.25, b: 0.18, a: 1}
-    - _Color: {r: 0.65, g: 0.24999997, b: 0.17999998, a: 1}
-    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
-  m_BuildTextureStacks: []
-  m_AllowLocking: 1
 --- !u!1 &1559270454
 GameObject:
   m_ObjectHideFlags: 0
@@ -15851,6 +15562,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Homestead.ShrineStation
   interactPrompt: Make Offering
   interactRange: 3
+  tooltipDescription: Make a gold offering for a combat blessing.
   offeringCost: 25
   blessStrBonus: 5
   blessIntBonus: 5
@@ -16713,6 +16425,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Homestead.GuildStation
   interactPrompt: Train
   interactRange: 3
+  tooltipDescription: Pay gold to train Intellect.
   guildName: Mages Guild
   trainedStat: 10
   baseCostPerLevel: 10
@@ -19627,6 +19340,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Homestead.StorageStation
   interactPrompt: Open Storage
   interactRange: 3
+  tooltipDescription: Bank up to 48 items, safe between runs.
 --- !u!1 &2052695816
 GameObject:
   m_ObjectHideFlags: 0
@@ -20476,6 +20190,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Homestead.GuildStation
   interactPrompt: Train
   interactRange: 3
+  tooltipDescription: Pay gold to train Dexterity.
   guildName: Rangers Guild
   trainedStat: 9
   baseCostPerLevel: 10

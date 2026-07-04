@@ -310,6 +310,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: b4f45c112a97d124c8e31f3d16189a81, type: 2}
+    - target: {fileID: -7511558181221131132, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d8f5ef922e2579e43a28149fd7e982ac, type: 2}
+    - target: {fileID: -5754084199372789682, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 7336033297182201316, guid: 0d0abc24a43617944a847681fad4b083, type: 3}
     - target: {fileID: 919132149155446097, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
       propertyPath: m_Name
       value: Ashfields Goblin Warrior 2
@@ -480,6 +496,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 00b995c9c39ac85419c4e14b9f2f0c1e, type: 2}
+    - target: {fileID: -7511558181221131132, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d8f5ef922e2579e43a28149fd7e982ac, type: 2}
+    - target: {fileID: -5754084199372789682, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 7336033297182201316, guid: 0d0abc24a43617944a847681fad4b083, type: 3}
     - target: {fileID: 919132149155446097, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
       propertyPath: m_Name
       value: Ashfields Goblin Scout 1
@@ -747,6 +779,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 00b995c9c39ac85419c4e14b9f2f0c1e, type: 2}
+    - target: {fileID: -7511558181221131132, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d8f5ef922e2579e43a28149fd7e982ac, type: 2}
+    - target: {fileID: -5754084199372789682, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 7336033297182201316, guid: 0d0abc24a43617944a847681fad4b083, type: 3}
     - target: {fileID: 919132149155446097, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
       propertyPath: m_Name
       value: Ashfields Goblin Scout 2
@@ -951,6 +999,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Homestead.PortalStation
   interactPrompt: Fast Travel
   interactRange: 3
+  tooltipDescription: Travel between discovered zones.
 --- !u!65 &1600124252
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1020,6 +1069,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: b4f45c112a97d124c8e31f3d16189a81, type: 2}
+    - target: {fileID: -7511558181221131132, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d8f5ef922e2579e43a28149fd7e982ac, type: 2}
+    - target: {fileID: -5754084199372789682, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 7336033297182201316, guid: 0d0abc24a43617944a847681fad4b083, type: 3}
     - target: {fileID: 919132149155446097, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
       propertyPath: m_Name
       value: Ashfields Goblin Warrior 1
