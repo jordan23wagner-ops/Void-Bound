@@ -1,42 +1,92 @@
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
 using VoidBound.Data;
 using VoidBound.Inventory;
+using VoidBound.UI;
 
 namespace VoidBound.Skilling
 {
+    // Crafting panel for Forge/Campfire/Garden stations. Polish pass 2:
+    // self-builds from Panel5cFactory (rounded panels, hover rows) on the
+    // HUDCanvas it lives on — the Phase 5 scene-wired legacy-Text panel is
+    // retired. Craft logic unchanged.
     public class CraftingUI : MonoBehaviour
     {
-        [SerializeField] private GameObject panel;
-        [SerializeField] private Text titleText;
-        [SerializeField] private Text skillInfoText;
-        [SerializeField] private Transform recipeList;
-        [SerializeField] private Text recipeDetailText;
-        [SerializeField] private Button craftButton;
+        private RectTransform panel;
+        private TextMeshProUGUI title;
+        private TextMeshProUGUI skillInfo;
+        private RectTransform recipeList;
+        private TextMeshProUGUI detailText;
+        private UnityEngine.UI.Button craftButton;
 
         private CraftingStation currentStation;
         private GameObject currentInstigator;
         private RecipeDefinitionSO selectedRecipe;
 
-        private void Start()
-        {
-            if (panel != null) panel.SetActive(false);
-            if (craftButton != null) craftButton.onClick.AddListener(DoCraft);
-        }
-
         public void Open(CraftingStation station, GameObject instigator)
         {
             currentStation = station;
             currentInstigator = instigator;
-            if (panel != null) panel.SetActive(true);
+
+            Panel5cFactory.CloseOtherHomesteadPanels(gameObject, this);
+            EnsureBuilt();
+            panel.gameObject.SetActive(true);
+            title.text = station.StationId.ToUpperInvariant();
             Refresh();
         }
 
         public void Close()
         {
-            if (panel != null) panel.SetActive(false);
+            if (panel != null) panel.gameObject.SetActive(false);
             currentStation = null;
             selectedRecipe = null;
+        }
+
+        private void EnsureBuilt()
+        {
+            if (panel != null) return;
+
+            panel = Panel5cFactory.CreatePanel(transform, "CraftingPanel5c", "CRAFTING",
+                560f, 400f, out var content, out var closeBtn);
+            closeBtn.onClick.AddListener(Close);
+            title = panel.Find("Header/Title").GetComponent<TextMeshProUGUI>();
+
+            skillInfo = Panel5cFactory.CreateLabel(content, "SkillInfo", "", 11f, Panel5cFactory.TextMuted);
+            Panel5cFactory.SetAnchor(skillInfo.rectTransform, new Vector2(0, 1), new Vector2(1, 1));
+            skillInfo.rectTransform.pivot = new Vector2(0.5f, 1f);
+            skillInfo.rectTransform.sizeDelta = new Vector2(-8, 18);
+
+            var listArea = Panel5cFactory.MakeRect("RecipeArea", content);
+            Panel5cFactory.SetAnchor(listArea, new Vector2(0, 0), new Vector2(0.46f, 1));
+            listArea.offsetMin = new Vector2(0, 0);
+            listArea.offsetMax = new Vector2(-4, -24);
+            recipeList = Panel5cFactory.CreateScrollList(listArea, "RecipeList");
+            Panel5cFactory.SetAnchor((RectTransform)recipeList.parent, Vector2.zero, Vector2.one);
+
+            var detailArea = Panel5cFactory.MakeRect("DetailArea", content);
+            Panel5cFactory.SetAnchor(detailArea, new Vector2(0.46f, 0), new Vector2(1, 1));
+            detailArea.offsetMin = new Vector2(4, 0);
+            detailArea.offsetMax = new Vector2(0, -24);
+            Panel5cFactory.AddPanelBg(detailArea.gameObject, Panel5cFactory.SlotBg, raycast: false);
+
+            detailText = Panel5cFactory.CreateLabel(detailArea, "Detail", "Select a recipe", 11f,
+                Panel5cFactory.TextPrimary);
+            Panel5cFactory.SetAnchor(detailText.rectTransform, Vector2.zero, Vector2.one);
+            detailText.rectTransform.offsetMin = new Vector2(12, 52);
+            detailText.rectTransform.offsetMax = new Vector2(-12, -10);
+            detailText.alignment = TextAlignmentOptions.TopLeft;
+            detailText.textWrappingMode = TextWrappingModes.Normal;
+
+            craftButton = Panel5cFactory.CreateActionButton(detailArea, "CRAFT");
+            var btnRT = (RectTransform)craftButton.transform;
+            Panel5cFactory.SetAnchor(btnRT, new Vector2(0.5f, 0), new Vector2(0.5f, 0));
+            btnRT.pivot = new Vector2(0.5f, 0f);
+            btnRT.sizeDelta = new Vector2(130, 32);
+            btnRT.anchoredPosition = new Vector2(0, 10);
+            craftButton.onClick.AddListener(DoCraft);
+            craftButton.gameObject.SetActive(false);
+
+            panel.gameObject.SetActive(false);
         }
 
         private void Refresh()
@@ -48,57 +98,41 @@ namespace VoidBound.Skilling
             int xp = skills?.GetXP(currentStation.StationType) ?? 0;
             int xpNext = skills?.GetXPToNext(currentStation.StationType) ?? 100;
 
-            if (titleText != null) titleText.text = currentStation.StationId;
-            if (skillInfoText != null)
-                skillInfoText.text = $"{currentStation.StationType} Lv{level}  XP: {xp}/{xpNext}";
+            skillInfo.text = $"{currentStation.StationType}  Lv {level}    XP {xp} / {xpNext}";
 
-            ClearChildren(recipeList);
-            if (currentStation.AvailableRecipes == null) return;
+            for (int i = recipeList.childCount - 1; i >= 0; i--)
+                Destroy(recipeList.GetChild(i).gameObject);
 
-            foreach (var recipe in currentStation.AvailableRecipes)
+            if (currentStation.AvailableRecipes != null)
             {
-                if (recipe == null) continue;
-                var captured = recipe;
-                bool locked = level < recipe.requiredSkillLevel;
+                foreach (var recipe in currentStation.AvailableRecipes)
+                {
+                    if (recipe == null) continue;
+                    var captured = recipe;
+                    bool locked = level < recipe.requiredSkillLevel;
 
-                var btn = new GameObject(recipe.displayName);
-                btn.transform.SetParent(recipeList, false);
-                btn.AddComponent<LayoutElement>().preferredHeight = 36f;
-                var img = btn.AddComponent<Image>();
-                img.color = locked ? new Color(0.3f, 0.2f, 0.2f, 0.8f) : new Color(0.2f, 0.3f, 0.2f, 0.8f);
-                var b = btn.AddComponent<Button>();
-                b.interactable = !locked;
-                b.onClick.AddListener(() => SelectRecipe(captured));
-
-                var textObj = new GameObject("Text");
-                textObj.transform.SetParent(btn.transform, false);
-                var textRect = textObj.AddComponent<RectTransform>();
-                textRect.anchorMin = Vector2.zero;
-                textRect.anchorMax = Vector2.one;
-                textRect.offsetMin = new Vector2(6f, 0f);
-                textRect.offsetMax = new Vector2(-6f, 0f);
-                var t = textObj.AddComponent<Text>();
-                t.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-                t.fontSize = 13;
-                t.alignment = TextAnchor.MiddleLeft;
-                t.color = locked ? Color.gray : Color.white;
-                t.text = locked ? $"{recipe.displayName} (Lv{recipe.requiredSkillLevel})" : recipe.displayName;
+                    var row = Panel5cFactory.CreateListRow(recipeList,
+                        recipe.displayName,
+                        locked ? $"Lv {recipe.requiredSkillLevel}" : "",
+                        locked ? (Color)Panel5cFactory.TextMuted : (Color)Panel5cFactory.TextPrimary,
+                        Panel5cFactory.TextMuted,
+                        interactable: !locked);
+                    row.onClick.AddListener(() => SelectRecipe(captured));
+                }
             }
 
             selectedRecipe = null;
-            if (recipeDetailText != null) recipeDetailText.text = "Select a recipe";
-            if (craftButton != null) craftButton.gameObject.SetActive(false);
+            detailText.text = "Select a recipe";
+            craftButton.gameObject.SetActive(false);
         }
 
         private void SelectRecipe(RecipeDefinitionSO recipe)
         {
             selectedRecipe = recipe;
-            if (recipeDetailText == null) return;
 
             var matInv = currentInstigator?.GetComponent<MaterialInventory>();
-            string detail = $"{recipe.displayName}\n";
-            detail += $"Skill: {recipe.requiredSkill} Lv{recipe.requiredSkillLevel}\n";
-            detail += $"XP: +{recipe.xpReward}\n\nIngredients:\n";
+            string detail = $"<b>{recipe.displayName}</b>\n";
+            detail += $"<color=#888d84>{recipe.requiredSkill} Lv {recipe.requiredSkillLevel}   +{recipe.xpReward} XP</color>\n\nIngredients:\n";
 
             bool canCraft = true;
             if (recipe.ingredients != null)
@@ -109,19 +143,19 @@ namespace VoidBound.Skilling
                     int have = matInv?.GetCount(ing.material.itemId) ?? 0;
                     bool enough = have >= ing.quantity;
                     if (!enough) canCraft = false;
-                    detail += $"  {ing.material.displayName}: {have}/{ing.quantity}" +
-                              (enough ? " ✓" : " ✗") + "\n";
+                    string color = enough ? "#97c459" : "#e24b4a";
+                    detail += $"  <color={color}>{ing.material.displayName}  {have}/{ing.quantity}</color>\n";
                 }
             }
 
-            detail += $"\nOutput: ";
+            detail += "\nOutput: ";
             if (recipe.outputType == RecipeOutputType.Gear && recipe.outputGear != null)
                 detail += recipe.outputGear.displayName;
             else if (recipe.outputMaterial != null)
                 detail += $"{recipe.outputMaterial.displayName} x{recipe.outputQuantity}";
 
-            recipeDetailText.text = detail;
-            if (craftButton != null) craftButton.gameObject.SetActive(canCraft);
+            detailText.text = detail;
+            craftButton.gameObject.SetActive(canCraft);
         }
 
         private void DoCraft()
@@ -155,15 +189,9 @@ namespace VoidBound.Skilling
             Combat.FloatingDamageNumber.SpawnText(currentInstigator.transform.position,
                 $"Crafted: {selectedRecipe.displayName}", new Color(0.3f, 0.8f, 1f));
 
+            var kept = selectedRecipe;
             Refresh();
-            if (selectedRecipe != null) SelectRecipe(selectedRecipe);
-        }
-
-        private void ClearChildren(Transform parent)
-        {
-            if (parent == null) return;
-            for (int i = parent.childCount - 1; i >= 0; i--)
-                Destroy(parent.GetChild(i).gameObject);
+            SelectRecipe(kept);
         }
     }
 }

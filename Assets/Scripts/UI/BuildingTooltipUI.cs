@@ -83,8 +83,8 @@ namespace VoidBound.UI
             panel.anchorMin = panel.anchorMax = new Vector2(0.5f, 0.5f);
             panel.pivot = new Vector2(0f, 1f); // hangs below-right of the cursor
             panel.sizeDelta = new Vector2(230f, 86f);
-            Panel5cFactory.AddImage(panel.gameObject, Panel5cFactory.PanelBg, raycast: false);
-            Panel5cFactory.AddOutline(panel.gameObject, Panel5cFactory.PanelBorder);
+            Panel5cFactory.AddPanelBg(panel.gameObject, Panel5cFactory.PanelBg, raycast: false);
+            Panel5cFactory.AddDropShadow(panel.gameObject);
 
             titleTMP = MakeText("Title", 12f, Panel5cFactory.TextPrimary, -8f, 18f);
             titleTMP.fontStyle = FontStyles.Bold;

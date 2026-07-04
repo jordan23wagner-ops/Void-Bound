@@ -216,6 +216,11 @@ namespace VoidBound.UI
             var img = go.AddComponent<Image>();
             img.color = SlotBg;
             img.raycastTarget = true;
+            if (Panel5cFactory.ButtonSprite != null)
+            {
+                img.sprite = Panel5cFactory.ButtonSprite;
+                img.type = Image.Type.Sliced;
+            }
             var outline = go.AddComponent<Outline>();
             outline.effectColor = borderColor;
             outline.effectDistance = new Vector2(BorderWidth, -BorderWidth);

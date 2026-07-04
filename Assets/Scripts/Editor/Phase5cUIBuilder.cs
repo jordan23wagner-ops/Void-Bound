@@ -8,6 +8,8 @@ using UnityEngine.SceneManagement;
 // ============================================================
 // Phase 5c UI Builder — HARDCODED from approved mockup.
 // DO NOT modify sizes, colors, or layout without Jordon's approval.
+// (Approval granted 2026-07-04 for the Polish Pass 2 restyle: rounded
+// 9-slice sprites, drop shadows, gold accents, merged PlayerInfoBar.)
 // Run via: VoidBound > Build Phase 5c UI
 // ============================================================
 namespace VoidBound.Editor
@@ -165,23 +167,29 @@ namespace VoidBound.Editor
         }
 
         // ═══════════════════════════════════════════════════════════
-        // PLAYER INFO BAR (top-left: portrait, name, HP bar)
+        // PLAYER INFO BAR — Polish pass 2: single rounded card holding
+        // portrait, name, Level, HP bar, XP bar, stats line, and currency.
+        // Absorbs and deletes the old illegible Phase 3b StatsPanel.
         // ═══════════════════════════════════════════════════════════
         static void BuildPlayerInfoBar(GameObject hudCanvas)
         {
+            DestroyIfExists(hudCanvas, "PlayerInfoBar"); // idempotent rebuild
+
             var bar = MakeRect("PlayerInfoBar", hudCanvas.transform);
             SetAnchor(bar, new Vector2(0, 1), new Vector2(0, 1));
             bar.pivot = new Vector2(0, 1);
             bar.anchoredPosition = new Vector2(12, -12);
-            bar.sizeDelta = new Vector2(230, 54);
+            bar.sizeDelta = new Vector2(252, 112);
+            AddPanelImage(bar.gameObject, C_PANEL_BG);
+            AddShadow(bar.gameObject);
 
-            // Portrait (round placeholder)
+            // Portrait (round)
             var portrait = MakeRect("Portrait", bar);
-            SetAnchor(portrait, new Vector2(0, 0.5f), new Vector2(0, 0.5f));
-            portrait.pivot = new Vector2(0, 0.5f);
-            portrait.anchoredPosition = new Vector2(2, 0);
-            portrait.sizeDelta = new Vector2(42, 42);
-            var pImg = AddImage(portrait.gameObject, C_ICON_EMPTY);
+            SetAnchor(portrait, new Vector2(0, 1), new Vector2(0, 1));
+            portrait.pivot = new Vector2(0, 1);
+            portrait.anchoredPosition = new Vector2(10, -10);
+            portrait.sizeDelta = new Vector2(44, 44);
+            var pImg = AddImage(portrait.gameObject, C_GOLD);
             pImg.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/Knob.psd");
 
             var pLetter = MakeTMP("Letter", portrait);
@@ -192,12 +200,12 @@ namespace VoidBound.Editor
             pLetter.color = C_HEADER_BG;
             pLetter.alignment = TextAlignmentOptions.Center;
 
-            // Name label
+            // Name + Level row (right of portrait)
             var nameTMP = MakeTMP("Name", bar);
             SetAnchor(nameTMP.rectTransform, new Vector2(0, 1), new Vector2(0, 1));
             nameTMP.rectTransform.pivot = new Vector2(0, 1);
-            nameTMP.rectTransform.anchoredPosition = new Vector2(52, -4);
-            nameTMP.rectTransform.sizeDelta = new Vector2(170, 16);
+            nameTMP.rectTransform.anchoredPosition = new Vector2(62, -10);
+            nameTMP.rectTransform.sizeDelta = new Vector2(120, 16);
             nameTMP.text = "PLAYER";
             nameTMP.fontSize = 12f;
             nameTMP.fontStyle = FontStyles.Bold;
@@ -205,63 +213,99 @@ namespace VoidBound.Editor
             nameTMP.characterSpacing = 3f;
             nameTMP.alignment = TextAlignmentOptions.MidlineLeft;
 
-            // HP bar (green fill + current/max text)
+            var levelText = MakeLegacyText("LevelText", bar, "Lv 1", 12, TextAnchor.MiddleRight);
+            var lvRT = (RectTransform)levelText.transform;
+            SetAnchor(lvRT, new Vector2(1, 1), new Vector2(1, 1));
+            lvRT.pivot = new Vector2(1, 1);
+            lvRT.anchoredPosition = new Vector2(-12, -10);
+            lvRT.sizeDelta = new Vector2(56, 16);
+            levelText.fontStyle = FontStyle.Bold;
+            levelText.color = C_GOLD;
+
+            // HP bar (rounded, green fill, centered text)
             var hpBar = MakeRect("HPBar", bar);
-            SetAnchor(hpBar, new Vector2(0, 0), new Vector2(0, 0));
-            hpBar.pivot = new Vector2(0, 0);
-            hpBar.anchoredPosition = new Vector2(52, 6);
-            hpBar.sizeDelta = new Vector2(170, 16);
-            AddImage(hpBar.gameObject, C_SLOT_BG);
-            AddOutline(hpBar.gameObject, C_BORDER_PANEL, 1f);
+            SetAnchor(hpBar, new Vector2(0, 1), new Vector2(0, 1));
+            hpBar.pivot = new Vector2(0, 1);
+            hpBar.anchoredPosition = new Vector2(62, -30);
+            hpBar.sizeDelta = new Vector2(178, 16);
+            AddButtonImage(hpBar.gameObject, C_SLOT_BG);
 
             var fill = MakeRect("Fill", hpBar);
             SetFullStretch(fill);
-            var fillImg = AddImage(fill.gameObject, C_DEX); // palette green
+            var fillImg = AddButtonImage(fill.gameObject, C_DEX); // palette green
             fillImg.type = Image.Type.Filled;
             fillImg.fillMethod = Image.FillMethod.Horizontal;
             fillImg.fillAmount = 1f;
 
-            // Legacy Text so HUDManager's existing hpText binding keeps working
-            var hpTextGO = new GameObject("HPText", typeof(RectTransform), typeof(UnityEngine.UI.Text));
-            hpTextGO.transform.SetParent(hpBar, false);
-            var hpTextRT = hpTextGO.GetComponent<RectTransform>();
-            SetFullStretch(hpTextRT);
-            var hpText = hpTextGO.GetComponent<UnityEngine.UI.Text>();
-            hpText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            hpText.fontSize = 10;
-            hpText.alignment = TextAnchor.MiddleCenter;
-            hpText.color = Color.white;
-            hpText.text = "100/100";
+            var hpText = MakeLegacyText("HPText", hpBar, "100/100", 10, TextAnchor.MiddleCenter);
+            SetFullStretch((RectTransform)hpText.transform);
 
-            // Migrate off the old Phase 3b flat HP bar inside StatsPanel:
-            // delete it and repoint HUDManager's serialized refs at the new bar.
-            var hudManager = hudCanvas.GetComponent<VoidBound.UI.HUDManager>();
+            // XP bar (thin, blue fill)
+            var xpBar = MakeRect("XPBar", bar);
+            SetAnchor(xpBar, new Vector2(0, 1), new Vector2(0, 1));
+            xpBar.pivot = new Vector2(0, 1);
+            xpBar.anchoredPosition = new Vector2(62, -49);
+            xpBar.sizeDelta = new Vector2(178, 6);
+            AddButtonImage(xpBar.gameObject, C_SLOT_BG);
+
+            var xpFillRT = MakeRect("Fill", xpBar);
+            SetFullStretch(xpFillRT);
+            var xpFillImg = AddButtonImage(xpFillRT.gameObject, C_INT); // palette blue
+            xpFillImg.type = Image.Type.Filled;
+            xpFillImg.fillMethod = Image.FillMethod.Horizontal;
+            xpFillImg.fillAmount = 0f;
+
+            // Stats line (rich text VIG/STR/DEX/INT over two lines, colored by
+            // HUDManager — needs ~30px or the second line clips)
+            var statsText = MakeLegacyText("StatsText", bar, "", 10, TextAnchor.UpperLeft);
+            var stRT = (RectTransform)statsText.transform;
+            SetAnchor(stRT, new Vector2(0, 0), new Vector2(1, 0));
+            stRT.pivot = new Vector2(0.5f, 0);
+            stRT.offsetMin = new Vector2(12, 22);
+            stRT.offsetMax = new Vector2(-12, 22 + 30);
+
+            // Currency line
+            var currencyText = MakeLegacyText("CurrencyText", bar, "Gold: 0  Shards: 0", 10, TextAnchor.MiddleLeft);
+            var cuRT = (RectTransform)currencyText.transform;
+            SetAnchor(cuRT, new Vector2(0, 0), new Vector2(1, 0));
+            cuRT.pivot = new Vector2(0.5f, 0);
+            cuRT.offsetMin = new Vector2(12, 8);
+            cuRT.offsetMax = new Vector2(-12, 8 + 14);
+            currencyText.color = C_GOLD;
+
+            // Retire the old Phase 3b StatsPanel entirely — everything it
+            // showed now lives in this card.
             var statsPanel = hudCanvas.transform.Find("StatsPanel");
-            bool migrated = false;
             if (statsPanel != null)
-            {
-                var oldHpBar = FindDeep(statsPanel, "HPBar");
-                var oldHpText = FindDeep(statsPanel, "HPText");
-                if (oldHpBar != null) { Object.DestroyImmediate(oldHpBar.gameObject); migrated = true; }
-                if (oldHpText != null && oldHpText.gameObject != null)
-                    Object.DestroyImmediate(oldHpText.gameObject);
+                Object.DestroyImmediate(statsPanel.gameObject);
 
-                // Make room for the info bar (only on first migration)
-                if (migrated)
-                {
-                    var spRect = statsPanel.GetComponent<RectTransform>();
-                    if (spRect != null)
-                        spRect.anchoredPosition += new Vector2(0, -60);
-                }
-            }
-
+            var hudManager = hudCanvas.GetComponent<VoidBound.UI.HUDManager>();
             if (hudManager != null)
             {
                 var so = new SerializedObject(hudManager);
                 so.FindProperty("hpFill").objectReferenceValue = fillImg;
                 so.FindProperty("hpText").objectReferenceValue = hpText;
+                so.FindProperty("levelText").objectReferenceValue = levelText;
+                so.FindProperty("xpFill").objectReferenceValue = xpFillImg;
+                so.FindProperty("statsText").objectReferenceValue = statsText;
+                so.FindProperty("currencyText").objectReferenceValue = currencyText;
                 so.ApplyModifiedPropertiesWithoutUndo();
             }
+        }
+
+        static UnityEngine.UI.Text MakeLegacyText(string name, RectTransform parent, string text,
+                                                  int size, TextAnchor anchor)
+        {
+            var go = new GameObject(name, typeof(RectTransform), typeof(UnityEngine.UI.Text));
+            go.transform.SetParent(parent, false);
+            var t = go.GetComponent<UnityEngine.UI.Text>();
+            t.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            t.fontSize = size;
+            t.alignment = anchor;
+            t.color = Color.white;
+            t.text = text;
+            t.raycastTarget = false;
+            return t;
         }
 
         static Transform FindDeep(Transform root, string name)
@@ -280,11 +324,11 @@ namespace VoidBound.Editor
         // ═══════════════════════════════════════════════════════════
         static RectTransform BuildEquipmentPanel(RectTransform parent)
         {
-            // Panel background
+            // Panel background (rounded + shadow, Polish pass 2)
             var panel = MakeRect("EquipmentPanel", parent);
             panel.sizeDelta = new Vector2(EQUIP_W, 0); // height auto from children
-            AddImage(panel.gameObject, C_PANEL_BG);
-            AddOutline(panel.gameObject, C_BORDER_PANEL, BORDER_W);
+            AddPanelImage(panel.gameObject, C_PANEL_BG);
+            AddShadow(panel.gameObject);
 
             // ── Header ────────────────────────────────────────────
             var header = MakeRect("Header", panel);
@@ -292,8 +336,7 @@ namespace VoidBound.Editor
             header.sizeDelta = new Vector2(0, HEADER_H);
             header.anchoredPosition = Vector2.zero;
             header.pivot = new Vector2(0.5f, 1f);
-            AddImage(header.gameObject, C_HEADER_BG);
-            AddBottomBorder(header.gameObject, C_BORDER_PANEL);
+            AddAccentStrip(header.gameObject);
 
             var titleText = MakeTMP("Title", header);
             SetAnchor(titleText.rectTransform, new Vector2(0,0), new Vector2(1,1));
@@ -301,19 +344,18 @@ namespace VoidBound.Editor
             titleText.rectTransform.offsetMax = new Vector2(-50, 0);
             titleText.text = "EQUIPMENT";
             titleText.fontSize = FS_HEADER;
-            titleText.color = C_TEXT_PRIMARY;
-            titleText.fontStyle = FontStyles.Normal;
+            titleText.color = C_GOLD;
+            titleText.fontStyle = FontStyles.Bold;
             titleText.alignment = TextAlignmentOptions.MidlineLeft;
             titleText.characterSpacing = 4f;
 
             // X button
             var xBtn = MakeRect("CloseBtn", header);
             SetAnchor(xBtn, new Vector2(1,0.5f), new Vector2(1,0.5f));
-            xBtn.sizeDelta = new Vector2(22, 22);
-            xBtn.anchoredPosition = new Vector2(-14, 0);
+            xBtn.sizeDelta = new Vector2(24, 24);
+            xBtn.anchoredPosition = new Vector2(-16, 0);
             xBtn.pivot = new Vector2(0.5f, 0.5f);
-            AddImage(xBtn.gameObject, C_X_BG);
-            AddRoundedCorner(xBtn.gameObject, 4f);
+            AddButtonImage(xBtn.gameObject, C_X_BG);
             var xLabel = MakeTMP("X", xBtn);
             SetFullStretch(xLabel.rectTransform);
             xLabel.text = "X"; // ASCII per standing icon-rendering rule (TMP default font lacks U+2715)
@@ -404,7 +446,7 @@ namespace VoidBound.Editor
         {
             var slot = MakeRect("Slot_" + label, parent);
             slot.sizeDelta = new Vector2(SLOT_SIZE, SLOT_SIZE);
-            AddImage(slot.gameObject, C_SLOT_BG);
+            AddButtonImage(slot.gameObject, C_SLOT_BG);
             AddOutline(slot.gameObject, borderColor, BORDER_W);
 
             // Icon label (abbreviated slot name as stand-in)
@@ -459,8 +501,7 @@ namespace VoidBound.Editor
             card.pivot = new Vector2(0.5f, 1f);
             card.sizeDelta = new Vector2(0, 150f);
             card.anchoredPosition = new Vector2(0, -26f);
-            AddImage(card.gameObject, C_INNER_CARD);
-            AddRoundedCorner(card.gameObject, 4f);
+            AddButtonImage(card.gameObject, C_INNER_CARD);
 
             var cardLayout = card.gameObject.AddComponent<VerticalLayoutGroup>();
             cardLayout.padding = new RectOffset(8, 8, 8, 8);
@@ -492,8 +533,8 @@ namespace VoidBound.Editor
         static RectTransform BuildInventoryPanel(RectTransform parent)
         {
             var panel = MakeRect("InventoryPanel", parent);
-            AddImage(panel.gameObject, C_PANEL_BG);
-            AddOutline(panel.gameObject, C_BORDER_PANEL, BORDER_W);
+            AddPanelImage(panel.gameObject, C_PANEL_BG);
+            AddShadow(panel.gameObject);
 
             // ── Header ────────────────────────────────────────────
             var header = MakeRect("Header", panel);
@@ -501,8 +542,7 @@ namespace VoidBound.Editor
             header.sizeDelta = new Vector2(0, HEADER_H);
             header.anchoredPosition = Vector2.zero;
             header.pivot = new Vector2(0.5f, 1f);
-            AddImage(header.gameObject, C_HEADER_BG);
-            AddBottomBorder(header.gameObject, C_BORDER_PANEL);
+            AddAccentStrip(header.gameObject);
 
             var titleTMP = MakeTMP("Title", header);
             SetAnchor(titleTMP.rectTransform, new Vector2(0,0), new Vector2(1,1));
@@ -510,7 +550,8 @@ namespace VoidBound.Editor
             titleTMP.rectTransform.offsetMax = new Vector2(-80, 0);
             titleTMP.text = "INVENTORY";
             titleTMP.fontSize = FS_HEADER;
-            titleTMP.color = C_TEXT_PRIMARY;
+            titleTMP.color = C_GOLD;
+            titleTMP.fontStyle = FontStyles.Bold;
             titleTMP.alignment = TextAlignmentOptions.MidlineLeft;
             titleTMP.characterSpacing = 4f;
 
@@ -526,10 +567,10 @@ namespace VoidBound.Editor
 
             var xBtn = MakeRect("CloseBtn", header);
             SetAnchor(xBtn, new Vector2(1,0.5f), new Vector2(1,0.5f));
-            xBtn.sizeDelta = new Vector2(22, 22);
-            xBtn.anchoredPosition = new Vector2(-14, 0);
+            xBtn.sizeDelta = new Vector2(24, 24);
+            xBtn.anchoredPosition = new Vector2(-16, 0);
             xBtn.pivot = new Vector2(0.5f, 0.5f);
-            AddImage(xBtn.gameObject, C_X_BG);
+            AddButtonImage(xBtn.gameObject, C_X_BG);
             var xLabel = MakeTMP("X", xBtn);
             SetFullStretch(xLabel.rectTransform);
             xLabel.text = "X"; // ASCII per standing icon-rendering rule (TMP default font lacks U+2715)
@@ -618,7 +659,7 @@ namespace VoidBound.Editor
         static void BuildInvSlot(RectTransform parent, string iconKey, Color32 borderColor, string badge, bool filled)
         {
             var slot = MakeRect("InvSlot", parent);
-            AddImage(slot.gameObject, C_SLOT_BG);
+            AddButtonImage(slot.gameObject, C_SLOT_BG);
             AddOutline(slot.gameObject, borderColor, BORDER_W);
 
             if (filled && iconKey.Length > 0)
@@ -677,6 +718,46 @@ namespace VoidBound.Editor
             "ti-flask" => "F",
             _ => "-"
         };
+
+        // ── Polish pass 2: rounded 9-slice sprites (UISpriteGenerator) ──
+        static Sprite PanelSprite =>
+            AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Resources/UI/panel_rounded.png");
+        static Sprite ButtonSprite =>
+            AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Resources/UI/button_rounded.png");
+
+        static Image AddPanelImage(GameObject go, Color32 color)
+        {
+            var img = AddImage(go, color);
+            if (PanelSprite != null) { img.sprite = PanelSprite; img.type = Image.Type.Sliced; }
+            return img;
+        }
+
+        static Image AddButtonImage(GameObject go, Color32 color)
+        {
+            var img = AddImage(go, color);
+            if (ButtonSprite != null) { img.sprite = ButtonSprite; img.type = Image.Type.Sliced; }
+            return img;
+        }
+
+        static void AddShadow(GameObject go)
+        {
+            var s = go.AddComponent<Shadow>();
+            s.effectColor = new Color(0f, 0f, 0f, 0.55f);
+            s.effectDistance = new Vector2(4f, -4f);
+        }
+
+        // Gold accent strip along the bottom edge of a header area
+        static void AddAccentStrip(GameObject headerGO)
+        {
+            var strip = MakeRect("Accent", headerGO.transform);
+            SetAnchor(strip, new Vector2(0, 0), new Vector2(1, 0));
+            strip.pivot = new Vector2(0.5f, 0f);
+            strip.offsetMin = new Vector2(14, 0);
+            strip.offsetMax = new Vector2(-14, 0);
+            strip.sizeDelta = new Vector2(strip.sizeDelta.x, 2f);
+            var img = AddButtonImage(strip.gameObject, C_GOLD);
+            img.color = new Color32(C_GOLD.r, C_GOLD.g, C_GOLD.b, 160);
+        }
 
         static RectTransform MakeRect(string name, Transform parent)
         {

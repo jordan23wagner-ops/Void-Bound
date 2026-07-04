@@ -45,9 +45,12 @@ namespace VoidBound.UI
 
             var bg = go.AddComponent<Image>();
             bg.color = BgColor;
-            var outline = go.AddComponent<Outline>();
-            outline.effectColor = BorderColor;
-            outline.effectDistance = new Vector2(2f, -2f);
+            if (Panel5cFactory.PanelSprite != null)
+            {
+                bg.sprite = Panel5cFactory.PanelSprite;
+                bg.type = Image.Type.Sliced;
+            }
+            Panel5cFactory.AddDropShadow(go);
 
             var view = go.AddComponent<ItemDetailView5c>();
             view.BuildContent(rt);
