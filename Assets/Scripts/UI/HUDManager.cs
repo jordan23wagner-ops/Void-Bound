@@ -36,6 +36,7 @@ namespace VoidBound.UI
 
         private EquipmentPanelUI equipmentUI;
         private BackpackPanelUI backpackUI;
+        private Phase5cUIRoot uiRoot5c;
 
         private void Start()
         {
@@ -84,11 +85,23 @@ namespace VoidBound.UI
 
         public void ToggleEquipment()
         {
+            if (uiRoot5c != null)
+            {
+                if (devToolsPanel != null) devToolsPanel.SetActive(false);
+                uiRoot5c.ToggleEquipment();
+                return;
+            }
             ToggleInventoryGroup();
         }
 
         public void ToggleBackpack()
         {
+            if (uiRoot5c != null)
+            {
+                if (devToolsPanel != null) devToolsPanel.SetActive(false);
+                uiRoot5c.ToggleInventory();
+                return;
+            }
             ToggleInventoryGroup();
         }
 
@@ -125,6 +138,7 @@ namespace VoidBound.UI
             if (equipmentPanel != null) equipmentPanel.SetActive(false);
             if (backpackPanel != null) backpackPanel.SetActive(false);
             if (devToolsPanel != null) devToolsPanel.SetActive(false);
+            if (uiRoot5c != null) uiRoot5c.CloseAll();
         }
 
         private void OnHealthChanged(int current, int max)
@@ -159,6 +173,14 @@ namespace VoidBound.UI
         {
             var canvas = GetComponent<Canvas>();
             if (canvas == null) return;
+
+            if (uiRoot5c == null)
+            {
+                var root5c = FindInChildren(transform, "UIRoot5c");
+                if (root5c != null) uiRoot5c = root5c.GetComponent<Phase5cUIRoot>();
+                if (uiRoot5c == null)
+                    Debug.LogWarning("[HUDManager] UIRoot5c/Phase5cUIRoot not found — falling back to legacy panels.");
+            }
 
             if (statsText == null) statsText = FindTextInChildren(transform, "StatsText");
             if (levelText == null) levelText = FindTextInChildren(transform, "LevelText");

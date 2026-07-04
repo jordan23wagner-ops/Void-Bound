@@ -72,6 +72,15 @@ namespace VoidBound.Editor
         const float FS_ICON    = 22f;
         const float FS_CURRENCY= 13f;
 
+        // Batch-mode entry point: opens Homestead, builds, saves.
+        // Unity.exe -batchmode -projectPath ... -executeMethod VoidBound.Editor.Phase5cUIBuilder.BuildFromBatch -quit
+        public static void BuildFromBatch()
+        {
+            EditorSceneManager.OpenScene("Assets/Scenes/Homestead.unity");
+            BuildUI();
+            EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
+        }
+
         [MenuItem("VoidBound/Build Phase 5c UI")]
         public static void BuildUI()
         {
@@ -107,6 +116,10 @@ namespace VoidBound.Editor
             DestroyIfExists(hudCanvasGO, "EquipmentPanel");
             DestroyIfExists(hudCanvasGO, "InventoryPanel");
             DestroyIfExists(hudCanvasGO, "UIRoot5c");
+            // Retire the Phase 3b panels (replaced by this UI; DevToolsPanel stays)
+            DestroyIfExists(hudCanvasGO, "InventoryPanelGroup");
+            DestroyIfExists(hudCanvasGO, "BackpackPanel");
+            DestroyIfExists(hudCanvasGO, "PlayerInfoBar");
 
             // ── Root container (centers both panels) ─────────────
             var root = MakeRect("UIRoot5c", hudCanvasGO.transform);
@@ -118,23 +131,148 @@ namespace VoidBound.Editor
             var equipPanel = BuildEquipmentPanel(root);
             var invPanel   = BuildInventoryPanel(root);
 
-            // Position side by side
+            // Position side by side (SetAnchor zeroes the offsets, so restore
+            // each panel's size after re-anchoring)
+            var equipSize = equipPanel.sizeDelta;
             SetAnchor(equipPanel, new Vector2(0, 0.5f), new Vector2(0, 0.5f));
-            equipPanel.anchoredPosition = new Vector2(0, 0);
             equipPanel.pivot = new Vector2(0, 0.5f);
+            equipPanel.sizeDelta = equipSize;
+            equipPanel.anchoredPosition = new Vector2(0, 0);
 
+            var invSize = invPanel.sizeDelta;
             SetAnchor(invPanel, new Vector2(0, 0.5f), new Vector2(0, 0.5f));
-            invPanel.anchoredPosition = new Vector2(EQUIP_W + PANEL_GAP, 0);
             invPanel.pivot = new Vector2(0, 0.5f);
+            invPanel.sizeDelta = invSize;
+            invPanel.anchoredPosition = new Vector2(EQUIP_W + PANEL_GAP, 0);
+
+            // ── Attach runtime controllers (Phase 5c data binding) ─
+            var rootCtrl = root.gameObject.AddComponent<VoidBound.UI.Phase5cUIRoot>();
+            var rootSO = new SerializedObject(rootCtrl);
+            rootSO.FindProperty("equipmentPanel").objectReferenceValue = equipPanel.gameObject;
+            rootSO.FindProperty("inventoryPanel").objectReferenceValue = invPanel.gameObject;
+            rootSO.ApplyModifiedPropertiesWithoutUndo();
+            equipPanel.gameObject.AddComponent<VoidBound.UI.EquipmentPanel5c>();
+            invPanel.gameObject.AddComponent<VoidBound.UI.InventoryPanel5c>();
+
+            // ── Player info bar (portrait + name + HP) ────────────
+            BuildPlayerInfoBar(hudCanvasGO);
 
             // ── Both panels start hidden ──────────────────────────
             root.gameObject.SetActive(false);
 
-            // ── Wire HUD buttons ──────────────────────────────────
-            WireHUDButtons(hudCanvasGO, root.gameObject);
-
             EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
-            Debug.Log("[Phase5c] UI built. Save the scene (Ctrl+S).");
+            Debug.Log("[Phase5c] UI built with runtime controllers. Save the scene (Ctrl+S).");
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // PLAYER INFO BAR (top-left: portrait, name, HP bar)
+        // ═══════════════════════════════════════════════════════════
+        static void BuildPlayerInfoBar(GameObject hudCanvas)
+        {
+            var bar = MakeRect("PlayerInfoBar", hudCanvas.transform);
+            SetAnchor(bar, new Vector2(0, 1), new Vector2(0, 1));
+            bar.pivot = new Vector2(0, 1);
+            bar.anchoredPosition = new Vector2(12, -12);
+            bar.sizeDelta = new Vector2(230, 54);
+
+            // Portrait (round placeholder)
+            var portrait = MakeRect("Portrait", bar);
+            SetAnchor(portrait, new Vector2(0, 0.5f), new Vector2(0, 0.5f));
+            portrait.pivot = new Vector2(0, 0.5f);
+            portrait.anchoredPosition = new Vector2(2, 0);
+            portrait.sizeDelta = new Vector2(42, 42);
+            var pImg = AddImage(portrait.gameObject, C_ICON_EMPTY);
+            pImg.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/Knob.psd");
+
+            var pLetter = MakeTMP("Letter", portrait);
+            SetFullStretch(pLetter.rectTransform);
+            pLetter.text = "P";
+            pLetter.fontSize = 18f;
+            pLetter.fontStyle = FontStyles.Bold;
+            pLetter.color = C_HEADER_BG;
+            pLetter.alignment = TextAlignmentOptions.Center;
+
+            // Name label
+            var nameTMP = MakeTMP("Name", bar);
+            SetAnchor(nameTMP.rectTransform, new Vector2(0, 1), new Vector2(0, 1));
+            nameTMP.rectTransform.pivot = new Vector2(0, 1);
+            nameTMP.rectTransform.anchoredPosition = new Vector2(52, -4);
+            nameTMP.rectTransform.sizeDelta = new Vector2(170, 16);
+            nameTMP.text = "PLAYER";
+            nameTMP.fontSize = 12f;
+            nameTMP.fontStyle = FontStyles.Bold;
+            nameTMP.color = C_TEXT_PRIMARY;
+            nameTMP.characterSpacing = 3f;
+            nameTMP.alignment = TextAlignmentOptions.MidlineLeft;
+
+            // HP bar (green fill + current/max text)
+            var hpBar = MakeRect("HPBar", bar);
+            SetAnchor(hpBar, new Vector2(0, 0), new Vector2(0, 0));
+            hpBar.pivot = new Vector2(0, 0);
+            hpBar.anchoredPosition = new Vector2(52, 6);
+            hpBar.sizeDelta = new Vector2(170, 16);
+            AddImage(hpBar.gameObject, C_SLOT_BG);
+            AddOutline(hpBar.gameObject, C_BORDER_PANEL, 1f);
+
+            var fill = MakeRect("Fill", hpBar);
+            SetFullStretch(fill);
+            var fillImg = AddImage(fill.gameObject, C_DEX); // palette green
+            fillImg.type = Image.Type.Filled;
+            fillImg.fillMethod = Image.FillMethod.Horizontal;
+            fillImg.fillAmount = 1f;
+
+            // Legacy Text so HUDManager's existing hpText binding keeps working
+            var hpTextGO = new GameObject("HPText", typeof(RectTransform), typeof(UnityEngine.UI.Text));
+            hpTextGO.transform.SetParent(hpBar, false);
+            var hpTextRT = hpTextGO.GetComponent<RectTransform>();
+            SetFullStretch(hpTextRT);
+            var hpText = hpTextGO.GetComponent<UnityEngine.UI.Text>();
+            hpText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            hpText.fontSize = 10;
+            hpText.alignment = TextAnchor.MiddleCenter;
+            hpText.color = Color.white;
+            hpText.text = "100/100";
+
+            // Migrate off the old Phase 3b flat HP bar inside StatsPanel:
+            // delete it and repoint HUDManager's serialized refs at the new bar.
+            var hudManager = hudCanvas.GetComponent<VoidBound.UI.HUDManager>();
+            var statsPanel = hudCanvas.transform.Find("StatsPanel");
+            bool migrated = false;
+            if (statsPanel != null)
+            {
+                var oldHpBar = FindDeep(statsPanel, "HPBar");
+                var oldHpText = FindDeep(statsPanel, "HPText");
+                if (oldHpBar != null) { Object.DestroyImmediate(oldHpBar.gameObject); migrated = true; }
+                if (oldHpText != null && oldHpText.gameObject != null)
+                    Object.DestroyImmediate(oldHpText.gameObject);
+
+                // Make room for the info bar (only on first migration)
+                if (migrated)
+                {
+                    var spRect = statsPanel.GetComponent<RectTransform>();
+                    if (spRect != null)
+                        spRect.anchoredPosition += new Vector2(0, -60);
+                }
+            }
+
+            if (hudManager != null)
+            {
+                var so = new SerializedObject(hudManager);
+                so.FindProperty("hpFill").objectReferenceValue = fillImg;
+                so.FindProperty("hpText").objectReferenceValue = hpText;
+                so.ApplyModifiedPropertiesWithoutUndo();
+            }
+        }
+
+        static Transform FindDeep(Transform root, string name)
+        {
+            foreach (Transform child in root)
+            {
+                if (child.name == name) return child;
+                var found = FindDeep(child, name);
+                if (found != null) return found;
+            }
+            return null;
         }
 
         // ═══════════════════════════════════════════════════════════
@@ -178,7 +316,7 @@ namespace VoidBound.Editor
             AddRoundedCorner(xBtn.gameObject, 4f);
             var xLabel = MakeTMP("X", xBtn);
             SetFullStretch(xLabel.rectTransform);
-            xLabel.text = "✕";
+            xLabel.text = "X"; // ASCII per standing icon-rendering rule (TMP default font lacks U+2715)
             xLabel.fontSize = 12f;
             xLabel.color = C_X_ICON;
             xLabel.alignment = TextAlignmentOptions.Center;
@@ -300,36 +438,37 @@ namespace VoidBound.Editor
 
         static void BuildStatCenter(RectTransform parent)
         {
-            var vLayout = parent.gameObject.AddComponent<VerticalLayoutGroup>();
-            vLayout.spacing = 4f;
-            vLayout.childForceExpandWidth = true;
-            vLayout.childForceExpandHeight = false;
-            vLayout.childAlignment = TextAnchor.UpperCenter;
-            vLayout.padding = new RectOffset(4, 4, 0, 0);
+            // Fixed manual layout: a ContentSizeFitter nested inside a parent
+            // LayoutGroup is unsupported by uGUI and mis-sizes the card.
 
-            // Level header
+            // Level header (fixed at top)
             var levelTMP = MakeTMP("Level", parent);
+            SetAnchor(levelTMP.rectTransform, new Vector2(0, 1), new Vector2(1, 1));
+            levelTMP.rectTransform.pivot = new Vector2(0.5f, 1f);
+            levelTMP.rectTransform.sizeDelta = new Vector2(0, 22f);
+            levelTMP.rectTransform.anchoredPosition = Vector2.zero;
             levelTMP.text = "Level 1";
             levelTMP.fontSize = FS_LEVEL;
             levelTMP.color = C_TEXT_PRIMARY;
             levelTMP.fontStyle = FontStyles.Bold;
             levelTMP.alignment = TextAlignmentOptions.Center;
-            AddLayoutElement(levelTMP.gameObject, -1, 22f);
 
-            // Inner card bg
+            // Inner card bg (fixed height, below the level header)
             var card = MakeRect("StatCard", parent);
+            SetAnchor(card, new Vector2(0, 1), new Vector2(1, 1));
+            card.pivot = new Vector2(0.5f, 1f);
+            card.sizeDelta = new Vector2(0, 150f);
+            card.anchoredPosition = new Vector2(0, -26f);
             AddImage(card.gameObject, C_INNER_CARD);
             AddRoundedCorner(card.gameObject, 4f);
-            AddLayoutElement(card.gameObject, -1, -1);
 
             var cardLayout = card.gameObject.AddComponent<VerticalLayoutGroup>();
             cardLayout.padding = new RectOffset(8, 8, 8, 8);
             cardLayout.spacing = 4f;
             cardLayout.childForceExpandWidth = true;
             cardLayout.childForceExpandHeight = false;
-
-            var cardFitter = card.gameObject.AddComponent<ContentSizeFitter>();
-            cardFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            cardLayout.childControlWidth = true;
+            cardLayout.childControlHeight = true;
 
             // Damage / Defense rows
             AddStatRow(card, "Damage",  "10", C_TEXT_MUTED, C_TEXT_PRIMARY, FS_BODY);
@@ -393,16 +532,32 @@ namespace VoidBound.Editor
             AddImage(xBtn.gameObject, C_X_BG);
             var xLabel = MakeTMP("X", xBtn);
             SetFullStretch(xLabel.rectTransform);
-            xLabel.text = "✕";
+            xLabel.text = "X"; // ASCII per standing icon-rendering rule (TMP default font lacks U+2715)
             xLabel.fontSize = 12f;
             xLabel.color = C_X_ICON;
             xLabel.alignment = TextAlignmentOptions.Center;
 
-            // ── Grid (4 columns) ──────────────────────────────────
-            var grid = MakeRect("Grid", panel);
-            SetAnchor(grid, new Vector2(0,0), new Vector2(1,1));
-            grid.offsetMin = new Vector2(PANEL_PAD, FOOTER_H + PANEL_PAD * 0.5f);
-            grid.offsetMax = new Vector2(-PANEL_PAD, -HEADER_H - PANEL_PAD * 0.5f);
+            // ── Grid (4 columns, scrollable viewport) ─────────────
+            var viewport = MakeRect("GridViewport", panel);
+            SetAnchor(viewport, new Vector2(0,0), new Vector2(1,1));
+            viewport.offsetMin = new Vector2(PANEL_PAD, FOOTER_H + PANEL_PAD * 0.5f);
+            viewport.offsetMax = new Vector2(-PANEL_PAD, -HEADER_H - PANEL_PAD * 0.5f);
+            viewport.gameObject.AddComponent<RectMask2D>();
+
+            var grid = MakeRect("Grid", viewport);
+            SetAnchor(grid, new Vector2(0,1), new Vector2(1,1));
+            grid.pivot = new Vector2(0.5f, 1f);
+            grid.anchoredPosition = Vector2.zero;
+
+            var gridFitter = grid.gameObject.AddComponent<ContentSizeFitter>();
+            gridFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            var scroll = viewport.gameObject.AddComponent<ScrollRect>();
+            scroll.content = grid;
+            scroll.horizontal = false;
+            scroll.vertical = true;
+            scroll.movementType = ScrollRect.MovementType.Clamped;
+            scroll.scrollSensitivity = 20f;
 
             var gridLayout = grid.gameObject.AddComponent<GridLayoutGroup>();
             gridLayout.cellSize = new Vector2(SLOT_SIZE, SLOT_SIZE);
@@ -434,15 +589,19 @@ namespace VoidBound.Editor
             footerLayout.padding = new RectOffset((int)PANEL_PAD, (int)PANEL_PAD, 0, 0);
             footerLayout.spacing = 20f;
             footerLayout.childAlignment = TextAnchor.MiddleLeft;
+            footerLayout.childControlWidth = true;
+            footerLayout.childControlHeight = true;
+            footerLayout.childForceExpandWidth = false;
+            footerLayout.childForceExpandHeight = false;
 
             var goldTMP = MakeTMP("Gold", footer);
-            goldTMP.text = "◈ 54 Gold";
+            goldTMP.text = "Gold 54";
             goldTMP.fontSize = FS_CURRENCY;
             goldTMP.color = C_GOLD;
             AddLayoutElement(goldTMP.gameObject, -1, FOOTER_H);
 
             var shardTMP = MakeTMP("Shards", footer);
-            shardTMP.text = "◆ 0 Shards";
+            shardTMP.text = "Shards 0";
             shardTMP.fontSize = FS_CURRENCY;
             shardTMP.color = C_SHARD;
             AddLayoutElement(shardTMP.gameObject, -1, FOOTER_H);
@@ -489,25 +648,9 @@ namespace VoidBound.Editor
             }
         }
 
-        // ═══════════════════════════════════════════════════════════
-        // HUD BUTTON WIRING
-        // ═══════════════════════════════════════════════════════════
-        static void WireHUDButtons(GameObject hudCanvas, GameObject uiRoot)
-        {
-            // Find Equip and Bag buttons — wire both to toggle UIRoot5c
-            var buttons = hudCanvas.GetComponentsInChildren<Button>(true);
-            foreach (var btn in buttons)
-            {
-                if (btn.name == "EquipBtn" || btn.name == "BagBtn" ||
-                    btn.gameObject.name.ToLower().Contains("equip") ||
-                    btn.gameObject.name.ToLower().Contains("bag"))
-                {
-                    btn.onClick.RemoveAllListeners();
-                    var capturedRoot = uiRoot;
-                    btn.onClick.AddListener(() => capturedRoot.SetActive(!capturedRoot.activeSelf));
-                }
-            }
-        }
+        // NOTE: HUD button wiring happens at runtime in HUDManager (Equip/Bag →
+        // Phase5cUIRoot toggles). Editor-time onClick.AddListener calls are
+        // non-persistent and would not survive scene serialization.
 
         // ═══════════════════════════════════════════════════════════
         // HELPER UTILITIES
@@ -614,6 +757,8 @@ namespace VoidBound.Editor
             var rowH = row.gameObject.AddComponent<HorizontalLayoutGroup>();
             rowH.childForceExpandWidth = true;
             rowH.childForceExpandHeight = true;
+            rowH.childControlWidth = true;
+            rowH.childControlHeight = true;
 
             var lblTMP = MakeTMP("Lbl", row);
             lblTMP.text = lbl;

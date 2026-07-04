@@ -24,15 +24,22 @@ Void Bound evolved from RunePortal (a Three.js browser ARPG). All gameplay syste
 6. **Update this CONTEXT.md** after each phase completes — log what was built, file locations, and any decisions made.
 
 ## Current Phase
-**Phase 6: Homestead Full Build-out** — see `PHASES/phase6_homestead.md`
+**Phase 6: Homestead Full Build-out** — `PHASES/phase6_homestead.md` does NOT exist yet; the phase file needs to be written before starting. Phase 5c completed and verified 2026-07-03.
 
-## Phase 5c Log (completed 2026-06-17)
-- **Equipment Panel (reference-matched):** Two-column slot layout (Left: Head/Body/Legs/Hands/Feet, Right: Cape/Neck/Ring/Ammo) + bottom Weapon/Shield dock. Center stat readout shows Character Level, Damage, Defense, VIG/STR/DEX/INT levels (live values from StatsComponent + PlayerSkills). Rarity-colored slot borders. Detail view with Unequip button.
-- **Inventory Panel (grid layout):** 5-column grid with 30 max slots. Rarity-colored borders on filled slots, empty slots as dark squares. Capacity counter (X/30). Currency display (Gold + Void Shards) at bottom. Detail view with Equip button.
-- **Player Info Bar:** Top-left: portrait placeholder, "PLAYER" name, HP bar (green fill, current/max text). Replaces old flat HP bar from Phase 3b.
-- **Close buttons:** Both panels have X close buttons wired at runtime (learned pattern from Phase 3b button fix).
-- **Character preview:** Deferred — requires secondary camera/render texture, low priority vs functional panels.
-- **Editor script:** `VoidBound > Setup Phase 5c - Inventory UI` — builds both panels, wires all serialized refs, destroys old panels if present.
+## Phase 5c Log (completed & play-mode verified 2026-07-03)
+*(An earlier 5c log dated 2026-06-17 claimed completion prematurely — that build was mockup visuals only, never verified in Play Mode. The 2026-07-03 session finished the runtime wiring and ran the full self-test.)*
+- **Builder:** `VoidBound > Build Phase 5c UI` (`Scripts/Editor/Phase5cUIBuilder.cs`) — builds UIRoot5c (EquipmentPanel + InventoryPanel, approved mockup visuals), PlayerInfoBar, attaches runtime controllers, retires old panels (InventoryPanelGroup, BackpackPanel), and repoints HUDManager HP refs. Batch entry point: `Phase5cUIBuilder.BuildFromBatch`. Fixed 3 builder layout bugs found via screenshot verification: SetAnchor wiping panel sizeDelta, ContentSizeFitter nested in LayoutGroup mis-sizing the stat card, and missing childControlWidth/Height flags pushing stat values outside the card.
+- **Runtime controllers (new, name/order-based binding — no scene wiring needed):**
+  - `Scripts/UI/Phase5cUIRoot.cs` — panel visibility manager; Equip button toggles Equipment, Bag toggles Inventory, root active while either is open.
+  - `Scripts/UI/EquipmentPanel5c.cs` — 11 slots (Left: Helm/Body/Legs/Boots/Gloves, Right: Amulet/Ring/Ring2/Cape, Dock: Weapon/Shield) with rarity-colored borders from `RarityVisualEffects`; center readout: Character Level (CombatLevelCalculator), Damage (weapon baseDamage through Physical/MagicDamage by weapon style), Defense (from DefenseMultiplier), live VIG/STR/DEX/INT from `StatsComponent.EffectiveStats`; refreshes on OnInventoryChanged.
+  - `Scripts/UI/InventoryPanel5c.cs` — 4-column scrollable grid (24 slots) rebuilt from `PlayerInventory.Backpack`; identical GearItemSO assets group into stacks with ×N badge; capacity X/24 in header; Gold + Void Shards footer from `PlayerCurrency`.
+  - `Scripts/UI/ItemDetailView5c.cs` — shared tap-to-detail overlay (name/rarity/slot/modifiers/set/damage) with Equip/Unequip action button; reuses Phase 3 EquipItem/UnequipItem logic unchanged.
+- **HUDManager:** extended (not refactored) — routes Equip/Bag toggles + Tab/B keys to Phase5cUIRoot when present, legacy fallback kept; CloseAllPanels also closes 5c root; DevToolsPanel untouched.
+- **Player Info Bar:** top-left portrait placeholder + "PLAYER" + green HP bar with current/max text; replaces the old flat HP row inside StatsPanel (deleted by builder, HUDManager hpFill/hpText repointed via SerializedObject).
+- **Slot mapping note:** GDD's "Ammo" slot does not exist in the `EquipmentSlot` enum — actual 11 slots end in Ring/Ring2, so the right column shows two RING slots. Flagged in case the GDD intends Ammo later.
+- **Character preview (Task 8):** DEFERRED — needs a secondary camera + RenderTexture; functional panels prioritized per spec.
+- **Known cosmetic issue (pre-existing, flagged):** legacy StatsPanel text (Lv/XP/VIG..., top-left under the info bar) is not legible in Game view captures; character stats are now authoritative in the Equipment panel readout. Worth a look when the HUD is next touched.
+- **Tooling note:** Unity MCP was NOT connected in this Claude Code session (the MCP-for-Unity plugin in the editor auto-connects to Claude Desktop only). Self-test was run by driving the open editor via computer-use; batch compile via Unity.exe -batchmode after closing the editor. Self-test passed: layout matches mockup, live stat values (STR leveled 1→2 mid-test from kills, gear bonus +2 applied on equip), stack badges ×3→×2 on equip, capacity 12/24→11/24, currency Gold 34 / Shards 4 from real drops, equip + unequip round-trip clean, X buttons close panels, console 0 errors / 0 warnings at Fixed 1920x1080.
 
 ## Phase 5b Log (completed 2026-06-17)
 - **RunePortal source confirmed:** XP split is 40/40/20+vigor. Actual code: melee→STR XP, ranged→DEX XP, magic→INT XP, VIG gets `xpGain * 0.5` (50% ratio, not 33%). XP curve uses OSRS formula: `sum(i + 300 * 2^(i/7)) / 4 * 3`. Character Level = `levelFromXP(player.totalXP)`.
