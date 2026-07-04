@@ -7,5 +7,7 @@ namespace VoidBound.Data
     {
         public string zoneId;
         public string displayName;
+        public string sceneName;
+        public bool isUnlocked = true;
     }
 }
