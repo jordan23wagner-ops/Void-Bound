@@ -10,19 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 68a3e1c9b7987c246bf826e0449d5225, type: 3}
-  m_Name: Arcane_Blade_Rare
+  m_Name: goblin_club
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Data.GearItemSO
-  itemId: arcane_blade
-  displayName: Arcane Blade
+  itemId: goblin_club
+  displayName: Goblin Club
   slot: 0
-  weaponType: 1
-  rarity: 2
+  weaponType: 4
+  rarity: 0
   statModifiers:
-    str: 5
-    dex: 3
+    str: 1
+    dex: 0
     vig: 0
-    intel: 2
-  visualPrefab: {fileID: 919132149155446097, guid: 9e914126ab0b79047ad62d7f53dce3d6, type: 3}
+    intel: 0
+  visualPrefab: {fileID: 919132149155446097, guid: b4f30aaa07c23bd4da1a59a9ba259d0e, type: 3}
   setId: 
-  baseDamage: 14
-  goldValue: 120
+  baseDamage: 0
+  goldValue: 5

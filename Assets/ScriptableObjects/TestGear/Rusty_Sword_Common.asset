@@ -22,7 +22,7 @@ MonoBehaviour:
     dex: 0
     vig: 0
     intel: 0
-  visualPrefab: {fileID: 0}
+  visualPrefab: {fileID: 919132149155446097, guid: 9e914126ab0b79047ad62d7f53dce3d6, type: 3}
   setId: 
   baseDamage: 8
   goldValue: 20

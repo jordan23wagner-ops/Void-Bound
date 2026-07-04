@@ -15,5 +15,9 @@ namespace VoidBound.Data
         public float aggroRange = 8f;
         public float attackRange = 2f;
         public LootTableSO lootTable;
+
+        [Header("Visible Gear (rendered on the body by EquipmentVisuals)")]
+        public GearItemSO weapon;
+        public GearItemSO[] armor;
     }
 }

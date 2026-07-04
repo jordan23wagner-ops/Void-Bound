@@ -10,19 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 68a3e1c9b7987c246bf826e0449d5225, type: 3}
-  m_Name: Arcane_Blade_Rare
+  m_Name: travelers_cape
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Data.GearItemSO
-  itemId: arcane_blade
-  displayName: Arcane Blade
-  slot: 0
-  weaponType: 1
-  rarity: 2
+  itemId: travelers_cape
+  displayName: Traveler's Cape
+  slot: 10
+  weaponType: 0
+  rarity: 0
   statModifiers:
-    str: 5
-    dex: 3
+    str: 0
+    dex: 1
     vig: 0
-    intel: 2
-  visualPrefab: {fileID: 919132149155446097, guid: 9e914126ab0b79047ad62d7f53dce3d6, type: 3}
+    intel: 0
+  visualPrefab: {fileID: 919132149155446097, guid: 3a55b969602b49248992d93a2e540d3a, type: 3}
   setId: 
-  baseDamage: 14
-  goldValue: 120
+  baseDamage: 0
+  goldValue: 30
