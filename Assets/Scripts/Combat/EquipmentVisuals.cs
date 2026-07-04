@@ -5,15 +5,18 @@ using VoidBound.Inventory;
 
 namespace VoidBound.Combat
 {
-    // Renders equipped gear on a character's body. Purely an observer — never
-    // touches equip/stat logic. On the Player it follows PlayerInventory.Equipped
-    // live; on an enemy it shows the EnemyDefinitionSO's weapon + armor once.
+    // Renders equipped gear on a character's body, attached to the animated
+    // skeleton so it moves with the animation (weapon swings with the Attack
+    // clip, helm bobs with the head, etc.). Observer only — never touches
+    // equip/stat logic. Player mode follows PlayerInventory.Equipped live; enemy
+    // mode shows the EnemyDefinitionSO's weapon + armor once.
     //
-    // Gear models (GearItemSO.visualPrefab) are authored in two frames (see
-    // Tools/build_equipment_models.py): weapons/shield in grip-space (attach at
-    // hand sockets) and armor in hero-body space (attach at the root socket).
-    // The Goblin body reuses the same hero-space armor, downscaled by its root
-    // socket. All socket transforms are tuned constants below.
+    // Two attach modes (models from Tools/build_equipment_models.py):
+    //  - weapons/shield are grip-space → parented to the hand bone with a tuned
+    //    local offset.
+    //  - armor is hero-body space → placed at the character root (correct rest
+    //    pose) then reparented to its bone keeping world position, so it sits
+    //    right AND follows that bone. Goblin armor is downscaled to fit.
     public class EquipmentVisuals : MonoBehaviour
     {
         public enum BodyType { Hero, Goblin }
@@ -21,10 +24,10 @@ namespace VoidBound.Combat
         [SerializeField] private BodyType bodyType = BodyType.Hero;
         [SerializeField] private EnemyDefinitionSO enemyDefinition; // null => player mode
 
-        private struct Socket { public Vector3 pos, euler; public float scale; }
+        private float BodyScale => bodyType == BodyType.Goblin ? 0.68f : 1f;
 
-        private Transform rootSocket, handRSocket, handLSocket;
         private readonly Dictionary<EquipmentSlot, GameObject> shown = new();
+        private readonly Dictionary<string, Transform> bones = new();
         private PlayerInventory inventory;
 
         public void Configure(BodyType body, EnemyDefinitionSO enemyDef)
@@ -33,18 +36,11 @@ namespace VoidBound.Combat
             enemyDefinition = enemyDef;
         }
 
-        private void Awake()
-        {
-            BuildSockets();
-        }
-
         private void Start()
         {
-            if (enemyDefinition != null)
-            {
-                ShowEnemyGear();
-                return;
-            }
+            ResolveBones();
+
+            if (enemyDefinition != null) { ShowEnemyGear(); return; }
 
             inventory = GetComponent<PlayerInventory>();
             if (inventory != null)
@@ -59,63 +55,49 @@ namespace VoidBound.Combat
             if (inventory != null) inventory.OnInventoryChanged -= SyncPlayer;
         }
 
-        // ── Socket setup ─────────────────────────────────────────
-        private void BuildSockets()
+        private void ResolveBones()
         {
-            Socket root, handR, handL;
-            if (bodyType == BodyType.Hero)
-            {
-                root  = new Socket { pos = Vector3.zero, euler = Vector3.zero, scale = 1f };
-                handR = new Socket { pos = new Vector3(0.30f, 0.76f, 0.02f), euler = Vector3.zero, scale = 1f };
-                handL = new Socket { pos = new Vector3(-0.30f, 0.76f, 0.02f), euler = Vector3.zero, scale = 1f };
-            }
-            else // Goblin — hero-space armor downscaled; hands wider/lower
-            {
-                root  = new Socket { pos = Vector3.zero, euler = Vector3.zero, scale = 0.68f };
-                handR = new Socket { pos = new Vector3(0.36f, 0.44f, -0.08f), euler = Vector3.zero, scale = 0.7f };
-                handL = new Socket { pos = new Vector3(-0.36f, 0.44f, -0.08f), euler = Vector3.zero, scale = 0.7f };
-            }
-
-            rootSocket  = MakeSocket("Socket_Root", root);
-            handRSocket = MakeSocket("Socket_HandR", handR);
-            handLSocket = MakeSocket("Socket_HandL", handL);
+            foreach (var t in GetComponentsInChildren<Transform>(true))
+                if (!bones.ContainsKey(t.name)) bones[t.name] = t;
         }
 
-        private Transform MakeSocket(string name, Socket s)
+        private Transform Bone(string n) => bones.TryGetValue(n, out var t) ? t : transform;
+
+        // Per-body local offset for grip-space weapons/shield on the hand bone.
+        // Tuned so the blade reads as held; the hand bone points down the forearm.
+        private (Vector3 pos, Vector3 euler) HandOffset(bool shield)
         {
-            var go = new GameObject(name);
-            go.transform.SetParent(transform, false);
-            go.transform.localPosition = s.pos;
-            go.transform.localEulerAngles = s.euler;
-            go.transform.localScale = Vector3.one * s.scale;
-            return go.transform;
+            // Local-to-hand-bone rotations (tuned): weapon blade points up, shield
+            // face points outward. Follows the hand through the animation.
+            return shield ? (new Vector3(0f, 0.02f, 0.06f), new Vector3(0f, 180f, 180f))
+                          : (new Vector3(0f, 0.02f, 0f), new Vector3(320f, 180f, 180f));
         }
 
-        private Transform SocketFor(EquipmentSlot slot) => slot switch
+        private (Transform bone, bool grip) Target(EquipmentSlot slot) => slot switch
         {
-            EquipmentSlot.Weapon => handRSocket,
-            EquipmentSlot.Shield => handLSocket,
-            _ => rootSocket, // all armor authored in body-space
+            EquipmentSlot.Weapon => (Bone("Hand_R"), true),
+            EquipmentSlot.Shield => (Bone("Hand_L"), true),
+            EquipmentSlot.Helm   => (Bone("Head"), false),
+            EquipmentSlot.Body   => (Bone("Chest"), false),
+            EquipmentSlot.Legs   => (Bone("Hips"), false),
+            EquipmentSlot.Boots  => (Bone("Hips"), false),
+            EquipmentSlot.Gloves => (Bone("Chest"), false),
+            EquipmentSlot.Cape   => (Bone("Chest"), false),
+            EquipmentSlot.Amulet => (Bone("Neck"), false),
+            _ => (transform, false),
         };
 
-        // ── Player (live) ────────────────────────────────────────
         private void SyncPlayer()
         {
             var equipped = inventory.Equipped;
-
-            // Remove visuals whose slot is no longer equipped
             var toRemove = new List<EquipmentSlot>();
             foreach (var kv in shown)
                 if (!equipped.ContainsKey(kv.Key) || equipped[kv.Key] == null)
                     toRemove.Add(kv.Key);
             foreach (var slot in toRemove) RemoveVisual(slot);
-
-            // Add/replace visuals for equipped items
-            foreach (var kv in equipped)
-                EnsureVisual(kv.Key, kv.Value);
+            foreach (var kv in equipped) EnsureVisual(kv.Key, kv.Value);
         }
 
-        // ── Enemy (static) ───────────────────────────────────────
         private void ShowEnemyGear()
         {
             if (enemyDefinition.weapon != null)
@@ -125,24 +107,41 @@ namespace VoidBound.Combat
                     if (piece != null) EnsureVisual(piece.slot, piece);
         }
 
-        // ── Instance management ──────────────────────────────────
         private void EnsureVisual(EquipmentSlot slot, GearItemSO item)
         {
             if (item == null || item.visualPrefab == null) { RemoveVisual(slot); return; }
 
-            // Rebuild only if the shown item for this slot changed
             if (shown.TryGetValue(slot, out var existing))
             {
                 if (existing != null && existing.name == VisualName(item)) return;
                 RemoveVisual(slot);
             }
 
-            var socket = SocketFor(slot);
-            var go = Instantiate(item.visualPrefab, socket);
+            var (bone, grip) = Target(slot);
+            var go = Instantiate(item.visualPrefab);
             go.name = VisualName(item);
-            go.transform.localPosition = Vector3.zero;
-            go.transform.localRotation = Quaternion.identity;
-            go.transform.localScale = Vector3.one;
+
+            if (grip)
+            {
+                go.transform.SetParent(bone, false);
+                var (pos, euler) = HandOffset(slot == EquipmentSlot.Shield);
+                // The imported armature root ("Rig") carries a ~100x unit-scale,
+                // so bones have a large lossyScale. Compensate so the gear ends
+                // up at BodyScale in world space with a sensible world offset.
+                float bs = bone.lossyScale.x <= 0.0001f ? 1f : bone.lossyScale.x;
+                go.transform.localPosition = pos / bs;
+                go.transform.localRotation = Quaternion.Euler(euler);
+                go.transform.localScale = Vector3.one * (BodyScale / bs);
+            }
+            else
+            {
+                // Body-space: correct rest placement at the root, then follow the bone.
+                go.transform.SetParent(transform, false);
+                go.transform.localPosition = Vector3.zero;
+                go.transform.localRotation = Quaternion.identity;
+                go.transform.localScale = Vector3.one * BodyScale;
+                go.transform.SetParent(bone, worldPositionStays: true);
+            }
 
             TintMain(go, RarityVisualEffects.GetRarityColor(item.rarity));
             shown[slot] = go;
@@ -162,12 +161,9 @@ namespace VoidBound.Combat
         private static void TintMain(GameObject go, Color color)
         {
             foreach (var r in go.GetComponentsInChildren<Renderer>())
-            {
-                var mats = r.materials; // per-instance copies
-                foreach (var m in mats)
+                foreach (var m in r.materials)
                     if (m != null && m.name.StartsWith("Main"))
                         m.color = color;
-            }
         }
     }
 }

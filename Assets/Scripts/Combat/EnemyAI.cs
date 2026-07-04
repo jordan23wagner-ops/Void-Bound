@@ -24,7 +24,7 @@ namespace VoidBound.Combat
         private StatsComponent playerStats;
         private Health playerHealth;
         private CharacterController controller;
-        private CombatAnimator animator;
+        private CharacterAnimation anim;
         private float lastAttackTime;
         private float verticalVelocity;
 
@@ -33,7 +33,7 @@ namespace VoidBound.Combat
             health = GetComponent<Health>();
             stats = GetComponent<StatsComponent>();
             controller = GetComponent<CharacterController>();
-            animator = GetComponent<CombatAnimator>();
+            anim = GetComponent<CharacterAnimation>();
             health.OnDeath += HandleDeath;
         }
 
@@ -94,6 +94,7 @@ namespace VoidBound.Combat
                     break;
             }
 
+            anim?.SetSpeed(state == EnemyState.Chase ? 1f : 0f);
             ApplyGravity();
         }
 
@@ -124,7 +125,7 @@ namespace VoidBound.Combat
             lastAttackTime = Time.time;
             int damage = DamageCalculator.CalculateDamage(stats, playerStats, baseDamage);
             playerHealth.TakeDamage(damage);
-            animator?.PlayAttack();
+            anim?.TriggerAttack();
             Debug.Log($"{gameObject.name} attacks Player for {damage} damage.");
         }
 
@@ -154,7 +155,15 @@ namespace VoidBound.Combat
             if (dropper != null)
                 dropper.DropLoot(deathPos);
 
-            controller.enabled = false;
+            if (controller != null) controller.enabled = false;
+            anim?.SetSpeed(0f);
+            // Keep the corpse visible briefly so the Death clip plays before despawn.
+            StartCoroutine(DespawnAfterDeath());
+        }
+
+        private System.Collections.IEnumerator DespawnAfterDeath()
+        {
+            yield return new WaitForSeconds(0.9f);
             gameObject.SetActive(false);
         }
 

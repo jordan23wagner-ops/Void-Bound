@@ -16,7 +16,7 @@ namespace VoidBound.Combat
         private StatsComponent stats;
         private PlayerInventory inventory;
         private PlayerSkills skills;
-        private CombatAnimator animator;
+        private CharacterAnimation anim;
         private float lastAttackTime = -999f;
 
         private void Awake()
@@ -24,7 +24,7 @@ namespace VoidBound.Combat
             stats = GetComponent<StatsComponent>();
             inventory = GetComponent<PlayerInventory>();
             skills = GetComponent<PlayerSkills>();
-            animator = GetComponent<CombatAnimator>();
+            anim = GetComponent<CharacterAnimation>();
         }
 
         private void Update()
@@ -60,7 +60,7 @@ namespace VoidBound.Combat
             lastAttackTime = Time.time;
             int damage = DamageCalculator.CalculateDamage(stats, closestStats, baseDamage);
             closestTarget.TakeDamage(damage);
-            animator?.PlayAttack();
+            anim?.TriggerAttack();
 
             WeaponType equippedWeapon = GetEquippedWeaponType();
             CombatXPCalculator.AwardCombatXP(skills, equippedWeapon, damage);

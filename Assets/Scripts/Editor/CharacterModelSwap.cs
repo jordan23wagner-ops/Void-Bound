@@ -38,54 +38,46 @@ namespace VoidBound.Editor
             { "Garden", "Tend herbs and brew mixtures. (Gathering, Alchemy)" },
         };
 
+        private const string HeroController = "Assets/Animation/HeroAnimator.controller";
+        private const string GoblinController = "Assets/Animation/GoblinAnimator.controller";
+
         [MenuItem("VoidBound/Polish - Swap Character Models + Tooltips")]
         public static void Run()
         {
-            var goblinMesh = LoadMesh(GoblinFbx);
-            var heroMesh = LoadMesh(HeroFbx);
-            if (goblinMesh == null || heroMesh == null)
+            var heroFbx = AssetDatabase.LoadAssetAtPath<GameObject>(HeroFbx);
+            var goblinFbx = AssetDatabase.LoadAssetAtPath<GameObject>(GoblinFbx);
+            var heroCtrl = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(HeroController);
+            var goblinCtrl = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(GoblinController);
+            if (heroFbx == null || goblinFbx == null)
             {
-                Debug.LogError("[ModelSwap] Goblin.fbx / Hero.fbx not found — run Tools/build_character_models.py first.");
+                Debug.LogError("[ModelSwap] Hero.fbx / Goblin.fbx not found — run Tools/build_character_models.py first.");
                 return;
             }
-            if (!CheckImportRotation(GoblinFbx) || !CheckImportRotation(HeroFbx)) return;
+            if (heroCtrl == null || goblinCtrl == null)
+            {
+                Debug.LogError("[ModelSwap] Animator controllers missing — run VoidBound/Animation - Setup Rigs + Controllers first.");
+                return;
+            }
 
             var mats = CreateMaterials();
             string[] goblinSlots = SlotNames(GoblinFbx);
             string[] heroSlots = SlotNames(HeroFbx);
 
-            ProcessScene("Assets/Scenes/Homestead.unity", goblinMesh, heroMesh, goblinSlots, heroSlots, mats, wireTooltips: true);
-            ProcessScene("Assets/Scenes/Ashfields.unity", goblinMesh, heroMesh, goblinSlots, heroSlots, mats, wireTooltips: true);
+            ProcessScene("Assets/Scenes/Homestead.unity", goblinFbx, heroFbx, goblinCtrl, heroCtrl, goblinSlots, heroSlots, mats, wireTooltips: true);
+            ProcessScene("Assets/Scenes/Ashfields.unity", goblinFbx, heroFbx, goblinCtrl, heroCtrl, goblinSlots, heroSlots, mats, wireTooltips: true);
 
-            Debug.Log("[ModelSwap] Character models swapped and tooltips wired in both scenes.");
+            Debug.Log("[ModelSwap] Rigged character models swapped and tooltips wired in both scenes.");
         }
 
         public static void RunFromBatch() => Run();
 
         // ═══════════════════════════════════════════════════════════
 
-        private static Mesh LoadMesh(string fbxPath) =>
-            AssetDatabase.LoadAllAssetsAtPath(fbxPath).OfType<Mesh>().FirstOrDefault();
-
-        // Standing FBX rule: root must import at (0,0,0) or the export was wrong.
-        private static bool CheckImportRotation(string fbxPath)
-        {
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(fbxPath);
-            if (prefab == null) return false;
-            var euler = prefab.transform.rotation.eulerAngles;
-            if (euler.sqrMagnitude > 0.01f)
-            {
-                Debug.LogError($"[ModelSwap] {fbxPath} imports with rotation {euler} — re-export, don't correct the instance.");
-                return false;
-            }
-            return true;
-        }
-
-        // Imported material names define the slot order contract with Blender.
+        // Imported material names define the slot contract with Blender.
         private static string[] SlotNames(string fbxPath)
         {
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(fbxPath);
-            var renderer = prefab.GetComponentInChildren<MeshRenderer>();
+            var renderer = prefab.GetComponentInChildren<Renderer>();
             return renderer.sharedMaterials.Select(m => m != null ? m.name : "").ToArray();
         }
 
@@ -119,7 +111,8 @@ namespace VoidBound.Editor
             return result;
         }
 
-        private static void ProcessScene(string scenePath, Mesh goblinMesh, Mesh heroMesh,
+        private static void ProcessScene(string scenePath, GameObject goblinFbx, GameObject heroFbx,
+            RuntimeAnimatorController goblinCtrl, RuntimeAnimatorController heroCtrl,
             string[] goblinSlots, string[] heroSlots, Dictionary<string, Material> mats, bool wireTooltips)
         {
             var scene = EditorSceneManager.OpenScene(scenePath);
@@ -136,7 +129,7 @@ namespace VoidBound.Editor
                 };
                 var slotMats = goblinSlots.Select(slot =>
                     slot.Contains("Cloth") ? mats["GoblinCloth"] : mats[skinName]).ToArray();
-                ApplyModel(ai.gameObject, goblinMesh, slotMats);
+                ApplyRiggedModel(ai.gameObject, goblinFbx, goblinCtrl, slotMats);
                 ConfigureEquipmentVisuals(ai.gameObject, EquipmentVisuals.BodyType.Goblin, def);
             }
 
@@ -147,7 +140,7 @@ namespace VoidBound.Editor
                     slot.Contains("Armor") ? mats["HeroArmor"]
                     : slot.Contains("Hair") ? mats["HeroHair"]
                     : mats["HeroSkin"]).ToArray();
-                ApplyModel(player, heroMesh, slotMats);
+                ApplyRiggedModel(player, heroFbx, heroCtrl, slotMats);
                 ConfigureEquipmentVisuals(player, EquipmentVisuals.BodyType.Hero, null);
             }
 
@@ -171,15 +164,39 @@ namespace VoidBound.Editor
             if (visuals == null) visuals = go.AddComponent<EquipmentVisuals>();
             visuals.Configure(body, enemyDef);
             EditorUtility.SetDirty(visuals);
+
+            if (go.GetComponent<CharacterAnimation>() == null)
+                go.AddComponent<CharacterAnimation>();
         }
 
-        private static void ApplyModel(GameObject go, Mesh mesh, Material[] materials)
+        // Replaces the root static mesh with the rigged model as a child "Model"
+        // (SkinnedMeshRenderer + Animator). Root keeps CharacterController + scripts.
+        private static void ApplyRiggedModel(GameObject root, GameObject fbxPrefab,
+            RuntimeAnimatorController controller, Material[] materials)
         {
-            var filter = go.GetComponent<MeshFilter>();
-            var renderer = go.GetComponent<MeshRenderer>();
-            if (filter == null || renderer == null) return;
-            filter.sharedMesh = mesh;
-            renderer.sharedMaterials = materials;
+            // Strip any old static mesh on the root.
+            var mf = root.GetComponent<MeshFilter>();
+            if (mf != null) Object.DestroyImmediate(mf);
+            var mr = root.GetComponent<MeshRenderer>();
+            if (mr != null) Object.DestroyImmediate(mr);
+
+            var existing = root.transform.Find("Model");
+            if (existing != null) Object.DestroyImmediate(existing.gameObject);
+
+            var model = (GameObject)PrefabUtility.InstantiatePrefab(fbxPrefab);
+            model.name = "Model";
+            model.transform.SetParent(root.transform, false);
+            model.transform.localPosition = Vector3.zero;
+            model.transform.localRotation = Quaternion.identity;
+            model.transform.localScale = Vector3.one;
+
+            var anim = model.GetComponent<Animator>();
+            if (anim == null) anim = model.AddComponent<Animator>();
+            anim.runtimeAnimatorController = controller;
+            anim.applyRootMotion = false;
+
+            var smr = model.GetComponentInChildren<SkinnedMeshRenderer>();
+            if (smr != null) smr.sharedMaterials = materials;
         }
 
         private static void WireTooltips()

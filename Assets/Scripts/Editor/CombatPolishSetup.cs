@@ -30,14 +30,10 @@ namespace VoidBound.Editor
         {
             var scene = EditorSceneManager.OpenScene(scenePath);
 
+            // CharacterAnimation is added by CharacterModelSwap alongside the
+            // rigged model; here we just ensure enemies have a health bar.
             foreach (var ai in Object.FindObjectsByType<EnemyAI>(FindObjectsInactive.Include))
-            {
                 EnsureHealthBar(ai.gameObject);
-                Ensure<CombatAnimator>(ai.gameObject);
-            }
-
-            var player = GameObject.FindGameObjectWithTag("Player");
-            if (player != null) Ensure<CombatAnimator>(player);
 
             WireDevGear();
 
@@ -51,13 +47,6 @@ namespace VoidBound.Editor
             var hb = new GameObject("HealthBar");
             hb.transform.SetParent(enemy.transform, false);
             hb.AddComponent<HealthBar>();
-        }
-
-        private static T Ensure<T>(GameObject go) where T : Component
-        {
-            var c = go.GetComponent<T>();
-            if (c == null) c = go.AddComponent<T>();
-            return c;
         }
 
         private static void WireDevGear()

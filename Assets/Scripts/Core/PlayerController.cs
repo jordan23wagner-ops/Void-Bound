@@ -14,10 +14,12 @@ namespace VoidBound.Core
         private CharacterController controller;
         private Vector3 verticalVelocity;
         private Transform cameraTransform;
+        private VoidBound.Combat.CharacterAnimation anim;
 
         private void Awake()
         {
             controller = GetComponent<CharacterController>();
+            anim = GetComponent<VoidBound.Combat.CharacterAnimation>();
         }
 
         private void Start()
@@ -66,6 +68,8 @@ namespace VoidBound.Core
 
             Vector3 finalMove = moveDirection * moveSpeed + verticalVelocity;
             controller.Move(finalMove * Time.deltaTime);
+
+            anim?.SetSpeed(moveDirection.magnitude);
         }
 
         private Vector3 GetIsometricDirection(Vector2 input)
