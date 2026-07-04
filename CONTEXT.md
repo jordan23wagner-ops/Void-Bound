@@ -24,7 +24,7 @@ Void Bound evolved from RunePortal (a Three.js browser ARPG). All gameplay syste
 6. **Update this CONTEXT.md** after each phase completes — log what was built, file locations, and any decisions made.
 
 ## Current Phase
-**Phase 6: Homestead Full Build-out** — `PHASES/phase6_homestead.md` does NOT exist yet; the phase file needs to be written before starting. Phase 5c completed and verified 2026-07-03.
+**Phase 6: Homestead Full Build-out** — see `PHASES/phase6_homestead.md` (written 2026-07-04, not yet started). Turns the 7 stubbed buildings into functional systems: Merchant shop, Storage bank, Pool heal/buff, Shrine blessing, Guild stat training, Portal UI stub, Watchtower confirm-or-defer. Phase 5c completed and verified 2026-07-03.
 
 ## Phase 5c Log (completed & play-mode verified 2026-07-03)
 *(An earlier 5c log dated 2026-06-17 claimed completion prematurely — that build was mockup visuals only, never verified in Play Mode. The 2026-07-03 session finished the runtime wiring and ran the full self-test.)*
