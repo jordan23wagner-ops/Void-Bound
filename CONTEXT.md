@@ -160,3 +160,23 @@ Assets/
 
 ## Communication Style
 Jordon prefers: concise updates, no fluff, full copy-paste-ready code when manual edits are needed, one clear next step at the end of each session. Flag issues immediately rather than working around them silently.
+
+## Visual Self-Verification Protocol (Standing Rule)
+**Applies to ANY task involving UI layout, visual styling, sizing, colors, or icons — supersedes the generic Play-Mode self-test for visual work.**
+
+For ANY task that builds or modifies UI/visual elements, before reporting complete:
+1. Use Unity MCP to capture an actual screenshot of the Game view in Play Mode (not just query object properties)
+2. Look at the screenshot yourself and check it against the written spec point by point:
+   - Are panels the expected approximate size relative to screen width?
+   - Are all icons/text actually visible (not blank squares, not invisible due to font/color issues)?
+   - Do colors match the specified hex values (rarity borders, stat colors, etc.)?
+   - Is the layout structure correct (correct column order, correct grouping)?
+3. If ANY checklist item fails, diagnose and fix, then re-screenshot and re-check. Repeat up to 3 times internally.
+4. Only report back once the screenshot actually matches the spec. If after 3 attempts it still doesn't match, report honestly with the screenshot AND what's still wrong.
+
+**Test Resolution:** Set Game view to FIXED 1920x1080 (not Free Aspect) before capturing verification screenshots.
+
+**Icon Rendering — Standing Fix:** Unicode symbols (⛨ ⬡ ⚔ etc.) do NOT render in TMP's default font (Liberation Sans). For icons:
+- Do NOT use Unicode symbols in TMP text fields
+- Use plain ASCII abbreviations (flagged as temporary), OR actual icon sprites as Texture2D/Sprite, OR a proper TMP Sprite Asset
+- Verify via screenshot that icons actually render visibly
