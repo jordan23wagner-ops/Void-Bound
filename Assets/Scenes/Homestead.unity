@@ -3541,6 +3541,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
       insertIndex: -1
       addedObject: {fileID: 378238802}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 378238807}
   m_SourcePrefab: {fileID: 100100000, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
 --- !u!1 &378238800 stripped
 GameObject:
@@ -3645,6 +3648,20 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0.7, z: 0}
+--- !u!114 &378238807
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 378238800}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 052c8a728f5b111419a4a351ebd2bb84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Combat.EquipmentVisuals
+  bodyType: 1
+  enemyDefinition: {fileID: 11400000, guid: b44fc003d28847445b2094dd6eb3b718, type: 2}
 --- !u!1 &379249750
 GameObject:
   m_ObjectHideFlags: 0
@@ -7101,6 +7118,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7983d41f5b490ab49b8cd8f7fccc2df6, type: 3}
       insertIndex: -1
       addedObject: {fileID: 751173373}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7983d41f5b490ab49b8cd8f7fccc2df6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 751173375}
   m_SourcePrefab: {fileID: 100100000, guid: 7983d41f5b490ab49b8cd8f7fccc2df6, type: 3}
 --- !u!1 &751173360 stripped
 GameObject:
@@ -7323,6 +7343,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5774754ce541d34bbe1411240445fd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Homestead.TimedBuff
+--- !u!114 &751173375
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 751173360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 052c8a728f5b111419a4a351ebd2bb84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Combat.EquipmentVisuals
+  bodyType: 0
+  enemyDefinition: {fileID: 0}
 --- !u!1 &772804200
 GameObject:
   m_ObjectHideFlags: 0
@@ -8197,6 +8231,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
       insertIndex: -1
       addedObject: {fileID: 906342359}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 906342364}
   m_SourcePrefab: {fileID: 100100000, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
 --- !u!1 &906342357 stripped
 GameObject:
@@ -8301,6 +8338,20 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0.7, z: 0}
+--- !u!114 &906342364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 906342357}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 052c8a728f5b111419a4a351ebd2bb84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Combat.EquipmentVisuals
+  bodyType: 1
+  enemyDefinition: {fileID: 11400000, guid: 5f41ecd37c8727d4fa7bea4f33509ee9, type: 2}
 --- !u!1001 &924589952
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11034,6 +11085,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1236574565}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1236574570}
   m_SourcePrefab: {fileID: 100100000, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
 --- !u!1 &1236574563 stripped
 GameObject:
@@ -11138,6 +11192,20 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0.7, z: 0}
+--- !u!114 &1236574570
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1236574563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 052c8a728f5b111419a4a351ebd2bb84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Combat.EquipmentVisuals
+  bodyType: 1
+  enemyDefinition: {fileID: 11400000, guid: f3630805160b475409c6514f05caeef6, type: 2}
 --- !u!1 &1241291024
 GameObject:
   m_ObjectHideFlags: 0

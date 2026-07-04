@@ -121,15 +121,16 @@ def build_goblin():
     p.append(box(skin, (-0.12, 0.07, 0.035), (0.11, 0.20, 0.07)))
     # Loincloth (cloth slot)
     p.append(box(cloth, (0, 0.0, 0.40), (0.36, 0.30, 0.16)))
-    # Crude club in the right hand (wood = cloth material)
-    p.append(cone(cloth, 0.035, 0.075, 0.52, (0.38, 0.14, 0.72), rotation=(rad(12), 0, 0), vertices=7))
+    # NOTE: no built-in club — the weapon slot is authoritative now, so the
+    # right hand stays empty and EquipmentVisuals attaches whatever gear the
+    # EnemyDefinitionSO specifies (or nothing).
 
     join_and_export(p, "Goblin", "Goblin.fbx")
 
 
 # ═══════════════════════════════════════════════════════════
-# HERO — upright, broad shoulders, tapered torso, hair,
-# sword at the left hip. ~1.8 units tall.
+# HERO — upright, broad shoulders, tapered torso, hair. ~1.8 units tall.
+# No built-in weapon; the equip system renders the held weapon.
 # ═══════════════════════════════════════════════════════════
 def build_hero():
     skin = make_mat("HeroSkin", (0.85, 0.65, 0.50, 1.0))
@@ -162,10 +163,9 @@ def build_hero():
     # Boots
     p.append(box(armor, (0.11, 0.05, 0.045), (0.13, 0.24, 0.09)))
     p.append(box(armor, (-0.11, 0.05, 0.045), (0.13, 0.24, 0.09)))
-    # Sword at the left hip: blade + crossguard + hilt
-    p.append(box(armor, (-0.26, -0.06, 0.52), (0.035, 0.02, 0.42)))
-    p.append(box(armor, (-0.26, -0.06, 0.76), (0.11, 0.03, 0.025)))
-    p.append(cyl(armor, 0.02, 0.12, (-0.26, -0.06, 0.83), vertices=6))
+    # NOTE: no built-in hip sword — the weapon slot is authoritative now, so an
+    # unarmed hero shows empty hands and EquipmentVisuals renders the equipped
+    # weapon in the right hand.
 
     join_and_export(p, "Hero", "Hero.fbx")
 

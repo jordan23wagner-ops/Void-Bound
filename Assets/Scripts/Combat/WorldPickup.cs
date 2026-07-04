@@ -12,23 +12,40 @@ namespace VoidBound.Combat
 
         public static void Spawn(Vector3 position, GearItemSO gearItem)
         {
-            var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            go.name = $"Pickup_{gearItem.displayName}";
-            go.transform.position = position + new Vector3(
+            var dropPos = position + new Vector3(
                 Random.Range(-0.5f, 0.5f), 0.3f, Random.Range(-0.5f, 0.5f));
-            go.transform.localScale = Vector3.one * 0.4f;
 
-            var collider = go.GetComponent<Collider>();
-            if (collider != null)
-                Object.Destroy(collider);
-
-            var renderer = go.GetComponent<Renderer>();
-            if (renderer != null)
+            GameObject go;
+            if (gearItem.visualPrefab != null)
             {
-                var mat = new Material(Shader.Find("Universal Render Pipeline/Lit")
-                    ?? Shader.Find("Standard"));
-                mat.color = RarityVisualEffects.GetRarityColor(gearItem.rarity);
-                renderer.material = mat;
+                // Show the actual gear model, rarity-tinted.
+                go = Instantiate(gearItem.visualPrefab);
+                go.name = $"Pickup_{gearItem.displayName}";
+                go.transform.position = dropPos;
+                foreach (var r in go.GetComponentsInChildren<Renderer>())
+                    foreach (var m in r.materials)
+                        if (m != null && m.name.StartsWith("Main"))
+                            m.color = RarityVisualEffects.GetRarityColor(gearItem.rarity);
+            }
+            else
+            {
+                // Fallback: rarity-colored sphere.
+                go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                go.name = $"Pickup_{gearItem.displayName}";
+                go.transform.position = dropPos;
+                go.transform.localScale = Vector3.one * 0.4f;
+
+                var collider = go.GetComponent<Collider>();
+                if (collider != null) Object.Destroy(collider);
+
+                var renderer = go.GetComponent<Renderer>();
+                if (renderer != null)
+                {
+                    var mat = new Material(Shader.Find("Universal Render Pipeline/Lit")
+                        ?? Shader.Find("Standard"));
+                    mat.color = RarityVisualEffects.GetRarityColor(gearItem.rarity);
+                    renderer.material = mat;
+                }
             }
 
             RarityVisualEffects.ApplyToRenderers(go, gearItem.rarity);

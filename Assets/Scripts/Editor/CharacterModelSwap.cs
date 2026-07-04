@@ -126,7 +126,8 @@ namespace VoidBound.Editor
 
             foreach (var ai in Object.FindObjectsByType<EnemyAI>(FindObjectsInactive.Include))
             {
-                var tier = GetTier(ai);
+                var def = GetDefinition(ai);
+                var tier = def != null ? def.tier : EnemyTier.Weak;
                 string skinName = tier switch
                 {
                     EnemyTier.Weak => "GoblinSkin_Weak",
@@ -136,6 +137,7 @@ namespace VoidBound.Editor
                 var slotMats = goblinSlots.Select(slot =>
                     slot.Contains("Cloth") ? mats["GoblinCloth"] : mats[skinName]).ToArray();
                 ApplyModel(ai.gameObject, goblinMesh, slotMats);
+                ConfigureEquipmentVisuals(ai.gameObject, EquipmentVisuals.BodyType.Goblin, def);
             }
 
             var player = GameObject.FindGameObjectWithTag("Player");
@@ -146,6 +148,7 @@ namespace VoidBound.Editor
                     : slot.Contains("Hair") ? mats["HeroHair"]
                     : mats["HeroSkin"]).ToArray();
                 ApplyModel(player, heroMesh, slotMats);
+                ConfigureEquipmentVisuals(player, EquipmentVisuals.BodyType.Hero, null);
             }
 
             if (wireTooltips)
@@ -155,11 +158,19 @@ namespace VoidBound.Editor
             EditorSceneManager.SaveScene(scene);
         }
 
-        private static EnemyTier GetTier(EnemyAI ai)
+        private static EnemyDefinitionSO GetDefinition(EnemyAI ai)
         {
             var so = new SerializedObject(ai);
-            var def = so.FindProperty("definition").objectReferenceValue as EnemyDefinitionSO;
-            return def != null ? def.tier : EnemyTier.Weak;
+            return so.FindProperty("definition").objectReferenceValue as EnemyDefinitionSO;
+        }
+
+        private static void ConfigureEquipmentVisuals(GameObject go, EquipmentVisuals.BodyType body,
+            EnemyDefinitionSO enemyDef)
+        {
+            var visuals = go.GetComponent<EquipmentVisuals>();
+            if (visuals == null) visuals = go.AddComponent<EquipmentVisuals>();
+            visuals.Configure(body, enemyDef);
+            EditorUtility.SetDirty(visuals);
         }
 
         private static void ApplyModel(GameObject go, Mesh mesh, Material[] materials)
