@@ -965,6 +965,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 8d8bebd1f9c08f943a47917a40b05c3c, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 8d8bebd1f9c08f943a47917a40b05c3c, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 07704179948524e4e8020d183843b6c2, type: 2}
+    - target: {fileID: -7511558181221131132, guid: 8d8bebd1f9c08f943a47917a40b05c3c, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 2380ab0ef4f157144a5d94f40eedaa7d, type: 2}
+    - target: {fileID: -7511558181221131132, guid: 8d8bebd1f9c08f943a47917a40b05c3c, type: 3}
+      propertyPath: 'm_Materials.Array.data[2]'
+      value: 
+      objectReference: {fileID: 2100000, guid: e013915db95c2dd42abaffd5d280966f, type: 2}
+    - target: {fileID: -5754084199372789682, guid: 8d8bebd1f9c08f943a47917a40b05c3c, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -2607347306135948246, guid: 6a851334009b34a4ca25a723f1f5b273, type: 3}
     - target: {fileID: 919132149155446097, guid: 8d8bebd1f9c08f943a47917a40b05c3c, type: 3}
       propertyPath: m_Name
       value: Fast Travel Portal
