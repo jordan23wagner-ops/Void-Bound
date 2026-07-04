@@ -14,7 +14,7 @@ namespace VoidBound.Homestead
         {
             var ui = Object.FindAnyObjectByType<PortalUI>();
             if (ui != null)
-                ui.Open();
+                ui.Open(this);
         }
     }
 }

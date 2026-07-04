@@ -30,6 +30,7 @@ namespace VoidBound.UI
             Panel5cFactory.CloseOtherHomesteadPanels(gameObject, this);
             EnsureBuilt();
             panel.gameObject.SetActive(true);
+            StationProximityCloser.Track(gameObject, this, guildStation, Close);
             title.text = station.GuildName.ToUpperInvariant();
             Refresh();
         }
@@ -37,6 +38,7 @@ namespace VoidBound.UI
         public void Close()
         {
             if (panel != null) panel.gameObject.SetActive(false);
+            StationProximityCloser.Untrack(gameObject, this);
         }
 
         private void EnsureBuilt()

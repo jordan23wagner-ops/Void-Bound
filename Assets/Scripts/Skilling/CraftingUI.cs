@@ -31,6 +31,7 @@ namespace VoidBound.Skilling
             Panel5cFactory.CloseOtherHomesteadPanels(gameObject, this);
             EnsureBuilt();
             panel.gameObject.SetActive(true);
+            StationProximityCloser.Track(gameObject, this, station, Close);
             title.text = station.StationId.ToUpperInvariant();
             Refresh();
         }
@@ -38,6 +39,7 @@ namespace VoidBound.Skilling
         public void Close()
         {
             if (panel != null) panel.gameObject.SetActive(false);
+            StationProximityCloser.Untrack(gameObject, this);
             currentStation = null;
             selectedRecipe = null;
         }

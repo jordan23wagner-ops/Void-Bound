@@ -111,7 +111,9 @@ namespace VoidBound.Editor
             var scaler = hudCanvasGO.GetComponent<CanvasScaler>();
             if (scaler == null) scaler = hudCanvasGO.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(1920, 1080);
+            // 1280x720 reference renders all UI 1.5x larger than the original
+            // 1920x1080 baseline (readability request, 2026-07-04).
+            scaler.referenceResolution = new Vector2(1280, 720);
             scaler.matchWidthOrHeight = 0.5f;
 
             // ── Remove old panels if they exist ───────────────────

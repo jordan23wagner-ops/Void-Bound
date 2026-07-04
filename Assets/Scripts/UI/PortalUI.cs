@@ -14,17 +14,20 @@ namespace VoidBound.UI
         private RectTransform panel;
         private RectTransform list;
 
-        public void Open()
+        public void Open(VoidBound.Core.Interactable station)
         {
             Panel5cFactory.CloseOtherHomesteadPanels(gameObject, this);
             EnsureBuilt();
             panel.gameObject.SetActive(true);
+            if (station != null)
+                StationProximityCloser.Track(gameObject, this, station, Close);
             Refresh();
         }
 
         public void Close()
         {
             if (panel != null) panel.gameObject.SetActive(false);
+            StationProximityCloser.Untrack(gameObject, this);
         }
 
         private void EnsureBuilt()

@@ -24,7 +24,7 @@ namespace VoidBound.UI
         private PlayerInventory inventory;
         private Skilling.MaterialInventory materials;
 
-        public void Open(ShopInventorySO shopInventory, GameObject instigator)
+        public void Open(ShopInventorySO shopInventory, GameObject instigator, Core.Interactable station)
         {
             shop = shopInventory;
             currency = instigator.GetComponent<PlayerCurrency>();
@@ -34,12 +34,14 @@ namespace VoidBound.UI
             Panel5cFactory.CloseOtherHomesteadPanels(gameObject, this);
             EnsureBuilt();
             panel.gameObject.SetActive(true);
+            StationProximityCloser.Track(gameObject, this, station, Close);
             Refresh();
         }
 
         public void Close()
         {
             if (panel != null) panel.gameObject.SetActive(false);
+            StationProximityCloser.Untrack(gameObject, this);
         }
 
         private void EnsureBuilt()

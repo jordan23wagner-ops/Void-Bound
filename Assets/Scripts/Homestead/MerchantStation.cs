@@ -15,7 +15,7 @@ namespace VoidBound.Homestead
         {
             var ui = Object.FindAnyObjectByType<MerchantUI>();
             if (ui != null)
-                ui.Open(shopInventory, instigator);
+                ui.Open(shopInventory, instigator, this);
         }
     }
 }

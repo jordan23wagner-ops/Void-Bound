@@ -19,7 +19,7 @@ namespace VoidBound.UI
         private PlayerStorage storage;
         private PlayerInventory inventory;
 
-        public void Open(GameObject instigator)
+        public void Open(GameObject instigator, VoidBound.Core.Interactable station)
         {
             storage = instigator.GetComponent<PlayerStorage>();
             inventory = instigator.GetComponent<PlayerInventory>();
@@ -32,12 +32,14 @@ namespace VoidBound.UI
             Panel5cFactory.CloseOtherHomesteadPanels(gameObject, this);
             EnsureBuilt();
             panel.gameObject.SetActive(true);
+            StationProximityCloser.Track(gameObject, this, station, Close);
             Refresh();
         }
 
         public void Close()
         {
             if (panel != null) panel.gameObject.SetActive(false);
+            StationProximityCloser.Untrack(gameObject, this);
         }
 
         private void EnsureBuilt()

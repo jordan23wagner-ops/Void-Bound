@@ -12,7 +12,7 @@ namespace VoidBound.Homestead
         {
             var ui = Object.FindAnyObjectByType<StorageUI>();
             if (ui != null)
-                ui.Open(instigator);
+                ui.Open(instigator, this);
         }
     }
 }
