@@ -122,16 +122,25 @@ def author_animations(arm):
     key("UpperArm_R", 1, 22);  key("UpperArm_R", 15, -22); key("UpperArm_R", 30, 22)
     key_loc("Hips", 1, 0); key_loc("Hips", 8, -0.05); key_loc("Hips", 22, -0.05); key_loc("Hips", 30, 0)
 
-    # ATTACK — right arm winds back then strikes forward/down, 22f once
+    # ATTACK — wind up, torso twist, diagonal overhead chop with follow-through
+    # and recover, 26f once. Off-hand counter-swings and the hips drop weight on
+    # impact so it reads as a committed strike rather than a limp arm wave.
     new_action("Attack")
-    key("UpperArm_R", 1, 0); key("UpperArm_R", 5, -75); key("UpperArm_R", 12, 85); key("UpperArm_R", 22, 0)
-    key("Hand_R", 1, 0); key("Hand_R", 12, 30); key("Hand_R", 22, 0)
-    key("Chest", 1, 0); key("Chest", 12, 0, 0, -12); key("Chest", 22, 0)
+    key("UpperArm_R", 1, 0); key("UpperArm_R", 5, -95); key("UpperArm_R", 12, 105); key("UpperArm_R", 16, 98); key("UpperArm_R", 26, 0)
+    key("Hand_R", 1, 0); key("Hand_R", 5, -25); key("Hand_R", 12, 45); key("Hand_R", 26, 0)
+    key("UpperArm_L", 1, 0); key("UpperArm_L", 12, -26); key("UpperArm_L", 26, 0)
+    key("Chest", 1, 0); key("Chest", 5, 0, 0, 16); key("Chest", 12, -12, 0, -26); key("Chest", 26, 0)
+    key("Head", 1, 0); key("Head", 12, -8); key("Head", 26, 0)
+    key_loc("Hips", 1, 0); key_loc("Hips", 12, -0.05); key_loc("Hips", 26, 0)
 
-    # HIT — head + chest recoil back, 15f once
+    # HIT — sharp recoil: head + chest snap back, arms fling, a flinch crouch,
+    # then a small forward overshoot before settling, 18f once.
     new_action("Hit")
-    key("Chest", 1, 0); key("Chest", 4, -16); key("Chest", 15, 0)
-    key("Head", 1, 0); key("Head", 4, -22); key("Head", 15, 0)
+    key("Chest", 1, 0); key("Chest", 3, -30, 0, 8); key("Chest", 8, 8, 0, -3); key("Chest", 18, 0)
+    key("Head", 1, 0); key("Head", 3, -38); key("Head", 9, 10); key("Head", 18, 0)
+    key("UpperArm_L", 1, 0); key("UpperArm_L", 3, -30); key("UpperArm_L", 18, 0)
+    key("UpperArm_R", 1, 0); key("UpperArm_R", 3, -24); key("UpperArm_R", 18, 0)
+    key_loc("Hips", 1, 0); key_loc("Hips", 3, -0.07); key_loc("Hips", 18, 0)
 
     # DEATH — topple backward and hold, 32f once
     new_action("Death")

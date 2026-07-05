@@ -36,7 +36,7 @@ ModelImporter:
       takeName: Rig|Attack
       internalID: -3510217540682870009
       firstFrame: 0
-      lastFrame: 21
+      lastFrame: 25
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -94,7 +94,7 @@ ModelImporter:
       takeName: Rig|Hit
       internalID: 3341008991451901215
       firstFrame: 0
-      lastFrame: 14
+      lastFrame: 17
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

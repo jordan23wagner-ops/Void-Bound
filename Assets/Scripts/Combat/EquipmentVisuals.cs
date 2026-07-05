@@ -67,10 +67,12 @@ namespace VoidBound.Combat
         // Tuned so the blade reads as held; the hand bone points down the forearm.
         private (Vector3 pos, Vector3 euler) HandOffset(bool shield)
         {
-            // Local-to-hand-bone rotations (tuned): weapon blade points up, shield
-            // face points outward. Follows the hand through the animation.
-            return shield ? (new Vector3(0f, 0.02f, 0.06f), new Vector3(0f, 180f, 180f))
-                          : (new Vector3(0f, 0.02f, 0f), new Vector3(320f, 180f, 180f));
+            // Local-to-hand-bone rotations (tuned for the +Z-facing model — see
+            // CharacterModelSwap's 180° flip): weapon blade points up and slightly
+            // forward, shield face points forward and sits upright. Follows the
+            // hand through the animation.
+            return shield ? (new Vector3(0f, 0.02f, 0.06f), new Vector3(0f, 0f, 180f))
+                          : (new Vector3(0f, 0.02f, 0f), new Vector3(20f, 180f, 180f));
         }
 
         private (Transform bone, bool grip) Target(EquipmentSlot slot) => slot switch
