@@ -22,6 +22,7 @@ Void Bound evolved from RunePortal (a Three.js browser ARPG). All gameplay syste
 4. **No deprecated Unity APIs.** Use the new Input System (not legacy Input class). Confirm current Unity 6.x best practices if uncertain — do not assume from older training data.
 5. **Commit after every completed task**, with a clear message referencing the phase/task (e.g. "Phase 0: URP config + isometric camera rig").
 6. **Update this CONTEXT.md** after each phase completes — log what was built, file locations, and any decisions made.
+7. **Visual polish standard: [`STYLE_GUIDE.md`](STYLE_GUIDE.md).** The Archmage set is the quality bar for ALL visual work — gear (melee/ranger too), enemies, the Homestead, and every UI. Use the named-material palette (`Main`/`Gold`/`Gem`/`Accent`), silhouette-first layered primitives, per-bone rigging, and screenshot-verify against the guide before calling any visual work done. Don't ship "functional but ugly."
 
 ## Current Phase
 **Phase 8: Zone 3 — Bleakwood** (not yet started). Phase 7 completed and play-mode verified 2026-07-04.
