@@ -40,12 +40,18 @@ namespace VoidBound.Combat
         [SerializeField] private Vector3 shieldPosOffset = new(0f, 0.02f, 0.06f);
         [Tooltip("Held shield local rotation (euler). Y turns which way it faces.")]
         [SerializeField] private Vector3 shieldEuler = new(0f, 90f, 180f);
+        [Tooltip("Bow/Crossbow held pose (limbs vertical).")]
+        [SerializeField] private Vector3 bowPosOffset = new(0f, 0.02f, 0f);
+        [SerializeField] private Vector3 bowEuler = new(0f, 180f, 180f);
+        [Tooltip("Staff/Wand held pose (pole upright).")]
+        [SerializeField] private Vector3 staffPosOffset = new(0f, 0.02f, 0f);
+        [SerializeField] private Vector3 staffEuler = new(0f, 180f, 180f);
 
         private float BodyScale => bodyType == BodyType.Goblin ? 0.68f : 1f;
 
         // Each slot can spawn several sub-parts (armor splits across limb bones).
         private readonly Dictionary<EquipmentSlot, List<GameObject>> shown = new();
-        private readonly Dictionary<EquipmentSlot, string> shownId = new();
+        private readonly Dictionary<EquipmentSlot, GearItemSO> shownItem = new();
         private readonly Dictionary<string, Transform> bones = new();
         private Transform modelRoot; // the "Model" child (holds the Animator + 180° facing flip)
         private PlayerInventory inventory;
@@ -83,15 +89,16 @@ namespace VoidBound.Combat
         // Play. Editor-only — nothing runs in a build (offsets are baked at equip).
         private void LateUpdate()
         {
-            ReapplyGrip(EquipmentSlot.Weapon, false);
-            ReapplyGrip(EquipmentSlot.Shield, true);
+            ReapplyGrip(EquipmentSlot.Weapon);
+            ReapplyGrip(EquipmentSlot.Shield);
         }
 
-        private void ReapplyGrip(EquipmentSlot slot, bool shield)
+        private void ReapplyGrip(EquipmentSlot slot)
         {
             if (!shown.TryGetValue(slot, out var parts) || parts.Count == 0) return;
             var t = parts[0].transform;
-            if (t != null && t.parent != null) ApplyGripOffset(t, t.parent, shield);
+            shownItem.TryGetValue(slot, out var item);
+            if (t != null && t.parent != null) ApplyGripOffset(t, t.parent, item);
         }
 #endif
 
@@ -103,17 +110,28 @@ namespace VoidBound.Combat
 
         private Transform Bone(string n) => bones.TryGetValue(n, out var t) ? t : transform;
 
-        // Local offset for grip-space weapons/shield on the hand bone, exposed on
-        // the component so it can be tuned live (see the serialized fields).
-        private (Vector3 pos, Vector3 euler) HandOffset(bool shield)
-            => shield ? (shieldPosOffset, shieldEuler) : (weaponPosOffset, weaponEuler);
+        // Local offset for grip-space gear on the hand bone, per weapon type so a
+        // bow/staff holds naturally rather than at the sword angle. Exposed on the
+        // component so each pose can be tuned live (see the serialized fields).
+        private (Vector3 pos, Vector3 euler) HandOffset(GearItemSO item)
+        {
+            if (item != null && item.slot == EquipmentSlot.Shield) return (shieldPosOffset, shieldEuler);
+            switch (item != null ? item.weaponType : WeaponType.None)
+            {
+                case WeaponType.Bow:
+                case WeaponType.Crossbow: return (bowPosOffset, bowEuler);
+                case WeaponType.Staff:
+                case WeaponType.Wand:     return (staffPosOffset, staffEuler);
+                default:                  return (weaponPosOffset, weaponEuler);
+            }
+        }
 
         // Place/orient a grip item on its hand bone. The imported armature root
         // ("Rig") carries a ~100x unit-scale, so bones have a large lossyScale —
         // compensate so the gear lands at BodyScale with a sensible world offset.
-        private void ApplyGripOffset(Transform go, Transform bone, bool shield)
+        private void ApplyGripOffset(Transform go, Transform bone, GearItemSO item)
         {
-            var (pos, euler) = HandOffset(shield);
+            var (pos, euler) = HandOffset(item);
             float bs = bone.lossyScale.x <= 0.0001f ? 1f : bone.lossyScale.x;
             go.localPosition = pos / bs;
             go.localRotation = Quaternion.Euler(euler);
@@ -158,7 +176,7 @@ namespace VoidBound.Combat
         {
             if (item == null || item.visualPrefab == null) { RemoveVisual(slot); return; }
 
-            if (shownId.TryGetValue(slot, out var id) && id == item.itemId) return; // already shown
+            if (shownItem.TryGetValue(slot, out var cur) && cur == item) return; // already shown
             RemoveVisual(slot);
 
             var (bone, grip) = Target(slot);
@@ -171,7 +189,7 @@ namespace VoidBound.Combat
                 var go = Instantiate(item.visualPrefab);
                 go.name = VisualName(item);
                 go.transform.SetParent(bone, false);
-                ApplyGripOffset(go.transform, bone, slot == EquipmentSlot.Shield);
+                ApplyGripOffset(go.transform, bone, item);
                 TintMain(go, color);
                 parts.Add(go);
             }
@@ -214,7 +232,7 @@ namespace VoidBound.Combat
             }
 
             shown[slot] = parts;
-            shownId[slot] = item.itemId;
+            shownItem[slot] = item;
         }
 
         private void RemoveVisual(EquipmentSlot slot)
@@ -224,7 +242,7 @@ namespace VoidBound.Combat
                 foreach (var go in parts) if (go != null) Destroy(go);
                 shown.Remove(slot);
             }
-            shownId.Remove(slot);
+            shownItem.Remove(slot);
         }
 
         private static string VisualName(GearItemSO item) => "Gear_" + item.itemId;

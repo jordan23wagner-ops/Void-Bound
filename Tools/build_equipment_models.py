@@ -174,10 +174,11 @@ def mace():
     export(p, "Mace")
 
 def bow():
+    # Grip at origin (like the other weapons) so it seats in the hand.
     p = []
-    p.append(torus("Main", 0.34, 0.02, (0, 0.05, 0.30), rotation=(rad(90), 0, 0)))  # arc (front half visible)
-    p.append(cyl("Accent", 0.025, 0.14, (0, 0, 0.30)))          # grip wrap
-    p.append(box("Accent", (0, 0.02, 0.30), (0.006, 0.02, 0.66)))  # string
+    p.append(torus("Main", 0.34, 0.02, (0, 0.05, 0.0), rotation=(rad(90), 0, 0)))  # arc (front half visible)
+    p.append(cyl("Accent", 0.025, 0.14, (0, 0, 0.0)))          # grip wrap
+    p.append(box("Accent", (0, 0.02, 0.0), (0.006, 0.02, 0.66)))  # string
     export(p, "Bow")
 
 def crossbow():

@@ -6585,6 +6585,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Combat.EquipmentVisuals
   bodyType: 0
   enemyDefinition: {fileID: 0}
+  weaponPosOffset: {x: 0, y: 0.02, z: 0}
+  weaponEuler: {x: 60, y: 180, z: 180}
+  shieldPosOffset: {x: 0, y: 0.02, z: 0.06}
+  shieldEuler: {x: 0, y: 90, z: 180}
+  bowPosOffset: {x: 0, y: 0.02, z: 0}
+  bowEuler: {x: 0, y: 180, z: 180}
+  staffPosOffset: {x: 0, y: 0.02, z: 0}
+  staffEuler: {x: 0, y: 180, z: 180}
 --- !u!114 &751173377
 MonoBehaviour:
   m_ObjectHideFlags: 0

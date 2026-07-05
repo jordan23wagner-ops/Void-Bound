@@ -41,6 +41,16 @@ namespace VoidBound.Editor
             AssignVisual("Assets/ScriptableObjects/TestGear/Flamecleaver_Legendary.asset", "Sword");
             AssignVisual("Assets/ScriptableObjects/TestGear/Voidreaver_Voidforged.asset", "Sword");
 
+            // ── Ranged + mage weapons (models already exist; DEX/INT-flavored) ──
+            Gear("hunters_bow", "Hunter's Bow", EquipmentSlot.Weapon, RarityTier.Common, "Bow",
+                weaponType: WeaponType.Bow, dex: 4, gold: 60);
+            Gear("oak_crossbow", "Oak Crossbow", EquipmentSlot.Weapon, RarityTier.Uncommon, "Crossbow",
+                weaponType: WeaponType.Crossbow, dex: 5, gold: 90);
+            Gear("willow_staff", "Willow Staff", EquipmentSlot.Weapon, RarityTier.Common, "Staff",
+                weaponType: WeaponType.Staff, intel: 4, gold: 60);
+            Gear("apprentice_wand", "Apprentice Wand", EquipmentSlot.Weapon, RarityTier.Common, "Wand",
+                weaponType: WeaponType.Wand, intel: 3, gold: 45);
+
             // ── Enemy gear ──
             var goblinClub = Gear("goblin_club", "Goblin Club", EquipmentSlot.Weapon, RarityTier.Common, "Mace",
                 weaponType: WeaponType.Mace, str: 1, gold: 5);
