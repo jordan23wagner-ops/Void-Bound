@@ -26,7 +26,9 @@ namespace VoidBound.Combat
 
         private float BodyScale => bodyType == BodyType.Goblin ? 0.68f : 1f;
 
-        private readonly Dictionary<EquipmentSlot, GameObject> shown = new();
+        // Each slot can spawn several sub-parts (armor splits across limb bones).
+        private readonly Dictionary<EquipmentSlot, List<GameObject>> shown = new();
+        private readonly Dictionary<EquipmentSlot, string> shownId = new();
         private readonly Dictionary<string, Transform> bones = new();
         private PlayerInventory inventory;
 
@@ -113,18 +115,18 @@ namespace VoidBound.Combat
         {
             if (item == null || item.visualPrefab == null) { RemoveVisual(slot); return; }
 
-            if (shown.TryGetValue(slot, out var existing))
-            {
-                if (existing != null && existing.name == VisualName(item)) return;
-                RemoveVisual(slot);
-            }
+            if (shownId.TryGetValue(slot, out var id) && id == item.itemId) return; // already shown
+            RemoveVisual(slot);
 
             var (bone, grip) = Target(slot);
-            var go = Instantiate(item.visualPrefab);
-            go.name = VisualName(item);
+            var color = RarityVisualEffects.GetRarityColor(item.rarity);
+            var parts = new List<GameObject>();
 
             if (grip)
             {
+                // Grip-space weapon/shield: one mesh on the hand bone.
+                var go = Instantiate(item.visualPrefab);
+                go.name = VisualName(item);
                 go.transform.SetParent(bone, false);
                 var (pos, euler) = HandOffset(slot == EquipmentSlot.Shield);
                 // The imported armature root ("Rig") carries a ~100x unit-scale,
@@ -134,28 +136,57 @@ namespace VoidBound.Combat
                 go.transform.localPosition = pos / bs;
                 go.transform.localRotation = Quaternion.Euler(euler);
                 go.transform.localScale = Vector3.one * (BodyScale / bs);
+                TintMain(go, color);
+                parts.Add(go);
             }
             else
             {
-                // Body-space: correct rest placement at the root, then follow the bone.
-                go.transform.SetParent(transform, false);
-                go.transform.localPosition = Vector3.zero;
-                go.transform.localRotation = Quaternion.identity;
-                go.transform.localScale = Vector3.one * BodyScale;
-                go.transform.SetParent(bone, worldPositionStays: true);
+                // Armor: the model holds one sub-mesh per bone it spans (named for
+                // that bone). Place it at the body rest pose, then hand each part
+                // to its bone so it follows that limb instead of sliding off it.
+                var root = Instantiate(item.visualPrefab);
+                root.name = VisualName(item);
+                root.transform.SetParent(transform, false);
+                root.transform.localPosition = Vector3.zero;
+                root.transform.localRotation = Quaternion.identity;
+                root.transform.localScale = Vector3.one * BodyScale;
+
+                var children = new List<Transform>();
+                foreach (Transform c in root.transform) children.Add(c);
+
+                if (children.Count == 0)
+                {
+                    // Single-mesh model (fallback): whole piece on the slot bone.
+                    root.transform.SetParent(bone, worldPositionStays: true);
+                    TintMain(root, color);
+                    parts.Add(root);
+                }
+                else
+                {
+                    foreach (var c in children)
+                    {
+                        var boneName = c.name; // sub-part is named for its bone
+                        c.SetParent(Bone(boneName), worldPositionStays: true);
+                        c.gameObject.name = VisualName(item) + "_" + boneName; // don't shadow the bone name
+                        TintMain(c.gameObject, color);
+                        parts.Add(c.gameObject);
+                    }
+                    Destroy(root); // emptied shell
+                }
             }
 
-            TintMain(go, RarityVisualEffects.GetRarityColor(item.rarity));
-            shown[slot] = go;
+            shown[slot] = parts;
+            shownId[slot] = item.itemId;
         }
 
         private void RemoveVisual(EquipmentSlot slot)
         {
-            if (shown.TryGetValue(slot, out var go))
+            if (shown.TryGetValue(slot, out var parts))
             {
-                if (go != null) Destroy(go);
+                foreach (var go in parts) if (go != null) Destroy(go);
                 shown.Remove(slot);
             }
+            shownId.Remove(slot);
         }
 
         private static string VisualName(GearItemSO item) => "Gear_" + item.itemId;

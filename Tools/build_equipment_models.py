@@ -97,6 +97,44 @@ def export(parts, name):
     bpy.ops.wm.read_factory_settings(use_empty=True)
 
 
+def export_armor(pairs, name):
+    # pairs: list of (object, bone_name). Armor spans several limbs, so it can't
+    # ride a single bone — split it into one merged mesh per bone, each object
+    # NAMED for its bone, and export them as separate objects. EquipmentVisuals
+    # then parents each sub-part to the matching skeleton bone so it follows that
+    # limb (matches the character's rigid one-bone-per-part deformation).
+    groups = {}
+    order = []
+    for ob, bone in pairs:
+        if bone not in groups:
+            groups[bone] = []
+            order.append(bone)
+        groups[bone].append(ob)
+    roots = []
+    for bone in order:
+        objs = groups[bone]
+        if len(objs) > 1:
+            bpy.ops.object.select_all(action='DESELECT')
+            for o in objs:
+                o.select_set(True)
+            bpy.context.view_layer.objects.active = objs[0]
+            bpy.ops.object.join()
+            ob = bpy.context.active_object
+        else:
+            ob = objs[0]
+        ob.name = bone
+        roots.append(ob)
+    bpy.ops.object.select_all(action='DESELECT')
+    for o in roots:
+        o.select_set(True)
+    bpy.context.view_layer.objects.active = roots[0]
+    bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+    path = os.path.join(OUT_DIR, name + ".fbx")
+    bpy.ops.export_scene.fbx(filepath=path, **FBX_SETTINGS)
+    print(f"[Equip] Exported {path} (per-bone parts: {', '.join(order)})")
+    bpy.ops.wm.read_factory_settings(use_empty=True)
+
+
 # ── WEAPONS (grip at origin, blade along +Z) ──────────────────
 def sword():
     p = []
@@ -171,54 +209,64 @@ def shield():
     export(p, "Shield")
 
 
-# ── ARMOR (hero-body space; parented at character root) ───────
+# ── ARMOR (hero-body space; each part tagged with the bone it follows) ──
+# Bone names match build_character_models.py's hero skeleton; +X = _R side.
 def helm():
-    p = []
-    p.append(sphere("Main", 0.155, (0, 0, 1.63), scale=(1.05, 1.05, 0.85)))  # dome
-    p.append(box("Accent", (0, 0.12, 1.56), (0.30, 0.06, 0.06)))             # brow band
-    p.append(cone("Main", 0.03, 0.005, 0.12, (0, 0, 1.80), vertices=6))      # spike
-    export(p, "Helm")
+    p = [
+        (sphere("Main", 0.155, (0, 0, 1.63), scale=(1.05, 1.05, 0.85)), "Head"),  # dome
+        (box("Accent", (0, 0.12, 1.56), (0.30, 0.06, 0.06)), "Head"),             # brow band
+        (cone("Main", 0.03, 0.005, 0.12, (0, 0, 1.80), vertices=6), "Head"),      # spike
+    ]
+    export_armor(p, "Helm")
 
 def body_armor():
-    p = []
-    p.append(box("Main", (0, 0.16, 1.14), (0.34, 0.10, 0.42)))   # chest plate
-    p.append(sphere("Main", 0.13, (0.28, 0, 1.38)))              # shoulder L
-    p.append(sphere("Main", 0.13, (-0.28, 0, 1.38)))            # shoulder R
-    p.append(box("Accent", (0, 0.20, 1.30), (0.10, 0.04, 0.12)))  # emblem
-    export(p, "Body")
+    p = [
+        (box("Main", (0, 0.16, 1.14), (0.34, 0.10, 0.42)), "Chest"),   # chest plate
+        (box("Accent", (0, 0.20, 1.30), (0.10, 0.04, 0.12)), "Chest"),  # emblem
+        (sphere("Main", 0.13, (0.28, 0, 1.38)), "UpperArm_R"),          # shoulder R (follows the arm)
+        (sphere("Main", 0.13, (-0.28, 0, 1.38)), "UpperArm_L"),         # shoulder L
+    ]
+    export_armor(p, "Body")
 
 def legs_armor():
-    p = []
-    p.append(box("Main", (0.12, 0.10, 0.55), (0.14, 0.16, 0.36)))
-    p.append(box("Main", (-0.12, 0.10, 0.55), (0.14, 0.16, 0.36)))
-    p.append(box("Accent", (0, 0.12, 0.80), (0.34, 0.14, 0.10)))  # belt
-    export(p, "Legs")
+    p = [
+        (box("Main", (0.12, 0.10, 0.55), (0.14, 0.16, 0.36)), "UpperLeg_R"),
+        (box("Main", (-0.12, 0.10, 0.55), (0.14, 0.16, 0.36)), "UpperLeg_L"),
+        (box("Accent", (0, 0.12, 0.80), (0.34, 0.14, 0.10)), "Hips"),  # belt
+    ]
+    export_armor(p, "Legs")
 
 def boots():
-    p = []
-    for sx in (0.12, -0.12):
-        p.append(box("Main", (sx, 0.05, 0.10), (0.15, 0.26, 0.20)))   # shin
-        p.append(box("Accent", (sx, 0.10, 0.03), (0.15, 0.34, 0.08)))  # foot
-    export(p, "Boots")
+    p = [
+        (box("Main", (0.12, 0.05, 0.10), (0.15, 0.26, 0.20)), "Foot_R"),   # shin/ankle
+        (box("Accent", (0.12, 0.10, 0.03), (0.15, 0.34, 0.08)), "Foot_R"),  # foot
+        (box("Main", (-0.12, 0.05, 0.10), (0.15, 0.26, 0.20)), "Foot_L"),
+        (box("Accent", (-0.12, 0.10, 0.03), (0.15, 0.34, 0.08)), "Foot_L"),
+    ]
+    export_armor(p, "Boots")
 
 def gloves():
-    p = []
-    for sx in (0.30, -0.30):
-        p.append(sphere("Main", 0.075, (sx, 0, 0.74)))            # hand
-        p.append(cyl("Main", 0.07, 0.16, (sx, 0, 0.90)))          # bracer up forearm
-    export(p, "Gloves")
+    p = [
+        (sphere("Main", 0.075, (0.30, 0, 0.74)), "Hand_R"),        # hand
+        (cyl("Main", 0.07, 0.16, (0.30, 0, 0.90)), "Hand_R"),      # bracer
+        (sphere("Main", 0.075, (-0.30, 0, 0.74)), "Hand_L"),
+        (cyl("Main", 0.07, 0.16, (-0.30, 0, 0.90)), "Hand_L"),
+    ]
+    export_armor(p, "Gloves")
 
 def cape():
-    p = []
-    p.append(box("Main", (0, -0.17, 1.30), (0.44, 0.04, 0.16)))   # collar
-    p.append(box("Main", (0, -0.20, 0.92), (0.50, 0.03, 0.72), rotation=(rad(-6), 0, 0)))  # drape
-    export(p, "Cape")
+    p = [
+        (box("Main", (0, -0.17, 1.30), (0.44, 0.04, 0.16)), "Chest"),   # collar
+        (box("Main", (0, -0.20, 0.92), (0.50, 0.03, 0.72), rotation=(rad(-6), 0, 0)), "Chest"),  # drape
+    ]
+    export_armor(p, "Cape")
 
 def amulet():
-    p = []
-    p.append(torus("Accent", 0.09, 0.012, (0, 0.06, 1.44), rotation=(rad(90), 0, 0)))  # cord
-    p.append(sphere("Main", 0.05, (0, 0.13, 1.36)))              # pendant
-    export(p, "Amulet")
+    p = [
+        (torus("Accent", 0.09, 0.012, (0, 0.06, 1.44), rotation=(rad(90), 0, 0)), "Neck"),  # cord
+        (sphere("Main", 0.05, (0, 0.13, 1.36)), "Neck"),              # pendant
+    ]
+    export_armor(p, "Amulet")
 
 
 # ── MATERIALS (centered props for world pickups) ──────────────
