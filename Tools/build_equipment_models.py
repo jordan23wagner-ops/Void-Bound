@@ -301,13 +301,15 @@ def mage_hat():
     export_armor(p, "MageHat")
 
 def mage_robe():
-    # Long flowing robe: torso + a skirt to the ground (rides the hips). The
-    # skirt is wide enough to contain the leg swing so the legs don't clip
-    # through it while walking.
+    # Long flowing robe: torso panel on the chest, and the lower skirt SPLIT into
+    # two panels — one per leg (weighted to UpperLeg_R/L) — so it parts and
+    # follows the legs as you stride instead of clipping through them. The panels
+    # overlap at rest so it still reads as one continuous robe.
     p = [
-        (cone("Main", 0.26, 0.20, 0.58, (0, 0.02, 1.14), vertices=8), "Chest"),   # upper robe (flares down)
+        (cone("Main", 0.26, 0.20, 0.58, (0, 0.02, 1.14), vertices=8), "Chest"),   # upper robe (flares to waist)
         (box("Accent", (0, 0.15, 1.34), (0.28, 0.05, 0.08)), "Chest"),            # collar trim
-        (cone("Main", 0.46, 0.26, 0.90, (0, 0.02, 0.46), vertices=10), "Hips"),   # wide skirt to the ground
+        (cone("Main", 0.25, 0.18, 0.90, (0.11, 0.02, 0.46), vertices=7), "UpperLeg_R"),  # right skirt panel
+        (cone("Main", 0.25, 0.18, 0.90, (-0.11, 0.02, 0.46), vertices=7), "UpperLeg_L"), # left skirt panel
     ]
     export_armor(p, "MageRobe")
 
