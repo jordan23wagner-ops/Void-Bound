@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68a3e1c9b7987c246bf826e0449d5225, type: 3}
+  m_Name: mage_robe
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Data.GearItemSO
+  itemId: mage_robe
+  displayName: Mage Robe
+  slot: 3
+  weaponType: 0
+  rarity: 0
+  statModifiers:
+    str: 0
+    dex: 0
+    vig: 1
+    intel: 3
+  visualPrefab: {fileID: 919132149155446097, guid: d331a643de6389740af399fb22abb722, type: 3}
+  setId: 
+  baseDamage: 0
+  goldValue: 80

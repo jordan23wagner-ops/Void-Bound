@@ -270,6 +270,46 @@ def amulet():
     export_armor(p, "Amulet")
 
 
+# ── CLASS ARMOR (ranger leather, mage cloth) — distinct silhouettes ──
+def ranger_hood():
+    # Hood over the head with a forward peak; reads as a leather hood.
+    p = [
+        (sphere("Main", 0.175, (0, -0.02, 1.60), scale=(1.0, 1.12, 1.05)), "Head"),  # hood dome (back-weighted)
+        (cone("Main", 0.11, 0.02, 0.18, (0, 0.15, 1.63), rotation=(rad(-38), 0, 0), vertices=6), "Head"),  # peak forward
+        (box("Accent", (0, 0.13, 1.51), (0.22, 0.06, 0.09)), "Head"),   # brow trim
+    ]
+    export_armor(p, "RangerHood")
+
+def ranger_vest():
+    # Leather vest with straps and small shoulder caps (lighter than plate).
+    p = [
+        (box("Main", (0, 0.14, 1.12), (0.30, 0.13, 0.42)), "Chest"),       # torso vest
+        (box("Accent", (0.10, 0.03, 1.10), (0.05, 0.14, 0.46)), "Chest"),  # strap R
+        (box("Accent", (-0.10, 0.03, 1.10), (0.05, 0.14, 0.46)), "Chest"), # strap L
+        (sphere("Main", 0.095, (0.27, 0, 1.37), scale=(1, 1, 0.6)), "UpperArm_R"),  # shoulder cap
+        (sphere("Main", 0.095, (-0.27, 0, 1.37), scale=(1, 1, 0.6)), "UpperArm_L"),
+    ]
+    export_armor(p, "RangerVest")
+
+def mage_hat():
+    # Wide-brim wizard hat with a tall cone and a tip bobble.
+    p = [
+        (cone("Accent", 0.24, 0.02, 0.05, (0, 0.02, 1.60), vertices=12), "Head"),  # brim
+        (cone("Main", 0.15, 0.005, 0.48, (0, 0.03, 1.83), vertices=8), "Head"),    # tall cone
+        (sphere("Accent", 0.03, (0, 0.04, 2.08)), "Head"),                          # tip bobble
+    ]
+    export_armor(p, "MageHat")
+
+def mage_robe():
+    # Long flowing robe: torso + a skirt to the ground (rides the hips).
+    p = [
+        (cone("Main", 0.24, 0.17, 0.56, (0, 0.02, 1.14), vertices=8), "Chest"),   # upper robe (flares down)
+        (box("Accent", (0, 0.14, 1.34), (0.26, 0.05, 0.08)), "Chest"),            # collar trim
+        (cone("Main", 0.34, 0.20, 0.86, (0, 0.02, 0.45), vertices=8), "Hips"),    # long skirt, wide at ground
+    ]
+    export_armor(p, "MageRobe")
+
+
 # ── MATERIALS (centered props for world pickups) ──────────────
 def ore_chunk():
     p = []
@@ -304,6 +344,7 @@ if __name__ == "__main__":
     bpy.ops.wm.read_factory_settings(use_empty=True)
     for fn in (sword, sword2h, dagger, mace, bow, crossbow, staff, wand, shield,
                helm, body_armor, legs_armor, boots, gloves, cape, amulet,
+               ranger_hood, ranger_vest, mage_hat, mage_robe,
                ore_chunk, ingot, herb, fish):
         fn()
     print("[Equip] Done - all equipment/item models exported.")

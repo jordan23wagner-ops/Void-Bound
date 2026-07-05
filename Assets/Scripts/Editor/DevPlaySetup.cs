@@ -30,27 +30,34 @@ namespace VoidBound.Editor
         private const string RangedMenu = "VoidBound/Dev - Equip Ranged Kit";
         private const string MageMenu = "VoidBound/Dev - Equip Mage Kit";
 
-        // Kits are asset paths. Armor is shared for now (weapon defines the class);
-        // ranged/mage drop the shield since bow/staff are two-handed.
+        // Kits are asset paths. Each class has its own helm/body silhouette; the
+        // remaining slots share the base pieces. Ranged/mage drop the shield
+        // (bow/staff are two-handed); the mage skips greaves (the robe covers).
         private const string G = "Assets/ScriptableObjects/Gear/";
-        private static readonly string[] SharedArmor =
-        {
-            G + "iron_helm.asset", G + "iron_chestplate.asset", G + "iron_greaves.asset",
-            G + "iron_boots.asset", G + "iron_gauntlets.asset", G + "travelers_cape.asset",
-            G + "iron_amulet.asset",
-        };
 
         private static string[] KitFor(string name)
         {
-            var kit = new List<string>(SharedArmor);
             switch (name)
             {
-                case "Ranged": kit.Add(G + "hunters_bow.asset"); break;
-                case "Mage":   kit.Add(G + "willow_staff.asset"); break;
-                default:       kit.Add(G + "wooden_shield.asset");
-                               kit.Add("Assets/ScriptableObjects/TestGear/Rusty_Sword_Common.asset"); break;
+                case "Ranged": return new[]
+                {
+                    G + "ranger_hood.asset", G + "ranger_vest.asset", G + "iron_greaves.asset",
+                    G + "iron_boots.asset", G + "iron_gauntlets.asset", G + "travelers_cape.asset",
+                    G + "iron_amulet.asset", G + "hunters_bow.asset",
+                };
+                case "Mage": return new[]
+                {
+                    G + "mage_hat.asset", G + "mage_robe.asset", G + "iron_boots.asset",
+                    G + "iron_gauntlets.asset", G + "iron_amulet.asset", G + "willow_staff.asset",
+                };
+                default: return new[]
+                {
+                    G + "iron_helm.asset", G + "iron_chestplate.asset", G + "iron_greaves.asset",
+                    G + "iron_boots.asset", G + "iron_gauntlets.asset", G + "travelers_cape.asset",
+                    G + "iron_amulet.asset", G + "wooden_shield.asset",
+                    "Assets/ScriptableObjects/TestGear/Rusty_Sword_Common.asset",
+                };
             }
-            return kit.ToArray();
         }
 
         static DevPlaySetup()
