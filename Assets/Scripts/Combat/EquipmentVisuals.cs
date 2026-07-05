@@ -19,12 +19,27 @@ namespace VoidBound.Combat
     //    space and doesn't land mirrored) at the rest pose, then each sub-part is
     //    reparented to its bone keeping world position, so it sits right AND
     //    follows that bone. Goblin armor is downscaled to fit.
+    //
+    // Tuning the weapon/shield pose: enter Play, select the Player, and drag the
+    // "Grip gear pose" fields — the held gear updates live (editor LateUpdate).
+    // To keep values: right-click the component header → Copy Component, Stop,
+    // then right-click → Paste Component Values (Play-mode edits otherwise revert).
     public class EquipmentVisuals : MonoBehaviour
     {
         public enum BodyType { Hero, Goblin }
 
         [SerializeField] private BodyType bodyType = BodyType.Hero;
         [SerializeField] private EnemyDefinitionSO enemyDefinition; // null => player mode
+
+        [Header("Grip gear pose — tune live in Play (see class summary)")]
+        [Tooltip("Held weapon local position offset on the hand bone.")]
+        [SerializeField] private Vector3 weaponPosOffset = new(0f, 0.02f, 0f);
+        [Tooltip("Held weapon local rotation (euler). X tilts the blade fore/aft.")]
+        [SerializeField] private Vector3 weaponEuler = new(60f, 180f, 180f);
+        [Tooltip("Held shield local position offset on the off-hand bone.")]
+        [SerializeField] private Vector3 shieldPosOffset = new(0f, 0.02f, 0.06f);
+        [Tooltip("Held shield local rotation (euler). Y turns which way it faces.")]
+        [SerializeField] private Vector3 shieldEuler = new(0f, 90f, 180f);
 
         private float BodyScale => bodyType == BodyType.Goblin ? 0.68f : 1f;
 
@@ -62,6 +77,24 @@ namespace VoidBound.Combat
             if (inventory != null) inventory.OnInventoryChanged -= SyncPlayer;
         }
 
+#if UNITY_EDITOR
+        // Live tuning: re-apply the grip offsets each frame in the editor so
+        // Inspector tweaks to the weapon/shield pose update in real time during
+        // Play. Editor-only — nothing runs in a build (offsets are baked at equip).
+        private void LateUpdate()
+        {
+            ReapplyGrip(EquipmentSlot.Weapon, false);
+            ReapplyGrip(EquipmentSlot.Shield, true);
+        }
+
+        private void ReapplyGrip(EquipmentSlot slot, bool shield)
+        {
+            if (!shown.TryGetValue(slot, out var parts) || parts.Count == 0) return;
+            var t = parts[0].transform;
+            if (t != null && t.parent != null) ApplyGripOffset(t, t.parent, shield);
+        }
+#endif
+
         private void ResolveBones()
         {
             foreach (var t in GetComponentsInChildren<Transform>(true))
@@ -70,17 +103,21 @@ namespace VoidBound.Combat
 
         private Transform Bone(string n) => bones.TryGetValue(n, out var t) ? t : transform;
 
-        // Per-body local offset for grip-space weapons/shield on the hand bone.
-        // Tuned so the blade reads as held; the hand bone points down the forearm.
+        // Local offset for grip-space weapons/shield on the hand bone, exposed on
+        // the component so it can be tuned live (see the serialized fields).
         private (Vector3 pos, Vector3 euler) HandOffset(bool shield)
+            => shield ? (shieldPosOffset, shieldEuler) : (weaponPosOffset, weaponEuler);
+
+        // Place/orient a grip item on its hand bone. The imported armature root
+        // ("Rig") carries a ~100x unit-scale, so bones have a large lossyScale —
+        // compensate so the gear lands at BodyScale with a sensible world offset.
+        private void ApplyGripOffset(Transform go, Transform bone, bool shield)
         {
-            // Local-to-hand-bone rotations (tuned for the +Z-facing model — see
-            // CharacterModelSwap's 180° flip): weapon blade angles down-forward so
-            // it clears the body/armor and reads clearly; shield face points out to
-            // the off-hand side (not forward) and sits upright. Follows the hand
-            // through the animation.
-            return shield ? (new Vector3(0f, 0.02f, 0.06f), new Vector3(0f, 90f, 180f))
-                          : (new Vector3(0f, 0.02f, 0f), new Vector3(60f, 180f, 180f));
+            var (pos, euler) = HandOffset(shield);
+            float bs = bone.lossyScale.x <= 0.0001f ? 1f : bone.lossyScale.x;
+            go.localPosition = pos / bs;
+            go.localRotation = Quaternion.Euler(euler);
+            go.localScale = Vector3.one * (BodyScale / bs);
         }
 
         private (Transform bone, bool grip) Target(EquipmentSlot slot) => slot switch
@@ -134,14 +171,7 @@ namespace VoidBound.Combat
                 var go = Instantiate(item.visualPrefab);
                 go.name = VisualName(item);
                 go.transform.SetParent(bone, false);
-                var (pos, euler) = HandOffset(slot == EquipmentSlot.Shield);
-                // The imported armature root ("Rig") carries a ~100x unit-scale,
-                // so bones have a large lossyScale. Compensate so the gear ends
-                // up at BodyScale in world space with a sensible world offset.
-                float bs = bone.lossyScale.x <= 0.0001f ? 1f : bone.lossyScale.x;
-                go.transform.localPosition = pos / bs;
-                go.transform.localRotation = Quaternion.Euler(euler);
-                go.transform.localScale = Vector3.one * (BodyScale / bs);
+                ApplyGripOffset(go.transform, bone, slot == EquipmentSlot.Shield);
                 TintMain(go, color);
                 parts.Add(go);
             }
