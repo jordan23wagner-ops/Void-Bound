@@ -187,7 +187,10 @@ namespace VoidBound.Editor
             model.name = "Model";
             model.transform.SetParent(root.transform, false);
             model.transform.localPosition = Vector3.zero;
-            model.transform.localRotation = Quaternion.identity;
+            // The FBX exports facing -Z, but movement/combat rotate the root so +Z
+            // faces the travel/target direction — so the mesh must be turned to
+            // face the root's forward, else the character walks/looks backward.
+            model.transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
             model.transform.localScale = Vector3.one;
 
             var anim = model.GetComponent<Animator>();

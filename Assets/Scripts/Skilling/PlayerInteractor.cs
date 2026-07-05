@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using VoidBound.Core;
 
 namespace VoidBound.Skilling
@@ -10,6 +11,20 @@ namespace VoidBound.Skilling
 
         private float lastCheckTime;
         private Interactable engaged; // non-repeat interactable already fired this approach
+        private bool justLoaded;      // just arrived in a scene — suppress stations we spawned inside
+
+        private void OnEnable() { SceneManager.sceneLoaded += OnSceneLoaded; }
+        private void OnDisable() { SceneManager.sceneLoaded -= OnSceneLoaded; }
+
+        // On arrival, run the next check immediately and mark any station we're
+        // already standing inside as engaged instead of firing it — so a fast
+        // travel that drops you onto the destination portal doesn't instantly
+        // re-open its menu. It re-triggers normally once you leave and walk back.
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            justLoaded = true;
+            lastCheckTime = 0f;
+        }
 
         private void Update()
         {
@@ -35,13 +50,21 @@ namespace VoidBound.Skilling
                 float dist = Vector3.Distance(transform.position, hit.transform.position);
                 if (dist <= interactable.InteractRange)
                 {
+                    if (justLoaded && !interactable.RepeatOnProximity)
+                    {
+                        engaged = interactable; // spawned inside it — don't auto-fire on arrival
+                        continue;
+                    }
+
                     interactable.OnInteract(gameObject);
                     if (!interactable.RepeatOnProximity)
                         engaged = interactable;
                     lastCheckTime = Time.time + 0.5f;
+                    justLoaded = false;
                     return;
                 }
             }
+            justLoaded = false;
         }
     }
 }

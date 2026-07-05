@@ -65,7 +65,10 @@ namespace VoidBound.UI
                 if (canTravel)
                 {
                     var targetScene = zone.sceneName;
-                    row.onClick.AddListener(() => SceneManager.LoadScene(targetScene));
+                    // Close the panel before travelling — PortalUI lives on the
+                    // persisted HUDCanvas, so it would otherwise stay open after
+                    // the destination scene loads.
+                    row.onClick.AddListener(() => { Close(); SceneManager.LoadScene(targetScene); });
                 }
             }
         }
