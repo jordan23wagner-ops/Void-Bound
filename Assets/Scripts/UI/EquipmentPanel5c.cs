@@ -36,6 +36,35 @@ namespace VoidBound.UI
             public Outline border;
             public TextMeshProUGUI icon;
             public TextMeshProUGUI label;
+            public Image iconImg;
+        }
+
+        // Real line-art slot icons (SlotIconGenerator) replace the placeholder
+        // letter glyphs. Sprites are built once and tinted per rarity at refresh.
+        private static readonly Dictionary<EquipmentSlot, Sprite> iconCache = new();
+
+        private static Sprite IconFor(EquipmentSlot slot)
+        {
+            if (iconCache.TryGetValue(slot, out var cached)) return cached;
+            Texture2D tex = slot switch
+            {
+                EquipmentSlot.Helm   => SlotIconGenerator.GenerateHelm(),
+                EquipmentSlot.Body   => SlotIconGenerator.GenerateBody(),
+                EquipmentSlot.Legs   => SlotIconGenerator.GenerateLegs(),
+                EquipmentSlot.Boots  => SlotIconGenerator.GenerateBoots(),
+                EquipmentSlot.Gloves => SlotIconGenerator.GenerateGlove(),
+                EquipmentSlot.Amulet => SlotIconGenerator.GenerateAmulet(),
+                EquipmentSlot.Ring   => SlotIconGenerator.GenerateRing(),
+                EquipmentSlot.Cape   => SlotIconGenerator.GenerateCape(),
+                EquipmentSlot.Weapon => SlotIconGenerator.GenerateSword(),
+                EquipmentSlot.Shield => SlotIconGenerator.GenerateShield(),
+                _ => null,
+            };
+            Sprite sprite = tex != null
+                ? Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100f)
+                : null;
+            iconCache[slot] = sprite;
+            return sprite;
         }
 
         private PlayerInventory inventory;
@@ -139,6 +168,23 @@ namespace VoidBound.UI
                     icon = child.Find("Icon")?.GetComponent<TextMeshProUGUI>(),
                     label = child.Find("Label")?.GetComponent<TextMeshProUGUI>()
                 };
+
+                // Swap the placeholder letter glyph for a real line-art icon.
+                var sprite = IconFor(slot);
+                if (sprite != null && widgets.icon != null)
+                {
+                    widgets.icon.text = "";
+                    var imgGO = new GameObject("IconImg", typeof(RectTransform), typeof(Image));
+                    var irt = (RectTransform)imgGO.transform;
+                    irt.SetParent(widgets.icon.transform, false);
+                    irt.anchorMin = irt.anchorMax = irt.pivot = new Vector2(0.5f, 0.5f);
+                    irt.anchoredPosition = Vector2.zero;
+                    irt.sizeDelta = new Vector2(28f, 32f);
+                    widgets.iconImg = imgGO.GetComponent<Image>();
+                    widgets.iconImg.sprite = sprite;
+                    widgets.iconImg.preserveAspect = true;
+                    widgets.iconImg.raycastTarget = false;
+                }
                 slots[slot] = widgets;
 
                 var button = child.GetComponent<Button>();
@@ -184,12 +230,14 @@ namespace VoidBound.UI
                     Color rarityColor = RarityVisualEffects.GetRarityColor(item.rarity);
                     if (w.border != null) w.border.effectColor = rarityColor;
                     if (w.icon != null) w.icon.color = rarityColor;
+                    if (w.iconImg != null) w.iconImg.color = rarityColor;
                     if (w.label != null) w.label.color = rarityColor;
                 }
                 else
                 {
                     if (w.border != null) w.border.effectColor = EmptyBorder;
                     if (w.icon != null) w.icon.color = EmptyIcon;
+                    if (w.iconImg != null) w.iconImg.color = EmptyIcon;
                     if (w.label != null) w.label.color = EmptyLabel;
                 }
             }
