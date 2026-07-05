@@ -37,8 +37,9 @@ namespace VoidBound.Editor
         public static Vector2 PosOf(float ang, float r) =>
             new Vector2(r * Mathf.Cos(ang * Mathf.Deg2Rad), r * Mathf.Sin(ang * Mathf.Deg2Rad));
 
-        // Faces the door (local +Z) toward the centre.
-        public static float FaceCentreYaw(Vector2 p) => Mathf.Atan2(-p.x, -p.y) * Mathf.Rad2Deg;
+        // Turns the building's door toward the centre. The models' fronts export
+        // facing away from local +Z, so the inward heading needs a 180° flip.
+        public static float FaceCentreYaw(Vector2 p) => Mathf.Atan2(-p.x, -p.y) * Mathf.Rad2Deg + 180f;
 
         public static List<Vector2> WorldPositions() => Ring.Select(b => PosOf(b.ang, b.r)).ToList();
 

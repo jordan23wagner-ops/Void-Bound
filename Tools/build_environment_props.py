@@ -153,24 +153,24 @@ def crate():
 # ─── Central town bonfire (focal landmark the village circles around) ───
 def bonfire():
     p = []
-    for i in range(10):                                                # stone ring
-        a = rad(i * 36)
-        p.append(box("Stone", (0.95 * math.cos(a), 0.95 * math.sin(a), 0.18),
-                     (0.3, 0.22, 0.34), rot=(0, 0, a)))
-    p.append(cyl("Ash", 0.98, 0.08, (0, 0, 0.05), v=12))               # ash bed
+    for i in range(12):                                                # bigger stone ring
+        a = rad(i * 30)
+        p.append(box("Stone", (1.18 * math.cos(a), 1.18 * math.sin(a), 0.22),
+                     (0.36, 0.26, 0.44), rot=(0, 0, a)))
+    p.append(cyl("Ash", 1.2, 0.1, (0, 0, 0.06), v=14))                 # ash bed
     for a in (0, 60, 120):                                             # crisscrossed logs
         aa = rad(a)
-        p.append(cyl("WoodDark", 0.1, 1.5, (0, 0, 0.36), rot=(rad(90), 0, aa), v=6))
+        p.append(cyl("WoodDark", 0.13, 1.95, (0, 0, 0.42), rot=(rad(90), 0, aa), v=6))
     for a in (30, 90, 150):
         aa = rad(a)
-        p.append(cyl("DeadWood", 0.09, 1.4, (0, 0, 0.56), rot=(rad(78), 0, aa), v=6))
-    p.append(cone("Fire", 0.46, 0.02, 1.4, (0, 0, 0.95)))              # tall layered flames
-    p.append(cone("Fire", 0.32, 0.02, 1.0, (0.16, 0.1, 0.85)))
-    p.append(cone("Fire", 0.26, 0.02, 0.8, (-0.14, -0.1, 0.8)))
-    p.append(cone("Fire", 0.16, 0.02, 0.55, (0.05, -0.12, 0.72)))
+        p.append(cyl("DeadWood", 0.12, 1.8, (0, 0, 0.66), rot=(rad(76), 0, aa), v=6))
+    p.append(cone("Fire", 0.62, 0.02, 2.2, (0, 0, 1.4)))               # tall layered flames
+    p.append(cone("Fire", 0.44, 0.02, 1.6, (0.2, 0.12, 1.15)))
+    p.append(cone("Fire", 0.34, 0.02, 1.25, (-0.18, -0.12, 1.05)))
+    p.append(cone("Fire", 0.22, 0.02, 0.85, (0.06, -0.15, 0.95)))
     for a in (35, 155, 275):                                           # seating logs
         aa = rad(a)
-        p.append(cyl("WoodLight", 0.16, 0.9, (1.75 * math.cos(aa), 1.75 * math.sin(aa), 0.16),
+        p.append(cyl("WoodLight", 0.18, 1.05, (2.15 * math.cos(aa), 2.15 * math.sin(aa), 0.18),
                      rot=(0, rad(90), aa), v=8))
     export(p, "Bonfire")
 

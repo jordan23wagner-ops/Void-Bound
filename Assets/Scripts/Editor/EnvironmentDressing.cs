@@ -94,12 +94,12 @@ namespace VoidBound.Editor
             return root.transform;
         }
 
-        private static void Place(Transform root, Dictionary<string, Material> mats,
+        private static GameObject Place(Transform root, Dictionary<string, Material> mats,
             string prop, float x, float z, float rotY, float scale,
             Dictionary<string, string> remap = null)
         {
             var fbx = AssetDatabase.LoadAssetAtPath<GameObject>($"{PropDir}/{prop}.fbx");
-            if (fbx == null) { Debug.LogWarning($"[EnvDressing] Missing prop {prop}"); return; }
+            if (fbx == null) { Debug.LogWarning($"[EnvDressing] Missing prop {prop}"); return null; }
 
             var go = (GameObject)PrefabUtility.InstantiatePrefab(fbx);
             go.transform.SetParent(root, false);
@@ -117,6 +117,7 @@ namespace VoidBound.Editor
                     return mats.TryGetValue(n, out var m) ? m : mats["Stone"];
                 }).ToArray();
             }
+            return go;
         }
 
         // A worn dirt path strip from the bonfire out toward a building (a thin
@@ -124,7 +125,7 @@ namespace VoidBound.Editor
         private static void Path(Transform root, Material mat, Vector2 target)
         {
             float dist = target.magnitude;
-            float start = 1.7f, end = dist - 2.0f;
+            float start = 2.6f, end = dist - 2.0f;
             if (end <= start + 0.5f) return;
             Vector2 dir = target / dist;
             float len = end - start;
@@ -177,15 +178,22 @@ namespace VoidBound.Editor
             var taken = new List<Vector2>();
             var rng = new System.Random(1337);
 
-            // Central bonfire + radial dirt paths out to every interactive building.
-            Place(root, mats, "Bonfire", 0f, 0f, 0f, 1f);
+            // Central bonfire (bigger focal landmark, solid + animated) + radial paths.
+            var bonfire = Place(root, mats, "Bonfire", 0f, 0f, 0f, 1.3f);
             taken.Add(Vector2.zero);
+            if (bonfire != null)
+            {
+                var col = bonfire.AddComponent<CapsuleCollider>();
+                col.radius = 1.15f; col.height = 2.4f; col.center = new Vector3(0f, 1.0f, 0f);
+                bonfire.AddComponent<VoidBound.Homestead.BonfireEffect>();
+            }
             foreach (var b in ring) Path(root, mats["Path"], b);
 
-            // Residential nook (NE): homes grouped, doors turned toward the fire (varied).
+            // Residential nook (NE): homes spread into a small neighbourhood,
+            // doors turned toward the fire (varied).
             var homes = new (string prop, float x, float z, float jit)[] {
-                ("House", 4.6f, 4.2f, 12f), ("Cottage", 6.9f, 2.7f, -14f),
-                ("Cottage", 3.1f, 6.4f, 8f), ("Cottage", 7.0f, 5.6f, -20f),
+                ("House", 2.5f, 6.0f, 10f), ("Cottage", 6.0f, 6.0f, -12f),
+                ("Cottage", 6.5f, 2.5f, 8f), ("Cottage", 2.5f, 2.5f, -8f),
             };
             foreach (var h in homes)
             {
