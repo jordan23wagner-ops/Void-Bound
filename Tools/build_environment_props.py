@@ -34,7 +34,7 @@ PALETTE = {
     "Soil":      (0.30, 0.22, 0.15, 1), "ClothRed":  (0.70, 0.20, 0.18, 1),
     "Grass":     (0.42, 0.62, 0.30, 1), "GrassDry":  (0.55, 0.50, 0.30, 1),
     "DeadWood":  (0.26, 0.24, 0.22, 1), "Bone":      (0.86, 0.83, 0.72, 1),
-    "Ash":       (0.34, 0.33, 0.35, 1),
+    "Ash":       (0.34, 0.33, 0.35, 1), "Thatch":    (0.72, 0.60, 0.30, 1),
 }
 
 def rad(d):
@@ -150,6 +150,43 @@ def crate():
          box("WoodDark", (0, 0, 0.3), (0.08, 0.64, 0.64))]
     export(p, "Crate")
 
+# ─── Homestead homes (non-interactive cottages that flesh out the village) ───
+def cottage():
+    p = [box("Stone", (0, 0, 0.2), (2.0, 1.7, 0.4))]                    # foundation
+    p.append(box("WoodLight", (0, 0, 1.0), (1.9, 1.6, 1.2)))            # walls
+    for sx in (-0.9, 0.9):                                              # corner beams
+        p.append(box("WoodDark", (sx, 0.81, 1.0), (0.1, 0.06, 1.2)))
+    p.append(box("WoodDark", (0, 0.81, 0.42), (1.9, 0.06, 0.1)))        # sill
+    p.append(box("WoodDark", (0, 0.81, 1.58), (1.9, 0.06, 0.1)))        # header
+    p.append(box("WoodDark", (0, 0.81, 1.0), (0.08, 0.06, 1.2)))        # center stud
+    p.append(box("WoodDark", (0.5, 0.82, 0.7), (0.5, 0.06, 0.9)))       # door
+    p.append(box("Gold", (0.5, 0.84, 1.18), (0.56, 0.05, 0.06)))        # lintel
+    p.append(box("Fire", (-0.5, 0.82, 1.05), (0.42, 0.05, 0.42)))       # lit window
+    p.append(box("Thatch", (0, -0.55, 2.25), (2.25, 1.25, 0.16), rot=(rad(36), 0, 0)))  # roof slabs
+    p.append(box("Thatch", (0, 0.55, 2.25), (2.25, 1.25, 0.16), rot=(rad(-36), 0, 0)))
+    p.append(box("WoodDark", (0, 0, 2.62), (2.25, 0.12, 0.1)))          # ridge
+    p.append(box("Stone", (-0.7, -0.45, 2.35), (0.3, 0.3, 0.95)))       # chimney
+    p.append(box("Fire", (-0.7, -0.45, 2.82), (0.2, 0.2, 0.06)))        # ember
+    export(p, "Cottage")
+
+def house():
+    p = [box("Stone", (0, 0, 0.25), (2.4, 2.0, 0.5))]                   # foundation
+    p.append(box("WoodLight", (0, 0, 1.6), (2.2, 1.8, 2.2)))            # two-storey walls
+    p.append(box("WoodDark", (0, 0.91, 1.5), (2.2, 0.06, 0.12)))        # storey band
+    for sx in (-1.05, 1.05):
+        p.append(box("WoodDark", (sx, 0.91, 1.6), (0.12, 0.06, 2.2)))   # corner beams
+    p.append(box("WoodDark", (0, 0.92, 0.9), (0.55, 0.06, 1.1)))        # door
+    p.append(box("Gold", (0, 0.94, 1.5), (0.6, 0.05, 0.07)))            # lintel
+    p.append(box("Fire", (-0.65, 0.92, 2.3), (0.36, 0.05, 0.42)))       # upper windows
+    p.append(box("Fire", (0.65, 0.92, 2.3), (0.36, 0.05, 0.42)))
+    p.append(box("Fire", (0.7, 0.92, 1.2), (0.34, 0.05, 0.4)))          # lower window
+    p.append(box("Thatch", (0, -0.62, 3.05), (2.55, 1.4, 0.16), rot=(rad(38), 0, 0)))  # roof
+    p.append(box("Thatch", (0, 0.62, 3.05), (2.55, 1.4, 0.16), rot=(rad(-38), 0, 0)))
+    p.append(box("WoodDark", (0, 0, 3.45), (2.55, 0.12, 0.12)))         # ridge
+    p.append(box("Stone", (0.8, -0.6, 3.15), (0.34, 0.34, 1.0)))        # chimney
+    p.append(box("Gold", (0.8, -0.6, 3.66), (0.4, 0.4, 0.06)))          # chimney cap
+    export(p, "House")
+
 # ─────────────────────────── Ashfields (ashen waste) ─────────────────────────
 def dead_tree():
     p = [cyl("DeadWood", 0.15, 1.6, (0, 0, 0.8), v=6)]                  # trunk
@@ -203,6 +240,7 @@ if __name__ == "__main__":
     bpy.ops.wm.read_factory_settings(use_empty=True)
     # Homestead
     tree(); bush(); rock(); grass_tuft(); flowers(); fence(); lamppost(); well(); barrel(); crate()
+    cottage(); house()
     # Ashfields
     dead_tree(); boulder(); bones(); brazier(); broken_pillar(); spikes()
     print("[Props] Done - environment props exported.")

@@ -44,6 +44,7 @@ namespace VoidBound.Editor
                 ("StoneDark", new Color(0.36f, 0.36f, 0.35f), null),
                 ("Metal",     new Color(0.45f, 0.47f, 0.50f), null),
                 ("Gold",      new Color(0.82f, 0.63f, 0.20f), null),
+                ("Thatch",    new Color(0.72f, 0.60f, 0.30f), null),
                 ("Water",     new Color(0.25f, 0.60f, 0.90f), null),
                 ("ClothRed",  new Color(0.70f, 0.20f, 0.18f), null),
                 ("Leaf",      new Color(0.28f, 0.55f, 0.24f), null),
@@ -174,6 +175,11 @@ namespace VoidBound.Editor
             { Place(root, mats, "Barrel", b.x, b.y, 0f, 1f); taken.Add(b); }
             foreach (var c in new[] { new Vector2(9.4f, -8.4f), new Vector2(-7f, 5.4f), new Vector2(11.2f, -1.2f) })
             { Place(root, mats, "Crate", c.x, c.y, 30f, 1f); taken.Add(c); }
+            // A little residential cluster of homes.
+            Place(root, mats, "House", -4f, -5f, 30f, 1f); taken.Add(new Vector2(-4, -5));
+            Place(root, mats, "Cottage", 4.5f, -6.5f, 205f, 1f); taken.Add(new Vector2(4.5f, -6.5f));
+            Place(root, mats, "Cottage", 3.5f, 6.8f, 160f, 1f); taken.Add(new Vector2(3.5f, 6.8f));
+            Place(root, mats, "Cottage", 7.8f, -11.5f, 215f, 1f); taken.Add(new Vector2(7.8f, -11.5f));
 
             // Scattered nature.
             Scatter(root, mats, "Tree", 16, 0.85f, 1.35f, rng, buildings, 4.0f, taken, 4.0f, 12f, 19f);
