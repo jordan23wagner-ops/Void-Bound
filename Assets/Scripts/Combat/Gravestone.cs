@@ -11,6 +11,7 @@ namespace VoidBound.Combat
         private const float PickupRange = 1.8f;
 
         private Transform player;
+        private Health playerHealth;
         private Transform orb;
 
         public static Gravestone Create(Vector3 position)
@@ -37,23 +38,32 @@ namespace VoidBound.Combat
 
         private void Start()
         {
-            var p = GameObject.FindGameObjectWithTag("Player");
-            if (p != null) player = p.transform;
+            ResolvePlayer();
         }
 
         private void Update()
         {
             if (orb != null) orb.Rotate(Vector3.up, 60f * Time.deltaTime);
 
-            if (player == null)
-            {
-                var p = GameObject.FindGameObjectWithTag("Player");
-                if (p == null) return;
-                player = p.transform;
-            }
+            if (player == null && !ResolvePlayer()) return;
+
+            // Don't self-collect from the corpse: while the player is dead they
+            // sit on the death spot during the respawn delay, which would recover
+            // the loot instantly and defeat the walk-back mechanic. Only a living
+            // player who returns to the grave collects it.
+            if (playerHealth != null && playerHealth.IsDead) return;
 
             if (Vector3.Distance(transform.position, player.position) <= PickupRange)
                 GraveManager.Collect(player.gameObject);
+        }
+
+        private bool ResolvePlayer()
+        {
+            var p = GameObject.FindGameObjectWithTag("Player");
+            if (p == null) return false;
+            player = p.transform;
+            playerHealth = p.GetComponent<Health>();
+            return true;
         }
 
         private static Material MakeMat(Color c, bool emissive)
