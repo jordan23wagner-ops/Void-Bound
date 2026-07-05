@@ -252,36 +252,174 @@ def build_hero():
     author_animations(arm)
     export(arm, body, "Hero.fbx")
 
-def build_goblin():
-    reset()
-    skin = mat("GoblinSkin", (0.35, 0.55, 0.25, 1))
-    cloth = mat("GoblinCloth", (0.35, 0.25, 0.15, 1))
+# ── Goblin material palette (names are the slot contract; colours come from
+# CharacterModelSwap at runtime — FBX flattens diffuse to gray). ──
+def goblin_mats():
+    return {
+        "skin":  mat("GoblinSkin",  (0.38, 0.54, 0.26, 1)),
+        "cloth": mat("GoblinCloth", (0.32, 0.24, 0.16, 1)),
+        "dark":  mat("GoblinDark",  (0.10, 0.10, 0.12, 1)),  # blackened iron scrap
+        "gold":  mat("GoblinGold",  (0.82, 0.63, 0.20, 1)),  # war-trophy trim
+        "gem":   mat("GoblinGem",   (0.35, 0.95, 0.45, 1)),  # sickly emissive green
+        "bone":  mat("GoblinBone",  (0.85, 0.82, 0.72, 1)),  # tusks / claws
+    }
+
+# A hunched, menacing low-poly goblin torso/head/limbs shared by every tier.
+# Silhouette: potbelly + forward hunch + heavy brow + underbite tusks + big
+# hooked ears + glowing eyes + clawed hands/feet. Tier extras layer on top.
+def goblin_base(M):
+    skin, cloth, bone, gem = M["skin"], M["cloth"], M["bone"], M["gem"]
     p = [
-        sph(skin, "Hips", 0.30, (0, 0.02, 0.60), scale=(1, 0.95, 0.85)),
-        sph(skin, "Chest", 0.22, (0, 0.08, 0.86), scale=(1.15, 0.9, 0.75)),
-        sph(skin, "Head", 0.23, (0, 0.16, 1.06), scale=(1.05, 1, 0.95)),
-        cone(skin, "Head", 0.08, 0.02, 0.18, (0, 0.42, 1.00), rot=(rad(-90), 0, 0)),
-        box(skin, "Head", (0, 0.30, 1.14), (0.30, 0.10, 0.06)),
-        cone(skin, "Head", 0.065, 0.005, 0.34, (0.30, 0.10, 1.16), rot=(0, rad(65), 0), v=6),
-        cone(skin, "Head", 0.065, 0.005, 0.34, (-0.30, 0.10, 1.16), rot=(0, rad(-65), 0), v=6),
-        cyl(skin, "UpperArm_R", 0.05, 0.46, (0.31, 0.06, 0.68), rot=(0, rad(12), 0)),
-        cyl(skin, "UpperArm_L", 0.05, 0.46, (-0.31, 0.06, 0.68), rot=(0, rad(-12), 0)),
+        # Torso — potbelly hips + hunched chest + a back hump
+        sph(skin, "Hips", 0.30, (0, 0.02, 0.58), scale=(1.05, 0.95, 0.9)),
+        sph(skin, "Chest", 0.23, (0, 0.10, 0.84), scale=(1.2, 0.95, 0.8)),
+        sph(skin, "Chest", 0.13, (0, -0.11, 0.90), scale=(1.0, 1.0, 0.85)),
+        # Head — cranium, heavy brow, jutting underbite jaw, hooked nose
+        sph(skin, "Head", 0.23, (0, 0.15, 1.05), scale=(1.05, 1.05, 0.98)),
+        box(skin, "Head", (0, 0.31, 1.11), (0.34, 0.09, 0.07)),
+        box(skin, "Head", (0, 0.29, 0.96), (0.26, 0.12, 0.06)),
+        cone(skin, "Head", 0.075, 0.02, 0.20, (0, 0.42, 1.03), rot=(rad(-90), 0, 0)),
+        # Tusks (bone) jutting up from the lower jaw
+        cone(bone, "Head", 0.028, 0.004, 0.11, (0.10, 0.34, 1.00), rot=(rad(18), 0, 0), v=6),
+        cone(bone, "Head", 0.028, 0.004, 0.11, (-0.10, 0.34, 1.00), rot=(rad(18), 0, 0), v=6),
+        # Big hooked ears
+        cone(skin, "Head", 0.07, 0.005, 0.36, (0.30, 0.08, 1.15), rot=(0, rad(72), 0), v=6),
+        cone(skin, "Head", 0.07, 0.005, 0.36, (-0.30, 0.08, 1.15), rot=(0, rad(-72), 0), v=6),
+        # Glowing sunken eyes (faceted emissive gems)
+        sph(gem, "Head", 0.033, (0.095, 0.29, 1.10), seg=4, ring=3),
+        sph(gem, "Head", 0.033, (-0.095, 0.29, 1.10), seg=4, ring=3),
+        # Sinewy arms
+        cyl(skin, "UpperArm_R", 0.05, 0.44, (0.31, 0.06, 0.68), rot=(0, rad(12), 0)),
+        cyl(skin, "UpperArm_L", 0.05, 0.44, (-0.31, 0.06, 0.68), rot=(0, rad(-12), 0)),
         sph(skin, "Hand_R", 0.07, (0.36, 0.08, 0.44)),
         sph(skin, "Hand_L", 0.07, (-0.36, 0.08, 0.44)),
-        cyl(skin, "UpperLeg_R", 0.065, 0.36, (0.12, 0, 0.20)),
-        cyl(skin, "UpperLeg_L", 0.065, 0.36, (-0.12, 0, 0.20)),
-        box(skin, "Foot_R", (0.12, 0.07, 0.035), (0.11, 0.20, 0.07)),
-        box(skin, "Foot_L", (-0.12, 0.07, 0.035), (0.11, 0.20, 0.07)),
+        # Short bandy legs + splayed feet
+        cyl(skin, "UpperLeg_R", 0.07, 0.36, (0.12, 0, 0.20)),
+        cyl(skin, "UpperLeg_L", 0.07, 0.36, (-0.12, 0, 0.20)),
+        box(skin, "Foot_R", (0.12, 0.07, 0.035), (0.12, 0.22, 0.07)),
+        box(skin, "Foot_L", (-0.12, 0.07, 0.035), (0.12, 0.22, 0.07)),
+        # Ragged loincloth
         box(cloth, "Hips", (0, 0.0, 0.40), (0.36, 0.30, 0.16)),
     ]
+    # Finger claws (bone) on each hand
+    for dx in (-0.045, 0.0, 0.045):
+        p.append(cone(bone, "Hand_R", 0.011, 0.002, 0.06, (0.36 + dx, 0.14, 0.44), rot=(rad(-75), 0, 0), v=4))
+        p.append(cone(bone, "Hand_L", 0.011, 0.002, 0.06, (-0.36 + dx, 0.14, 0.44), rot=(rad(-75), 0, 0), v=4))
+    return p
+
+# A crude club baked into the right hand (shaft + spiked head).
+def goblin_club(M, big=False):
+    dark, bone, gold = M["dark"], M["bone"], M["gold"]
+    s = 1.35 if big else 1.0
+    p = [
+        cyl(bone, "Hand_R", 0.022, 0.34 * s, (0.42, 0.20, 0.42), rot=(rad(90), 0, 0)),
+        sph(dark, "Hand_R", 0.075 * s, (0.42, 0.40 * s + 0.02, 0.42)),
+    ]
+    # protruding spikes on the head
+    for ang in (0, 90, 180, 270):
+        p.append(cone(dark, "Hand_R", 0.02 * s, 0.002, 0.09 * s,
+                      (0.42, 0.40 * s + 0.02, 0.42), rot=(rad(90), 0, rad(ang)), v=4))
+    if big:  # champion club gets a gold band
+        p.append(cyl(gold, "Hand_R", 0.03, 0.03, (0.42, 0.28, 0.42), rot=(rad(90), 0, 0)))
+    return p
+
+# A curved horn (stacked cone segments) rooted at base_loc, curling up/out.
+def goblin_horn(M, base_loc, side, material="gold"):
+    m = M[material]
+    x, y, z = base_loc
+    return [
+        cone(m, "Head", 0.05, 0.036, 0.10, (x, y, z), rot=(rad(-15), rad(28 * side), 0), v=6),
+        cone(m, "Head", 0.036, 0.022, 0.10, (x + 0.06 * side, y + 0.02, z + 0.09), rot=(rad(-42), rad(40 * side), 0), v=6),
+        cone(m, "Head", 0.022, 0.003, 0.09, (x + 0.14 * side, y + 0.03, z + 0.15), rot=(rad(-68), rad(52 * side), 0), v=6),
+    ]
+
+# ── Per-tier assembly. All share one skeleton so a single controller drives
+# every variant (Generic clips retarget by bone name). ──
+def build_goblin(variant, filename):
+    reset()
+    M = goblin_mats()
+    p = goblin_base(M)
+    skin, cloth, dark, gold, gem, bone = (M["skin"], M["cloth"], M["dark"], M["gold"], M["gem"], M["bone"])
+
+    if variant == "scout":
+        # Lean skirmisher: a hide baldric + a crude bone shiv.
+        p += [
+            box(dark, "Chest", (0.0, 0.02, 0.90), (0.5, 0.05, 0.06), rot=(0, rad(28), 0)),
+            cyl(bone, "Hand_R", 0.018, 0.11, (0.40, 0.15, 0.42), rot=(rad(90), 0, 0)),
+            cone(dark, "Hand_R", 0.028, 0.004, 0.18, (0.40, 0.30, 0.42), rot=(rad(-90), 0, 0), v=4),
+        ]
+
+    elif variant == "warrior":
+        # Scrap-armored grunt: iron skullcap, one shoulder plate, belt + club.
+        p += [
+            cyl(dark, "Head", 0.21, 0.11, (0, 0.13, 1.15), rot=(rad(6), 0, 0)),
+            cone(dark, "Head", 0.03, 0.004, 0.10, (0, 0.10, 1.24), v=4),
+            sph(dark, "Chest", 0.13, (0.30, 0.06, 0.95), scale=(1.1, 1.0, 0.6)),
+            box(dark, "Hips", (0, 0.02, 0.52), (0.38, 0.32, 0.06)),
+        ]
+        p += goblin_club(M, big=False)
+
+    elif variant == "champion":
+        # Bigger, gold-touched brute: horned helm, chest plate, bracers, spiked club.
+        p += [
+            cyl(dark, "Head", 0.22, 0.13, (0, 0.12, 1.15), rot=(rad(6), 0, 0)),
+            box(dark, "Chest", (0, 0.14, 0.86), (0.42, 0.10, 0.30)),
+            sph(gold, "Chest", 0.022, (0.10, 0.24, 0.90)),
+            sph(gold, "Chest", 0.022, (-0.10, 0.24, 0.90)),
+            sph(dark, "Chest", 0.14, (0.31, 0.06, 0.95), scale=(1.1, 1.0, 0.7)),
+            sph(dark, "Chest", 0.14, (-0.31, 0.06, 0.95), scale=(1.1, 1.0, 0.7)),
+            cyl(dark, "UpperArm_R", 0.06, 0.16, (0.31, 0.06, 0.55), rot=(0, rad(12), 0)),
+            cyl(dark, "UpperArm_L", 0.06, 0.16, (-0.31, 0.06, 0.55), rot=(0, rad(-12), 0)),
+        ]
+        p += goblin_horn(M, (0.14, 0.10, 1.22), 1)
+        p += goblin_horn(M, (-0.14, 0.10, 1.22), -1)
+        p += goblin_club(M, big=True)
+
+    elif variant == "warchief":
+        # Hulking boss-elite: great horns, spiked pauldrons, gold trim, a glowing
+        # back-totem, and a massive gold-edged cleaver.
+        p += [
+            cyl(dark, "Head", 0.23, 0.14, (0, 0.11, 1.15), rot=(rad(6), 0, 0)),
+            box(gold, "Head", (0, 0.30, 1.17), (0.30, 0.05, 0.04)),  # brow band
+            # Spiked pauldrons
+            sph(dark, "Chest", 0.17, (0.33, 0.06, 0.98), scale=(1.1, 1.0, 0.8)),
+            sph(dark, "Chest", 0.17, (-0.33, 0.06, 0.98), scale=(1.1, 1.0, 0.8)),
+            cone(gold, "Chest", 0.04, 0.004, 0.13, (0.36, 0.06, 1.10), v=4),
+            cone(gold, "Chest", 0.04, 0.004, 0.13, (-0.36, 0.06, 1.10), v=4),
+            # Gold-trimmed breastplate
+            box(dark, "Chest", (0, 0.15, 0.86), (0.46, 0.10, 0.34)),
+            box(gold, "Chest", (0, 0.15, 0.72), (0.46, 0.11, 0.05)),
+            # Back-totem: haft + skull + emissive crystal
+            cyl(bone, "Chest", 0.02, 0.5, (0, -0.18, 0.95)),
+            sph(bone, "Chest", 0.07, (0, -0.20, 1.22), scale=(1, 0.9, 1.05)),
+            sph(gem, "Chest", 0.06, (0, -0.20, 1.34), seg=4, ring=3),
+            # Bracers
+            cyl(dark, "UpperArm_R", 0.065, 0.18, (0.31, 0.06, 0.55), rot=(0, rad(12), 0)),
+            cyl(dark, "UpperArm_L", 0.065, 0.18, (-0.31, 0.06, 0.55), rot=(0, rad(-12), 0)),
+        ]
+        p += goblin_horn(M, (0.15, 0.08, 1.22), 1)
+        p += goblin_horn(M, (-0.15, 0.08, 1.22), -1)
+        # Massive cleaver in the right hand (dark blade, gold edge, gem rune)
+        p += [
+            cyl(bone, "Hand_R", 0.028, 0.30, (0.42, 0.18, 0.42), rot=(rad(90), 0, 0)),
+            box(dark, "Hand_R", (0.42, 0.40, 0.47), (0.05, 0.34, 0.26)),
+            box(gold, "Hand_R", (0.42, 0.40, 0.61), (0.055, 0.34, 0.03)),
+            sph(gem, "Hand_R", 0.04, (0.42, 0.40, 0.44), seg=4, ring=3),
+        ]
+
     body = join(p, "Goblin")
     arm = build_armature(goblin_bones())
     bind(body, arm)
     author_animations(arm)
-    export(arm, body, "Goblin.fbx")
+    export(arm, body, filename)
 
 if __name__ == "__main__":
     bpy.context.scene.render.fps = 30
-    build_goblin()
+    # Base rig = canonical clip source for the shared GoblinAnimator controller.
+    build_goblin("scout", "Goblin.fbx")
+    build_goblin("scout", "Goblin_Scout.fbx")
+    build_goblin("warrior", "Goblin_Warrior.fbx")
+    build_goblin("champion", "Goblin_Champion.fbx")
+    build_goblin("warchief", "Goblin_Warchief.fbx")
     build_hero()
-    print("[Models] Done — rigged + animated Hero and Goblin.")
+    print("[Models] Done — rigged + animated Hero and 4-tier Goblin warband.")

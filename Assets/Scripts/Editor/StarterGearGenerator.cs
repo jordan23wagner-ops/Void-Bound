@@ -82,9 +82,13 @@ namespace VoidBound.Editor
 
             AssetDatabase.SaveAssets();
 
-            AssignEnemyGear("Assets/ScriptableObjects/Enemies/Goblin_Scout.asset", goblinClub, null);
-            AssignEnemyGear("Assets/ScriptableObjects/Enemies/Goblin_Warrior.asset", goblinClub, new[] { goblinHelm });
-            AssignEnemyGear("Assets/ScriptableObjects/Enemies/Goblin_Champion.asset", goblinClub, new[] { goblinHelm, goblinPlate });
+            // Goblin visuals are now baked into the per-tier body meshes
+            // (build_character_models.py), so the definitions carry NO visible
+            // gear — otherwise EquipmentVisuals would double-render a weapon/helm
+            // on top of the sculpt. (goblin_club/helm/plate remain as loot items.)
+            AssignEnemyGear("Assets/ScriptableObjects/Enemies/Goblin_Scout.asset", null, null);
+            AssignEnemyGear("Assets/ScriptableObjects/Enemies/Goblin_Warrior.asset", null, null);
+            AssignEnemyGear("Assets/ScriptableObjects/Enemies/Goblin_Champion.asset", null, null);
 
             AssetDatabase.SaveAssets();
             Debug.Log("[StarterGear] Generated gear set, wired visuals, assigned enemy gear.");

@@ -22,6 +22,47 @@ namespace VoidBound.Editor
         private const string HeroFbx = "Assets/Art/Models/Hero.fbx";
         private const string MatDir = "Assets/Art/Materials";
 
+        // Per-tier goblin body variant (distinct baked silhouette + world scale so
+        // toughness reads at a glance). Keyed by enemyId, fallback by tier.
+        private static (string fbx, float scale) GoblinVariant(EnemyDefinitionSO def)
+        {
+            string id = def != null ? def.enemyId : "";
+            switch (id)
+            {
+                case "goblin_scout":    return ("Assets/Art/Models/Goblin_Scout.fbx", 0.92f);
+                case "goblin_warrior":  return ("Assets/Art/Models/Goblin_Warrior.fbx", 1.00f);
+                case "goblin_champion": return ("Assets/Art/Models/Goblin_Champion.fbx", 1.18f);
+                case "goblin_warchief": return ("Assets/Art/Models/Goblin_Warchief.fbx", 1.50f);
+            }
+            var tier = def != null ? def.tier : EnemyTier.Weak;
+            return tier switch
+            {
+                EnemyTier.Weak     => ("Assets/Art/Models/Goblin_Scout.fbx", 0.92f),
+                EnemyTier.Standard => ("Assets/Art/Models/Goblin_Warrior.fbx", 1.00f),
+                EnemyTier.Elite    => ("Assets/Art/Models/Goblin_Champion.fbx", 1.18f),
+                _                  => ("Assets/Art/Models/Goblin_Warchief.fbx", 1.50f),
+            };
+        }
+
+        private static string GoblinSkinFor(EnemyTier tier) => tier switch
+        {
+            EnemyTier.Weak     => "GoblinSkin_Weak",
+            EnemyTier.Standard => "GoblinSkin_Standard",
+            EnemyTier.Elite    => "GoblinSkin_Elite",
+            _                  => "GoblinSkin_RareElite",
+        };
+
+        // Map a Blender material-slot name to its URP material by palette convention.
+        private static Material MapGoblinSlot(string slot, string skinName, Dictionary<string, Material> mats)
+        {
+            if (slot.Contains("Cloth")) return mats["GoblinCloth"];
+            if (slot.Contains("Dark"))  return mats["GoblinDark"];
+            if (slot.Contains("Gold"))  return mats["GoblinGold"];
+            if (slot.Contains("Gem"))   return mats["GoblinGem"];
+            if (slot.Contains("Bone"))  return mats["GoblinBone"];
+            return mats[skinName];
+        }
+
         private static readonly Dictionary<string, string> BuildingTooltips = new()
         {
             { "Merchant", "Buy supplies and sell your loot for gold." },
@@ -85,13 +126,17 @@ namespace VoidBound.Editor
         {
             var defs = new (string name, Color color)[]
             {
-                ("GoblinSkin_Weak",     new Color(0.45f, 0.62f, 0.30f)), // olive green scout
-                ("GoblinSkin_Standard", new Color(0.62f, 0.42f, 0.28f)), // red-brown warrior
-                ("GoblinSkin_Elite",    new Color(0.58f, 0.26f, 0.34f)), // deep red champion
-                ("GoblinCloth",         new Color(0.32f, 0.24f, 0.16f)),
-                ("HeroSkin",            new Color(0.85f, 0.66f, 0.50f)),
-                ("HeroArmor",           new Color(0.36f, 0.42f, 0.52f)),
-                ("HeroHair",            new Color(0.26f, 0.16f, 0.10f)),
+                ("GoblinSkin_Weak",      new Color(0.45f, 0.62f, 0.30f)), // olive green scout
+                ("GoblinSkin_Standard",  new Color(0.55f, 0.45f, 0.24f)), // sallow ochre warrior
+                ("GoblinSkin_Elite",     new Color(0.58f, 0.30f, 0.26f)), // ruddy red champion
+                ("GoblinSkin_RareElite", new Color(0.40f, 0.18f, 0.22f)), // near-black crimson warchief
+                ("GoblinCloth",          new Color(0.32f, 0.24f, 0.16f)),
+                ("GoblinDark",           new Color(0.10f, 0.10f, 0.12f)), // blackened iron scrap
+                ("GoblinGold",           new Color(0.82f, 0.63f, 0.20f)), // war-trophy trim
+                ("GoblinBone",           new Color(0.86f, 0.82f, 0.70f)), // tusks / claws
+                ("HeroSkin",             new Color(0.85f, 0.66f, 0.50f)),
+                ("HeroArmor",            new Color(0.36f, 0.42f, 0.52f)),
+                ("HeroHair",             new Color(0.26f, 0.16f, 0.10f)),
             };
 
             var result = new Dictionary<string, Material>();
@@ -102,11 +147,31 @@ namespace VoidBound.Editor
                 if (mat == null)
                 {
                     mat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
-                    mat.color = color;
                     AssetDatabase.CreateAsset(mat, path);
                 }
+                mat.color = color; // keep tints in sync if this runs again after a tweak
+                EditorUtility.SetDirty(mat);
                 result[name] = mat;
             }
+
+            // Emissive sickly-green gem (goblin eyes / totem crystal focal points).
+            {
+                string path = $"{MatDir}/GoblinGem.mat";
+                var gem = AssetDatabase.LoadAssetAtPath<Material>(path);
+                if (gem == null)
+                {
+                    gem = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+                    AssetDatabase.CreateAsset(gem, path);
+                }
+                var glow = new Color(0.35f, 0.95f, 0.45f);
+                gem.color = glow;
+                gem.EnableKeyword("_EMISSION");
+                gem.SetColor("_EmissionColor", glow * 1.6f);
+                gem.globalIlluminationFlags = MaterialGlobalIlluminationFlags.RealtimeEmissive;
+                EditorUtility.SetDirty(gem);
+                result["GoblinGem"] = gem;
+            }
+
             AssetDatabase.SaveAssets();
             return result;
         }
@@ -121,15 +186,12 @@ namespace VoidBound.Editor
             {
                 var def = GetDefinition(ai);
                 var tier = def != null ? def.tier : EnemyTier.Weak;
-                string skinName = tier switch
-                {
-                    EnemyTier.Weak => "GoblinSkin_Weak",
-                    EnemyTier.Standard => "GoblinSkin_Standard",
-                    _ => "GoblinSkin_Elite",
-                };
-                var slotMats = goblinSlots.Select(slot =>
-                    slot.Contains("Cloth") ? mats["GoblinCloth"] : mats[skinName]).ToArray();
-                ApplyRiggedModel(ai.gameObject, goblinFbx, goblinCtrl, slotMats);
+                var (variantPath, scale) = GoblinVariant(def);
+                var variantFbx = AssetDatabase.LoadAssetAtPath<GameObject>(variantPath) ?? goblinFbx;
+                string skinName = GoblinSkinFor(tier);
+                var slotMats = SlotNames(variantPath)
+                    .Select(slot => MapGoblinSlot(slot, skinName, mats)).ToArray();
+                ApplyRiggedModel(ai.gameObject, variantFbx, goblinCtrl, slotMats, scale);
                 ConfigureEquipmentVisuals(ai.gameObject, EquipmentVisuals.BodyType.Goblin, def);
             }
 
@@ -140,7 +202,7 @@ namespace VoidBound.Editor
                     slot.Contains("Armor") ? mats["HeroArmor"]
                     : slot.Contains("Hair") ? mats["HeroHair"]
                     : mats["HeroSkin"]).ToArray();
-                ApplyRiggedModel(player, heroFbx, heroCtrl, slotMats);
+                ApplyRiggedModel(player, heroFbx, heroCtrl, slotMats, 1f);
                 ConfigureEquipmentVisuals(player, EquipmentVisuals.BodyType.Hero, null);
             }
 
@@ -172,7 +234,7 @@ namespace VoidBound.Editor
         // Replaces the root static mesh with the rigged model as a child "Model"
         // (SkinnedMeshRenderer + Animator). Root keeps CharacterController + scripts.
         private static void ApplyRiggedModel(GameObject root, GameObject fbxPrefab,
-            RuntimeAnimatorController controller, Material[] materials)
+            RuntimeAnimatorController controller, Material[] materials, float scale)
         {
             // Strip any old static mesh on the root.
             var mf = root.GetComponent<MeshFilter>();
@@ -191,7 +253,7 @@ namespace VoidBound.Editor
             // faces the travel/target direction — so the mesh must be turned to
             // face the root's forward, else the character walks/looks backward.
             model.transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
-            model.transform.localScale = Vector3.one;
+            model.transform.localScale = Vector3.one * scale;
 
             var anim = model.GetComponent<Animator>();
             if (anim == null) anim = model.AddComponent<Animator>();

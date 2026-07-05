@@ -26,7 +26,5 @@ MonoBehaviour:
   aggroRange: 12
   attackRange: 2.2
   lootTable: {fileID: 11400000, guid: 911cfc3105c4eb64786190c9e375544a, type: 2}
-  weapon: {fileID: 11400000, guid: 7da873312a4531d49be940d23c8b2927, type: 2}
-  armor:
-  - {fileID: 11400000, guid: 40e3c0e9b78781b47872bf3233caeaa7, type: 2}
-  - {fileID: 11400000, guid: 8378b367b59a84b4aa3de5d74a21ccc3, type: 2}
+  weapon: {fileID: 0}
+  armor: []

@@ -10,21 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d0c27df59cea0734daa3d12f9ba16bdf, type: 3}
-  m_Name: Goblin_Warrior
+  m_Name: Goblin_Warchief
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Data.EnemyDefinitionSO
-  enemyId: goblin_warrior
-  displayName: Goblin Warrior
-  tier: 1
+  enemyId: goblin_warchief
+  displayName: Goblin Warchief
+  tier: 3
   visualPrefab: {fileID: 0}
   baseStats:
-    str: 6
-    dex: 5
-    vig: 8
-    intel: 2
-  baseDamage: 7
-  moveSpeed: 3
-  aggroRange: 9
-  attackRange: 2
-  lootTable: {fileID: 11400000, guid: d67214ddde15158469d3a0663ed85426, type: 2}
+    str: 14
+    dex: 9
+    vig: 22
+    intel: 5
+  baseDamage: 18
+  moveSpeed: 3.2
+  aggroRange: 14
+  attackRange: 2.6
+  lootTable: {fileID: 11400000, guid: 911cfc3105c4eb64786190c9e375544a, type: 2}
   weapon: {fileID: 0}
   armor: []
