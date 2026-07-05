@@ -59,6 +59,14 @@ namespace VoidBound.Editor
             Gear("mage_robe_top", "Archmage's Robe", EquipmentSlot.Body, RarityTier.Epic, "MageRobeTop", intel: 7, vig: 2, gold: 700);
             Gear("mage_robe_bottom", "Archmage's Skirts", EquipmentSlot.Legs, RarityTier.Epic, "MageRobeBottom", intel: 5, dex: 2, gold: 500);
 
+            // Dread Knight set — obsidian plate, dark gold, violet gem-glow (STR).
+            Gear("dread_helm", "Dread Helm", EquipmentSlot.Helm, RarityTier.Epic, "DreadHelm", str: 4, vig: 3, gold: 450);
+            Gear("dread_chest", "Dread Plate", EquipmentSlot.Body, RarityTier.Epic, "DreadChest", str: 6, vig: 5, gold: 750);
+            Gear("dread_legs", "Dread Greaves", EquipmentSlot.Legs, RarityTier.Epic, "DreadLegs", str: 4, vig: 4, gold: 520);
+            Gear("dread_shield", "Dread Aegis", EquipmentSlot.Shield, RarityTier.Epic, "DreadShield", vig: 6, gold: 480);
+            Gear("dread_gauntlets", "Dread Gauntlets", EquipmentSlot.Gloves, RarityTier.Epic, "DreadGauntlets", str: 3, gold: 320);
+            Gear("dread_boots", "Dread Sabatons", EquipmentSlot.Boots, RarityTier.Epic, "DreadBoots", str: 2, vig: 2, gold: 320);
+
             // ── Enemy gear ──
             var goblinClub = Gear("goblin_club", "Goblin Club", EquipmentSlot.Weapon, RarityTier.Common, "Mace",
                 weaponType: WeaponType.Mace, str: 1, gold: 5);

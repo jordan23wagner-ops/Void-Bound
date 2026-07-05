@@ -51,11 +51,11 @@ namespace VoidBound.Editor
                     G + "iron_boots.asset", G + "iron_gauntlets.asset", G + "iron_amulet.asset",
                     G + "apprentice_wand.asset",
                 };
-                default: return new[]
+                default: return new[] // Melee = Dread Knight
                 {
-                    G + "iron_helm.asset", G + "iron_chestplate.asset", G + "iron_greaves.asset",
-                    G + "iron_boots.asset", G + "iron_gauntlets.asset", G + "travelers_cape.asset",
-                    G + "iron_amulet.asset", G + "wooden_shield.asset",
+                    G + "dread_helm.asset", G + "dread_chest.asset", G + "dread_legs.asset",
+                    G + "dread_boots.asset", G + "dread_gauntlets.asset", G + "travelers_cape.asset",
+                    G + "iron_amulet.asset", G + "dread_shield.asset",
                     "Assets/ScriptableObjects/TestGear/Rusty_Sword_Common.asset",
                 };
             }

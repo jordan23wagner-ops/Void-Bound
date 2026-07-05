@@ -34,10 +34,15 @@ FBX_SETTINGS = dict(
 # Placeholder colors. Unity restyles by material name (EquipmentVisuals):
 # Main -> rarity tint, Gold -> gold trim, Gem -> glowing cyan, Accent stays ~this.
 COLORS = {
-    "Main":   (0.60, 0.62, 0.66, 1.0),
-    "Accent": (0.20, 0.16, 0.28, 1.0),   # dark violet lining
-    "Gold":   (0.83, 0.66, 0.22, 1.0),
-    "Gem":    (0.45, 0.85, 1.00, 1.0),
+    "Main":    (0.60, 0.62, 0.66, 1.0),
+    "Accent":  (0.20, 0.16, 0.28, 1.0),   # dark violet lining
+    "Gold":    (0.83, 0.66, 0.22, 1.0),
+    "Dark":    (0.10, 0.10, 0.13, 1.0),    # obsidian plate
+    "Crimson": (0.50, 0.08, 0.10, 1.0),
+    "Gem":     (0.45, 0.85, 1.00, 1.0),    # cyan
+    "GemV":    (0.62, 0.28, 0.95, 1.0),    # violet
+    "GemR":    (0.95, 0.18, 0.20, 1.0),    # red
+    "GemG":    (0.35, 0.95, 0.45, 1.0),    # green
 }
 
 def rad(d):
@@ -354,6 +359,89 @@ def mage_robe_bottom():
     export_armor(p, "MageRobeBottom")
 
 
+# ── DREAD KNIGHT (obsidian plate, dark gold, violet gem-glow) ──
+def dread_helm():
+    # Menacing horned great-helm with a glowing violet eye-slit.
+    p = []
+    p.append((sphere("Dark", 0.165, (0, 0, 1.60), scale=(1.0, 1.05, 1.08)), "Head"))            # skull dome
+    p.append((box("Dark", (0, 0.11, 1.55), (0.27, 0.13, 0.22)), "Head"))                        # faceplate
+    p.append((box("Dark", (0, 0.15, 1.47), (0.20, 0.06, 0.10), rotation=(rad(20), 0, 0)), "Head"))  # jaw/chin bevel
+    p.append((box("GemV", (0, 0.185, 1.60), (0.20, 0.028, 0.032)), "Head"))                     # glowing eye slit
+    p.append((box("Gold", (0, 0.17, 1.665), (0.24, 0.05, 0.045)), "Head"))                      # brow ridge
+    p.append((box("Dark", (0, 0.20, 1.55), (0.03, 0.05, 0.12)), "Head"))                        # nasal bar
+    # horns — two segments each, curling up and back
+    for sx in (0.13, -0.13):
+        z = rad(22 if sx > 0 else -22)
+        p.append((cone("Dark", 0.05, 0.032, 0.15, (sx, 0.03, 1.71), rotation=(rad(12), 0, z)), "Head"))
+        p.append((cone("Dark", 0.032, 0.004, 0.18, (sx * 1.35, -0.02, 1.86), rotation=(rad(40), 0, z * 1.4)), "Head"))
+        p.append((torus("Gold", 0.05, 0.009, (sx, 0.03, 1.70), rotation=(rad(90), 0, 0)), "Head"))
+    p.append((cone("Dark", 0.035, 0.004, 0.14, (0, -0.02, 1.82), rotation=(rad(-8), 0, 0)), "Head"))  # crown spike
+    export_armor(p, "DreadHelm")
+
+def dread_chest():
+    # Blackened breastplate with a violet core gem and sharp spiked pauldrons.
+    p = []
+    p.append((box("Dark", (0, 0.16, 1.14), (0.34, 0.14, 0.44)), "Chest"))                       # breastplate
+    p.append((cone("Dark", 0.21, 0.145, 0.22, (0, 0.18, 1.31), rotation=(rad(90), 0, 0), vertices=6), "Chest"))  # chest bevel
+    p.append((sphere("GemV", 0.06, (0, 0.245, 1.15), segments=4, rings=3), "Chest"))            # core gem
+    p.append((torus("Gold", 0.085, 0.014, (0, 0.24, 1.15), rotation=(rad(90), 0, 0)), "Chest")) # gem ring
+    p.append((box("Gold", (0, 0.185, 1.35), (0.30, 0.05, 0.045)), "Chest"))                     # collar edge
+    p.append((box("Gold", (0, 0.15, 0.94), (0.34, 0.05, 0.045)), "Chest"))                      # waist edge
+    p.append((box("Crimson", (0, 0.235, 1.05), (0.03, 0.03, 0.30)), "Chest"))                   # crimson runnel
+    for sx, bone in ((0.28, "UpperArm_R"), (-0.28, "UpperArm_L")):
+        z = rad(40 if sx > 0 else -40)
+        p.append((sphere("Dark", 0.135, (sx, 0, 1.38), scale=(1.1, 1.1, 0.85)), bone))          # pauldron
+        p.append((torus("Gold", 0.125, 0.016, (sx, 0, 1.335), rotation=(rad(25 if sx > 0 else -25), 0, 0)), bone))
+        p.append((cone("Dark", 0.05, 0.004, 0.20, (sx * 1.02, -0.03, 1.50), rotation=(rad(-30), 0, 0), vertices=6), bone))  # back spike
+        p.append((cone("Dark", 0.035, 0.004, 0.13, (sx * 1.18, 0.05, 1.41), rotation=(rad(18), 0, z), vertices=6), bone))   # side spike
+    export_armor(p, "DreadChest")
+
+def dread_legs():
+    # Dark tassets + angular thigh plates with a knee spike each.
+    p = []
+    p.append((box("Dark", (0, 0.10, 0.80), (0.35, 0.16, 0.15)), "Hips"))                        # waist guard
+    p.append((box("Gold", (0, 0.185, 0.80), (0.31, 0.045, 0.03)), "Hips"))                      # belt trim
+    p.append((sphere("GemV", 0.035, (0, 0.21, 0.80), segments=4, rings=2), "Hips"))             # belt gem
+    for sx, bone in ((0.12, "UpperLeg_R"), (-0.12, "UpperLeg_L")):
+        p.append((box("Dark", (sx, 0.10, 0.55), (0.17, 0.16, 0.42)), bone))                     # thigh plate
+        p.append((box("Gold", (sx, 0.195, 0.55), (0.14, 0.02, 0.36)), bone))                    # plate trim
+        p.append((cone("Dark", 0.045, 0.004, 0.11, (sx, 0.22, 0.40), rotation=(rad(-95), 0, 0), vertices=6), bone))  # knee spike
+    export_armor(p, "DreadLegs")
+
+def dread_shield():
+    # GRIP-space off-hand shield: dark hexagonal face, gold rim/spine, gem boss,
+    # top+bottom spikes.
+    p = []
+    p.append(cyl("Dark", 0.27, 0.05, (0, 0, 0), rotation=(rad(90), 0, 0), vertices=6))          # hex face
+    p.append(torus("Gold", 0.27, 0.022, (0, 0, 0), rotation=(rad(90), 0, 0)))                   # gold rim
+    p.append(box("Gold", (0, -0.03, 0), (0.05, 0.05, 0.50)))                                    # vertical spine
+    p.append(sphere("GemV", 0.075, (0, -0.06, 0), segments=4, rings=3))                         # gem boss
+    p.append(cone("Dark", 0.05, 0.005, 0.20, (0, -0.03, 0.32), vertices=6))                     # top spike (+Z)
+    p.append(cone("Dark", 0.05, 0.005, 0.20, (0, -0.03, -0.32), rotation=(rad(180), 0, 0), vertices=6))  # bottom spike
+    export(p, "DreadShield")
+
+def dread_gauntlets():
+    # Obsidian gauntlets: armoured fist, gold-ringed bracer, knuckle spike.
+    p = []
+    for sx, bone in ((0.30, "Hand_R"), (-0.30, "Hand_L")):
+        p.append((box("Dark", (sx, 0, 0.74), (0.12, 0.12, 0.13)), bone))                        # fist
+        p.append((cyl("Dark", 0.078, 0.22, (sx, 0, 0.92)), bone))                               # forearm bracer
+        p.append((torus("Gold", 0.084, 0.013, (sx, 0, 1.01)), bone))                            # rim top
+        p.append((torus("Gold", 0.084, 0.013, (sx, 0, 0.83)), bone))                            # rim bottom
+        p.append((cone("Dark", 0.024, 0.003, 0.08, (sx, 0.08, 0.74), rotation=(rad(-90), 0, 0), vertices=5), bone))  # knuckle spike
+    export_armor(p, "DreadGauntlets")
+
+def dread_boots():
+    # Obsidian sabatons with gold trim and a back spur.
+    p = []
+    for sx, bone in ((0.12, "Foot_R"), (-0.12, "Foot_L")):
+        p.append((box("Dark", (sx, 0.05, 0.11), (0.16, 0.27, 0.22)), bone))                     # shin/ankle
+        p.append((box("Dark", (sx, 0.12, 0.035), (0.16, 0.36, 0.10)), bone))                    # foot
+        p.append((box("Gold", (sx, 0.05, 0.20), (0.16, 0.05, 0.035)), bone))                    # shin trim
+        p.append((cone("Dark", 0.026, 0.003, 0.09, (sx, -0.10, 0.15), rotation=(rad(90), 0, 0), vertices=5), bone))  # back spur
+    export_armor(p, "DreadBoots")
+
+
 # ── MATERIALS (centered props for world pickups) ──────────────
 def ore_chunk():
     p = []
@@ -389,6 +477,7 @@ if __name__ == "__main__":
     for fn in (sword, sword2h, dagger, mace, bow, crossbow, staff, wand, shield,
                helm, body_armor, legs_armor, boots, gloves, cape, amulet,
                ranger_hood, ranger_vest, mage_hat, mage_robe_top, mage_robe_bottom,
+               dread_helm, dread_chest, dread_legs, dread_shield, dread_gauntlets, dread_boots,
                ore_chunk, ingot, herb, fish):
         fn()
     print("[Equip] Done - all equipment/item models exported.")

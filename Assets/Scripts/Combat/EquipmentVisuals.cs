@@ -250,30 +250,46 @@ namespace VoidBound.Combat
 
         private static string VisualName(GearItemSO item) => "Gear_" + item.itemId;
 
-        private static readonly Color GoldColor = new(0.85f, 0.66f, 0.20f);
-        private static readonly Color GemColor = new(0.40f, 0.85f, 1f);
-        private static readonly Color AccentColor = new(0.16f, 0.13f, 0.20f); // dark charcoal-violet
+        // Named-material palette (FBX import flattens everything to gray, so
+        // colours are assigned here by material name — see STYLE_GUIDE.md).
+        //   Main    -> rarity tint (per item)         Accent  -> dark charcoal-violet
+        //   Gold    -> gold trim                       Dark    -> obsidian (near-black plate)
+        //   Crimson -> deep blood red
+        //   Gem/GemV/GemR/GemG -> glowing cyan/violet/red/green (emissive focal points)
+        private static readonly Color GoldColor = new(0.82f, 0.63f, 0.20f);
+        private static readonly Color AccentColor = new(0.16f, 0.13f, 0.20f);
+        private static readonly Color DarkColor = new(0.09f, 0.09f, 0.12f);
+        private static readonly Color CrimsonColor = new(0.50f, 0.07f, 0.10f);
+        private static readonly Color GemCyan = new(0.40f, 0.85f, 1.00f);
+        private static readonly Color GemViolet = new(0.62f, 0.28f, 0.95f);
+        private static readonly Color GemRed = new(0.95f, 0.18f, 0.20f);
+        private static readonly Color GemGreen = new(0.35f, 0.95f, 0.45f);
 
-        // Restyle a piece's materials by name (FBX import gives everything a flat
-        // gray, so colours are assigned here): Main -> rarity tint, Gold -> gold
-        // trim, Gem -> glowing gemstone, Accent -> dark trim/lining.
-        private static void TintMain(GameObject go, Color color)
+        private static void TintMain(GameObject go, Color rarity)
         {
             foreach (var r in go.GetComponentsInChildren<Renderer>())
                 foreach (var m in r.materials)
                 {
                     if (m == null) continue;
-                    if (m.name.StartsWith("Main")) m.color = color;
-                    else if (m.name.StartsWith("Gold")) m.color = GoldColor;
-                    else if (m.name.StartsWith("Accent")) m.color = AccentColor;
-                    else if (m.name.StartsWith("Gem"))
-                    {
-                        m.color = GemColor;
-                        m.EnableKeyword("_EMISSION");
-                        m.SetColor("_EmissionColor", GemColor * 1.4f);
-                        m.globalIlluminationFlags = MaterialGlobalIlluminationFlags.RealtimeEmissive;
-                    }
+                    var n = m.name;
+                    if (n.StartsWith("Main")) m.color = rarity;
+                    else if (n.StartsWith("Gold")) m.color = GoldColor;
+                    else if (n.StartsWith("Dark")) m.color = DarkColor;
+                    else if (n.StartsWith("Crimson")) m.color = CrimsonColor;
+                    else if (n.StartsWith("Accent")) m.color = AccentColor;
+                    else if (n.StartsWith("GemV")) SetGem(m, GemViolet);
+                    else if (n.StartsWith("GemR")) SetGem(m, GemRed);
+                    else if (n.StartsWith("GemG")) SetGem(m, GemGreen);
+                    else if (n.StartsWith("Gem")) SetGem(m, GemCyan);
                 }
+        }
+
+        private static void SetGem(Material m, Color c)
+        {
+            m.color = c;
+            m.EnableKeyword("_EMISSION");
+            m.SetColor("_EmissionColor", c * 1.4f);
+            m.globalIlluminationFlags = MaterialGlobalIlluminationFlags.RealtimeEmissive;
         }
     }
 }
