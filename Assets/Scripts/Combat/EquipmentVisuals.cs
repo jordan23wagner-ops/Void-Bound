@@ -14,9 +14,11 @@ namespace VoidBound.Combat
     // Two attach modes (models from Tools/build_equipment_models.py):
     //  - weapons/shield are grip-space → parented to the hand bone with a tuned
     //    local offset.
-    //  - armor is hero-body space → placed at the character root (correct rest
-    //    pose) then reparented to its bone keeping world position, so it sits
-    //    right AND follows that bone. Goblin armor is downscaled to fit.
+    //  - armor is hero-body space → placed under the "Model" child (which carries
+    //    CharacterModelSwap's 180° facing flip, so armor shares the skeleton's
+    //    space and doesn't land mirrored) at the rest pose, then each sub-part is
+    //    reparented to its bone keeping world position, so it sits right AND
+    //    follows that bone. Goblin armor is downscaled to fit.
     public class EquipmentVisuals : MonoBehaviour
     {
         public enum BodyType { Hero, Goblin }
@@ -30,6 +32,7 @@ namespace VoidBound.Combat
         private readonly Dictionary<EquipmentSlot, List<GameObject>> shown = new();
         private readonly Dictionary<EquipmentSlot, string> shownId = new();
         private readonly Dictionary<string, Transform> bones = new();
+        private Transform modelRoot; // the "Model" child (holds the Animator + 180° facing flip)
         private PlayerInventory inventory;
 
         public void Configure(BodyType body, EnemyDefinitionSO enemyDef)
@@ -40,6 +43,8 @@ namespace VoidBound.Combat
 
         private void Start()
         {
+            var animT = GetComponentInChildren<Animator>();
+            modelRoot = animT != null ? animT.transform : transform;
             ResolveBones();
 
             if (enemyDefinition != null) { ShowEnemyGear(); return; }
@@ -146,7 +151,9 @@ namespace VoidBound.Combat
                 // to its bone so it follows that limb instead of sliding off it.
                 var root = Instantiate(item.visualPrefab);
                 root.name = VisualName(item);
-                root.transform.SetParent(transform, false);
+                // Parent under the Model (not the character root) so the armor
+                // inherits the 180° facing flip and lands in the skeleton's space.
+                root.transform.SetParent(modelRoot, false);
                 root.transform.localPosition = Vector3.zero;
                 root.transform.localRotation = Quaternion.identity;
                 root.transform.localScale = Vector3.one * BodyScale;
