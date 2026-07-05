@@ -26,6 +26,18 @@ namespace VoidBound.UI
             if (giveGoldButton != null) giveGoldButton.onClick.AddListener(GiveGold);
         }
 
+        // Equip the full test-gear kit straight into its slots (the pool is one
+        // item per slot), so the player spawns fully geared. Called by the editor
+        // dev-play setup on entering play mode — safe on this (inactive) panel
+        // since it's a plain method call, not a coroutine.
+        public void EquipTestGearKit()
+        {
+            if (inventory == null || testGearPool == null) return;
+            foreach (var item in testGearPool)
+                if (item != null) inventory.EquipItem(item);
+            Debug.Log("[DevTools] Auto-equipped test gear kit.");
+        }
+
         public void GiveTestGear()
         {
             if (inventory == null || testGearPool == null) return;
