@@ -67,6 +67,13 @@ namespace VoidBound.Editor
             Gear("dread_gauntlets", "Dread Gauntlets", EquipmentSlot.Gloves, RarityTier.Epic, "DreadGauntlets", str: 3, gold: 320);
             Gear("dread_boots", "Dread Sabatons", EquipmentSlot.Boots, RarityTier.Epic, "DreadBoots", str: 2, vig: 2, gold: 320);
 
+            // Hooded Assassin set — charcoal + crimson wraps, cyan gem (DEX).
+            Gear("assassin_hood", "Shadow Hood", EquipmentSlot.Helm, RarityTier.Epic, "AssassinHood", dex: 4, gold: 380);
+            Gear("assassin_garb", "Shadow Garb", EquipmentSlot.Body, RarityTier.Epic, "AssassinGarb", dex: 6, vig: 2, gold: 640);
+            Gear("assassin_legs", "Shadow Wraps", EquipmentSlot.Legs, RarityTier.Epic, "AssassinLegs", dex: 5, gold: 480);
+            Gear("assassin_gauntlets", "Shadow Grips", EquipmentSlot.Gloves, RarityTier.Epic, "AssassinGauntlets", dex: 3, gold: 300);
+            Gear("assassin_boots", "Shadow Treads", EquipmentSlot.Boots, RarityTier.Epic, "AssassinBoots", dex: 3, gold: 300);
+
             // ── Enemy gear ──
             var goblinClub = Gear("goblin_club", "Goblin Club", EquipmentSlot.Weapon, RarityTier.Common, "Mace",
                 weaponType: WeaponType.Mace, str: 1, gold: 5);

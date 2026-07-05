@@ -442,6 +442,61 @@ def dread_boots():
     export_armor(p, "DreadBoots")
 
 
+# ── HOODED ASSASSIN (charcoal + crimson wraps, cyan gem) — sleek/minimal ──
+def assassin_hood():
+    # Deep pointed hood shadowing the face, glowing cyan eye-slit, crimson mask.
+    p = []
+    p.append((sphere("Dark", 0.175, (0, -0.03, 1.60), scale=(1.0, 1.16, 1.08)), "Head"))        # hood
+    p.append((cone("Dark", 0.145, 0.02, 0.22, (0, 0.15, 1.66), rotation=(rad(-44), 0, 0), vertices=6), "Head"))  # forward peak
+    p.append((box("Dark", (0, 0.185, 1.58), (0.22, 0.07, 0.14)), "Head"))                       # brow shadow
+    p.append((box("Gem", (0, 0.225, 1.585), (0.15, 0.022, 0.022)), "Head"))                     # cyan eye-slit
+    p.append((box("Crimson", (0, 0.185, 1.47), (0.19, 0.06, 0.11)), "Head"))                    # face wrap/mask
+    export_armor(p, "AssassinHood")
+
+def assassin_garb():
+    # Fitted charcoal wrap, a crimson sash + strap, cyan clasp, minimal shoulders.
+    p = []
+    p.append((cone("Dark", 0.215, 0.185, 0.50, (0, 0.03, 1.14), vertices=8), "Chest"))          # torso wrap
+    p.append((box("Crimson", (0, 0.195, 1.08), (0.09, 0.025, 0.42), rotation=(0, rad(20), 0)), "Chest"))  # diagonal sash
+    p.append((box("Dark", (0, 0.20, 1.12), (0.05, 0.02, 0.40), rotation=(0, rad(-16), 0)), "Chest"))      # counter strap
+    p.append((sphere("Gem", 0.028, (0.075, 0.215, 1.18), segments=4, rings=2), "Chest"))        # clasp gem
+    p.append((cyl("Crimson", 0.20, 0.05, (0, 0.03, 0.92)), "Chest"))                            # waist wrap
+    for sx, bone in ((0.27, "UpperArm_R"), (-0.27, "UpperArm_L")):
+        p.append((sphere("Dark", 0.092, (sx, 0, 1.38), scale=(1, 1, 0.7)), bone))               # small shoulder
+        p.append((cyl("Crimson", 0.078, 0.045, (sx, 0, 1.30)), bone))                           # crimson band
+    export_armor(p, "AssassinGarb")
+
+def assassin_legs():
+    # Wrapped charcoal leggings with crimson binding bands (per-leg).
+    p = []
+    p.append((box("Dark", (0, 0.07, 0.80), (0.31, 0.13, 0.13)), "Hips"))                        # hip wrap
+    p.append((box("Crimson", (0, 0.14, 0.80), (0.27, 0.03, 0.035)), "Hips"))                    # crimson belt line
+    for sx, bone in ((0.12, "UpperLeg_R"), (-0.12, "UpperLeg_L")):
+        p.append((cyl("Dark", 0.088, 0.62, (sx, 0.02, 0.46)), bone))                            # legging
+        p.append((cyl("Crimson", 0.092, 0.035, (sx, 0.02, 0.24)), bone))                        # binding band
+        p.append((cyl("Crimson", 0.092, 0.035, (sx, 0.02, 0.56)), bone))                        # binding band
+    export_armor(p, "AssassinLegs")
+
+def assassin_gauntlets():
+    # Wrapped forearms with crimson bands.
+    p = []
+    for sx, bone in ((0.30, "Hand_R"), (-0.30, "Hand_L")):
+        p.append((box("Dark", (sx, 0, 0.74), (0.10, 0.10, 0.11)), bone))                        # wrapped fist
+        p.append((cyl("Dark", 0.072, 0.20, (sx, 0, 0.91)), bone))                               # forearm wrap
+        p.append((cyl("Crimson", 0.075, 0.03, (sx, 0, 0.99)), bone))                            # band
+        p.append((cyl("Crimson", 0.075, 0.03, (sx, 0, 0.85)), bone))                            # band
+    export_armor(p, "AssassinGauntlets")
+
+def assassin_boots():
+    # Wrapped charcoal boots with a crimson ankle wrap.
+    p = []
+    for sx, bone in ((0.12, "Foot_R"), (-0.12, "Foot_L")):
+        p.append((box("Dark", (sx, 0.05, 0.10), (0.14, 0.25, 0.20)), bone))                     # shin
+        p.append((box("Dark", (sx, 0.11, 0.03), (0.14, 0.33, 0.09)), bone))                     # foot
+        p.append((cyl("Crimson", 0.082, 0.035, (sx, 0.02, 0.18)), bone))                        # crimson ankle wrap
+    export_armor(p, "AssassinBoots")
+
+
 # ── MATERIALS (centered props for world pickups) ──────────────
 def ore_chunk():
     p = []
@@ -478,6 +533,7 @@ if __name__ == "__main__":
                helm, body_armor, legs_armor, boots, gloves, cape, amulet,
                ranger_hood, ranger_vest, mage_hat, mage_robe_top, mage_robe_bottom,
                dread_helm, dread_chest, dread_legs, dread_shield, dread_gauntlets, dread_boots,
+               assassin_hood, assassin_garb, assassin_legs, assassin_gauntlets, assassin_boots,
                ore_chunk, ingot, herb, fish):
         fn()
     print("[Equip] Done - all equipment/item models exported.")

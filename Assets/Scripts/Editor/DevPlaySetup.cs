@@ -39,10 +39,10 @@ namespace VoidBound.Editor
         {
             switch (name)
             {
-                case "Ranged": return new[]
+                case "Ranged": return new[] // Ranged = Hooded Assassin
                 {
-                    G + "ranger_hood.asset", G + "ranger_vest.asset", G + "iron_greaves.asset",
-                    G + "iron_boots.asset", G + "iron_gauntlets.asset", G + "travelers_cape.asset",
+                    G + "assassin_hood.asset", G + "assassin_garb.asset", G + "assassin_legs.asset",
+                    G + "assassin_boots.asset", G + "assassin_gauntlets.asset", G + "travelers_cape.asset",
                     G + "iron_amulet.asset", G + "hunters_bow.asset",
                 };
                 case "Mage": return new[]

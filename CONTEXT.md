@@ -27,6 +27,12 @@ Void Bound evolved from RunePortal (a Three.js browser ARPG). All gameplay syste
 ## Current Phase
 **Phase 8: Zone 3 — Bleakwood** (not yet started). Phase 7 completed and play-mode verified 2026-07-04.
 
+## Dread Knight + Hooded Assassin Sets; Palette Expansion (2026-07-05)
+- **Palette expanded** (`EquipmentVisuals.TintMain`, per [`STYLE_GUIDE.md`](STYLE_GUIDE.md)): added `Dark` (obsidian), `Crimson`, and gem variants `GemV`/`GemR`/`GemG` (violet/red/green glow) alongside `Main`/`Gold`/`Gem`/`Accent`. Gear now themes per class.
+- **Dread Knight** (melee, Epic, obsidian + gold + violet-glow): `dread_helm` (horned great-helm, glowing violet eye-slit), `dread_chest` (spiked breastplate, crimson runnel, violet core gem, spiked pauldrons), `dread_legs`, `dread_gauntlets`, `dread_boots`, `dread_shield` (spiked gem-boss). Melee kit = the full Dread set + sword.
+- **Hooded Assassin** (ranged, Epic, charcoal + crimson + cyan-glow): `assassin_hood` (deep hood, cyan eye-slit, crimson mask), `assassin_garb` (wraps + sash + cyan clasp), `assassin_legs`, `assassin_gauntlets`, `assassin_boots`. Ranged kit = the full Shadow set + bow. (Old `ranger_hood`/`ranger_vest` kept as alt gear, no longer in the kit.)
+- **`PlayerSettings.runInBackground = true`** — Play always ticks now, so `EquipmentVisuals.Start`/coroutines don't stall when the editor is unfocused (the recurring stale-visual cause).
+
 ## Archmage Showpiece Set + Material Styling (2026-07-05)
 - **Material styling by name** (`EquipmentVisuals.TintMain`): FBX import flattens every material to gray (Blender's `diffuse_color` doesn't export), so colours are assigned in Unity by material name — `Main`→rarity tint, `Gold`→gold trim, `Gem`→glowing cyan (emissive), `Accent`→dark charcoal-violet. Any model can now use those four material names for a rich palette. `build_equipment_models.py` COLORS extended with Gold/Gem (placeholders; Unity is authoritative).
 - **Archmage set** (Epic → purple): `mage_hat` (Archmage's Hat — wide gold-rimmed brim, a 3-segment cone that bends/droops forward, jewelled band + gem-tipped point), `mage_robe_top` (Body — tapered torso, gold front trim, high collar, gem brooch, gem-tipped pauldrons), `mage_robe_bottom` (Legs — jewelled belt, hanging sash w/ tassel, per-leg split skirt with gold hems + dark lining). Replaces the old single `mage_robe` (deleted). Mage kit = hat + robe_top + robe_bottom + wand. Robe bottom keeps the per-leg split (panels on UpperLeg_R/L, belt/sash on Hips).
