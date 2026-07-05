@@ -183,7 +183,8 @@ namespace VoidBound.Editor
             Scatter(root, mats, "GrassTuft", 26, 0.8f, 1.4f, rng, buildings, 2.6f, taken, 1.4f, 4f, 19f);
 
             TuneLighting(warm: true);
-            SetGroundColor(new Color(0.40f, 0.52f, 0.30f));
+            SetGround("Homestead", new Color(0.40f, 0.52f, 0.30f), new Color(0.33f, 0.45f, 0.25f),
+                new Color(0.42f, 0.34f, 0.22f), new Color(0.30f, 0.32f, 0.26f), new Color(0.54f, 0.60f, 0.42f), 20, 10f);
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
         }
@@ -218,20 +219,102 @@ namespace VoidBound.Editor
             Scatter(root, mats, "GrassTuft", 18, 0.7f, 1.2f, rng, keep, 2.4f, taken, 1.6f, 4f, 19f, dry);
 
             TuneLighting(warm: false);
-            SetGroundColor(new Color(0.44f, 0.39f, 0.34f));
+            SetGround("Ashfields", new Color(0.46f, 0.41f, 0.35f), new Color(0.37f, 0.33f, 0.30f),
+                new Color(0.31f, 0.29f, 0.29f), new Color(0.25f, 0.24f, 0.25f), new Color(0.58f, 0.54f, 0.48f), 51, 8f);
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
         }
 
         // ─────────────────────────── ground / light / fog ───────────────────────────
-        private static void SetGroundColor(Color c)
+        // Bakes a mottled ground texture (base variation + dirt patches + gravel
+        // specks) so the terrain isn't a flat colour, then tiles it on the ground.
+        private static void SetGround(string zone, Color baseA, Color baseB, Color dirt,
+            Color gravelD, Color gravelL, int seed, float tiling)
         {
             var ground = GameObject.Find("Ground");
             if (ground == null) return;
+
+            var tex = GenerateGroundTexture(baseA, baseB, dirt, gravelD, gravelL, seed);
+            const string dir = "Assets/Art/Textures";
+            if (!AssetDatabase.IsValidFolder(dir)) AssetDatabase.CreateFolder("Assets/Art", "Textures");
+            string path = $"{dir}/Ground_{zone}.asset";
+            var existing = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+            if (existing != null) { EditorUtility.CopySerialized(tex, existing); tex = existing; }
+            else AssetDatabase.CreateAsset(tex, path);
+
             var r = ground.GetComponent<Renderer>();
-            if (r != null && r.sharedMaterial != null) { r.sharedMaterial.color = c; EditorUtility.SetDirty(r.sharedMaterial); }
+            if (r != null && r.sharedMaterial != null)
+            {
+                var m = r.sharedMaterial;
+                m.color = Color.white;                 // full colour lives in the texture
+                m.mainTexture = tex;
+                if (m.HasProperty("_BaseMap")) m.SetTexture("_BaseMap", tex);
+                m.mainTextureScale = new Vector2(tiling, tiling);
+                if (m.HasProperty("_BaseMap")) m.SetTextureScale("_BaseMap", new Vector2(tiling, tiling));
+                EditorUtility.SetDirty(m);
+            }
             // Widen the ground so its edge sits out past the fog.
             ground.transform.localScale = new Vector3(56f, ground.transform.localScale.y, 56f);
+        }
+
+        private static Texture2D GenerateGroundTexture(Color a, Color b, Color dirt,
+            Color gravelD, Color gravelL, int seed)
+        {
+            const int S = 256;
+            var tex = new Texture2D(S, S, TextureFormat.RGBA32, true) { wrapMode = TextureWrapMode.Repeat, filterMode = FilterMode.Bilinear };
+            var rng = new System.Random(seed);
+
+            // Dirt patch centres (toroidal so the texture tiles).
+            int patchN = 16;
+            var pcx = new float[patchN]; var pcy = new float[patchN]; var pr = new float[patchN];
+            for (int i = 0; i < patchN; i++)
+            {
+                pcx[i] = (float)rng.NextDouble() * S;
+                pcy[i] = (float)rng.NextDouble() * S;
+                pr[i] = (float)(rng.NextDouble() * 26 + 12);
+            }
+            float off = (float)rng.NextDouble() * 100f;
+
+            var px = new Color[S * S];
+            for (int y = 0; y < S; y++)
+                for (int x = 0; x < S; x++)
+                {
+                    float n = Mathf.PerlinNoise(x * 0.025f + off, y * 0.025f + off);
+                    float fine = Mathf.PerlinNoise(x * 0.18f, y * 0.18f) * 0.6f + Mathf.PerlinNoise(x * 0.5f + 40, y * 0.5f + 40) * 0.4f;
+                    Color c = Color.Lerp(b, a, n);
+                    c *= Mathf.Lerp(0.92f, 1.08f, fine);
+
+                    float dmin = 99f;
+                    for (int i = 0; i < patchN; i++)
+                    {
+                        float dx = Mathf.Abs(x - pcx[i]); dx = Mathf.Min(dx, S - dx);
+                        float dy = Mathf.Abs(y - pcy[i]); dy = Mathf.Min(dy, S - dy);
+                        float d = Mathf.Sqrt(dx * dx + dy * dy) / pr[i];
+                        if (d < dmin) dmin = d;
+                    }
+                    if (dmin < 1f) c = Color.Lerp(c, dirt, (1f - dmin) * 0.75f);
+                    c.a = 1f;
+                    px[y * S + x] = c;
+                }
+
+            // Gravel specks (2x2 so they read at tiled scale).
+            var grng = new System.Random(seed * 7 + 3);
+            int specks = S * S / 90;
+            for (int i = 0; i < specks; i++)
+            {
+                int gx = grng.Next(S), gy = grng.Next(S);
+                Color g = grng.NextDouble() < 0.4 ? gravelL : gravelD;
+                for (int oy = 0; oy < 2; oy++)
+                    for (int ox = 0; ox < 2; ox++)
+                    {
+                        int ix = (gx + ox) % S, iy = (gy + oy) % S;
+                        px[iy * S + ix] = Color.Lerp(px[iy * S + ix], g, 0.6f);
+                    }
+            }
+
+            tex.SetPixels(px);
+            tex.Apply(true);
+            return tex;
         }
 
         private static void TuneLighting(bool warm)
