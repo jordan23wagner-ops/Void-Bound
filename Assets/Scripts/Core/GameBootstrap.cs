@@ -38,6 +38,10 @@ namespace VoidBound.Core
             if (hudCanvas != null) DontDestroyOnLoad(hudCanvas);
             if (eventSystem != null) DontDestroyOnLoad(eventSystem);
 
+            // Ensure the persisted player has the death/gravestone handler.
+            if (player != null && player.GetComponent<Combat.PlayerDeath>() == null)
+                player.AddComponent<Combat.PlayerDeath>();
+
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
 

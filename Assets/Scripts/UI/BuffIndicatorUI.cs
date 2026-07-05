@@ -22,7 +22,7 @@ namespace VoidBound.UI
             rt.anchorMin = new Vector2(0, 1);
             rt.anchorMax = new Vector2(0, 1);
             rt.pivot = new Vector2(0, 1);
-            rt.anchoredPosition = new Vector2(14, -70); // just below PlayerInfoBar
+            rt.anchoredPosition = new Vector2(14, -132); // below the (112px-tall) PlayerInfoBar card
             rt.sizeDelta = new Vector2(300, 18);
             label.fontSize = 10f;
             label.color = Panel5cFactory.Green;

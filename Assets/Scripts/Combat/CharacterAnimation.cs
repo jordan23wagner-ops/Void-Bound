@@ -57,6 +57,12 @@ namespace VoidBound.Combat
             if (animator != null) animator.SetTrigger(AttackId);
         }
 
+        // Clear the Death state so a respawned player returns to Idle.
+        public void Revive()
+        {
+            if (animator != null) animator.SetBool(DeadId, false);
+        }
+
         private void OnDamaged()
         {
             if (animator != null) animator.SetTrigger(HitId);

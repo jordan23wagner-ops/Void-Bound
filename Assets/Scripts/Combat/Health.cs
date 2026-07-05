@@ -49,6 +49,17 @@ namespace VoidBound.Combat
             OnHealthChanged?.Invoke(currentHP, maxHP);
         }
 
+        // Full restore after death (player respawn). Re-derives maxHP so a
+        // dead entity comes back to life at full health.
+        public void Revive()
+        {
+            var stats = GetComponent<StatsComponent>();
+            if (stats != null) maxHP = stats.MaxHP;
+            if (maxHP <= 0) maxHP = 100;
+            currentHP = maxHP;
+            OnHealthChanged?.Invoke(currentHP, maxHP);
+        }
+
         // Re-derive maxHP from StatsComponent after a VIG change (timed buff,
         // gear swap). maxHP is otherwise only read once at Start.
         public void RefreshMaxHP()

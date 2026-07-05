@@ -31,5 +31,15 @@ namespace VoidBound.Inventory
             OnCurrencyChanged?.Invoke();
             return true;
         }
+
+        // Removes and returns all currency (death drop). Restore with Add*.
+        public (int gold, int shards) TakeAll()
+        {
+            int g = gold, s = voidShards;
+            gold = 0;
+            voidShards = 0;
+            OnCurrencyChanged?.Invoke();
+            return (g, s);
+        }
     }
 }
