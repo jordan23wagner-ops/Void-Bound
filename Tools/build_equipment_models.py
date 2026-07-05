@@ -31,10 +31,13 @@ FBX_SETTINGS = dict(
     bake_anim=False,
 )
 
-# Placeholder colors (Unity reassigns Main by rarity; Accent stays ~this)
+# Placeholder colors. Unity restyles by material name (EquipmentVisuals):
+# Main -> rarity tint, Gold -> gold trim, Gem -> glowing cyan, Accent stays ~this.
 COLORS = {
     "Main":   (0.60, 0.62, 0.66, 1.0),
-    "Accent": (0.28, 0.22, 0.15, 1.0),
+    "Accent": (0.20, 0.16, 0.28, 1.0),   # dark violet lining
+    "Gold":   (0.83, 0.66, 0.22, 1.0),
+    "Gem":    (0.45, 0.85, 1.00, 1.0),
 }
 
 def rad(d):
@@ -292,26 +295,63 @@ def ranger_vest():
     export_armor(p, "RangerVest")
 
 def mage_hat():
-    # Wide-brim wizard hat with a tall cone and a tip bobble.
-    p = [
-        (cone("Accent", 0.24, 0.02, 0.05, (0, 0.02, 1.60), vertices=12), "Head"),  # brim
-        (cone("Main", 0.15, 0.005, 0.48, (0, 0.03, 1.83), vertices=8), "Head"),    # tall cone
-        (sphere("Accent", 0.03, (0, 0.04, 2.08)), "Head"),                          # tip bobble
-    ]
+    # Grand wizard hat: wide gold-rimmed brim, a tall cone that bends and droops
+    # forward in three segments, a jeweled hatband, and a gem-tipped point.
+    p = []
+    # brim — wide, gently domed, gold rim
+    p.append((cone("Main", 0.33, 0.30, 0.05, (0, 0.03, 1.585), vertices=16), "Head"))          # wide brim
+    p.append((torus("Gold", 0.325, 0.018, (0, 0.03, 1.585), rotation=(rad(90), 0, 0)), "Head")) # gold rim
+    p.append((cone("Main", 0.23, 0.195, 0.07, (0, 0.03, 1.635), vertices=14), "Head"))          # domed crown of brim
+    # hatband + faceted gem at the front
+    p.append((cyl("Accent", 0.20, 0.075, (0, 0.03, 1.70), vertices=14), "Head"))                # band
+    p.append((torus("Gold", 0.205, 0.01, (0, 0.03, 1.735), rotation=(rad(90), 0, 0)), "Head"))  # band top trim
+    p.append((sphere("Gem", 0.055, (0, 0.205, 1.70), scale=(1.0, 0.6, 1.4), segments=4, rings=3), "Head"))  # gem
+    # cone — three bending segments drooping forward (+Y)
+    p.append((cone("Main", 0.19, 0.14, 0.30, (0, 0.03, 1.88), vertices=12), "Head"))            # base (straight)
+    p.append((cone("Main", 0.14, 0.09, 0.30, (0, 0.086, 2.17), rotation=(rad(-22), 0, 0), vertices=10), "Head"))  # mid bend
+    p.append((cone("Main", 0.09, 0.02, 0.28, (0, 0.253, 2.40), rotation=(rad(-52), 0, 0), vertices=8), "Head"))   # tip droop
+    # gem star at the tip
+    p.append((sphere("Gem", 0.04, (0, 0.40, 2.49), segments=4, rings=3), "Head"))               # tip gem
+    p.append((cone("Gold", 0.02, 0.002, 0.05, (0, 0.42, 2.53), rotation=(rad(-58), 0, 0), vertices=6), "Head"))  # tip cap
     export_armor(p, "MageHat")
 
-def mage_robe():
-    # Long flowing robe: torso panel on the chest, and the lower skirt SPLIT into
-    # two panels — one per leg (weighted to UpperLeg_R/L) — so it parts and
-    # follows the legs as you stride instead of clipping through them. The panels
-    # overlap at rest so it still reads as one continuous robe.
-    p = [
-        (cone("Main", 0.26, 0.20, 0.58, (0, 0.02, 1.14), vertices=8), "Chest"),   # upper robe (flares to waist)
-        (box("Accent", (0, 0.15, 1.34), (0.28, 0.05, 0.08)), "Chest"),            # collar trim
-        (cone("Main", 0.25, 0.18, 0.90, (0.11, 0.02, 0.46), vertices=7), "UpperLeg_R"),  # right skirt panel
-        (cone("Main", 0.25, 0.18, 0.90, (-0.11, 0.02, 0.46), vertices=7), "UpperLeg_L"), # left skirt panel
-    ]
-    export_armor(p, "MageRobe")
+def mage_robe_top():
+    # Fitted upper robe: tapered torso, gold-trimmed front placket, a high collar,
+    # a jewelled chest brooch, and layered gem-tipped shoulder pauldrons.
+    p = []
+    p.append((cone("Main", 0.25, 0.205, 0.52, (0, 0.03, 1.14), vertices=10), "Chest"))          # body
+    p.append((box("Accent", (0, 0.185, 1.10), (0.11, 0.05, 0.46)), "Chest"))                    # dark placket
+    p.append((box("Gold", (0.06, 0.205, 1.10), (0.02, 0.02, 0.46)), "Chest"))                   # gold trim R
+    p.append((box("Gold", (-0.06, 0.205, 1.10), (0.02, 0.02, 0.46)), "Chest"))                  # gold trim L
+    p.append((cone("Main", 0.11, 0.16, 0.17, (0, -0.03, 1.45), vertices=10), "Chest"))          # high collar (flares up/back)
+    p.append((torus("Gold", 0.135, 0.012, (0, -0.03, 1.52), rotation=(rad(70), 0, 0)), "Chest"))# collar rim
+    p.append((torus("Gold", 0.052, 0.014, (0, 0.225, 1.24), rotation=(rad(90), 0, 0)), "Chest"))# brooch ring
+    p.append((sphere("Gem", 0.04, (0, 0.245, 1.24), segments=4, rings=3), "Chest"))             # brooch gem
+    # pauldrons
+    p.append((sphere("Main", 0.12, (0.28, 0, 1.38), scale=(1.05, 1.05, 0.8)), "UpperArm_R"))
+    p.append((torus("Gold", 0.11, 0.016, (0.28, 0, 1.34), rotation=(rad(22), 0, 0)), "UpperArm_R"))
+    p.append((cone("Gold", 0.035, 0.005, 0.13, (0.285, 0, 1.51), vertices=6), "UpperArm_R"))
+    p.append((sphere("Gem", 0.03, (0.285, 0.09, 1.41), segments=4, rings=2), "UpperArm_R"))
+    p.append((sphere("Main", 0.12, (-0.28, 0, 1.38), scale=(1.05, 1.05, 0.8)), "UpperArm_L"))
+    p.append((torus("Gold", 0.11, 0.016, (-0.28, 0, 1.34), rotation=(rad(-22), 0, 0)), "UpperArm_L"))
+    p.append((cone("Gold", 0.035, 0.005, 0.13, (-0.285, 0, 1.51), vertices=6), "UpperArm_L"))
+    p.append((sphere("Gem", 0.03, (-0.285, 0.09, 1.41), segments=4, rings=2), "UpperArm_L"))
+    export_armor(p, "MageRobeTop")
+
+def mage_robe_bottom():
+    # Flowing lower robe: a jewelled belt, a hanging front sash with a tassel, and
+    # two elegant skirt panels (one per leg) with gold hems and a dark lining.
+    p = []
+    p.append((cyl("Gold", 0.235, 0.075, (0, 0.03, 0.86), vertices=14), "Hips"))                 # belt
+    p.append((sphere("Gem", 0.055, (0, 0.235, 0.86), scale=(1.3, 0.6, 1.0), segments=4, rings=3), "Hips"))  # buckle gem
+    p.append((box("Main", (0, 0.215, 0.55), (0.10, 0.03, 0.52)), "Hips"))                       # front sash
+    p.append((box("Gold", (0, 0.232, 0.55), (0.035, 0.02, 0.52)), "Hips"))                      # sash trim
+    p.append((sphere("Gold", 0.045, (0, 0.22, 0.28), scale=(1, 1, 1.3), segments=6, rings=4), "Hips"))  # tassel bead
+    for sx, bone in ((0.11, "UpperLeg_R"), (-0.11, "UpperLeg_L")):
+        p.append((cone("Main", 0.25, 0.175, 0.88, (sx, 0.02, 0.46), vertices=8), bone))         # panel
+        p.append((cone("Accent", 0.205, 0.14, 0.82, (sx, 0.05, 0.44), vertices=7), bone))       # dark lining (peeks)
+        p.append((torus("Gold", 0.245, 0.02, (sx, 0.02, 0.06), rotation=(rad(90), 0, 0)), bone))# gold hem
+    export_armor(p, "MageRobeBottom")
 
 
 # ── MATERIALS (centered props for world pickups) ──────────────
@@ -348,7 +388,7 @@ if __name__ == "__main__":
     bpy.ops.wm.read_factory_settings(use_empty=True)
     for fn in (sword, sword2h, dagger, mace, bow, crossbow, staff, wand, shield,
                helm, body_armor, legs_armor, boots, gloves, cape, amulet,
-               ranger_hood, ranger_vest, mage_hat, mage_robe,
+               ranger_hood, ranger_vest, mage_hat, mage_robe_top, mage_robe_bottom,
                ore_chunk, ingot, herb, fish):
         fn()
     print("[Equip] Done - all equipment/item models exported.")

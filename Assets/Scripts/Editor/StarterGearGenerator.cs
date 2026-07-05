@@ -54,8 +54,10 @@ namespace VoidBound.Editor
             // ── Class armor (distinct silhouettes): ranger leather, mage cloth ──
             Gear("ranger_hood", "Ranger's Hood", EquipmentSlot.Helm, RarityTier.Common, "RangerHood", dex: 2, gold: 45);
             Gear("ranger_vest", "Ranger's Vest", EquipmentSlot.Body, RarityTier.Common, "RangerVest", dex: 3, vig: 2, gold: 80);
-            Gear("mage_hat", "Wizard's Hat", EquipmentSlot.Helm, RarityTier.Common, "MageHat", intel: 2, gold: 45);
-            Gear("mage_robe", "Mage Robe", EquipmentSlot.Body, RarityTier.Common, "MageRobe", intel: 3, vig: 1, gold: 80);
+            // Mage set — Epic (arcane purple) with gold trim + glowing gems.
+            Gear("mage_hat", "Archmage's Hat", EquipmentSlot.Helm, RarityTier.Epic, "MageHat", intel: 5, gold: 400);
+            Gear("mage_robe_top", "Archmage's Robe", EquipmentSlot.Body, RarityTier.Epic, "MageRobeTop", intel: 7, vig: 2, gold: 700);
+            Gear("mage_robe_bottom", "Archmage's Skirts", EquipmentSlot.Legs, RarityTier.Epic, "MageRobeBottom", intel: 5, dex: 2, gold: 500);
 
             // ── Enemy gear ──
             var goblinClub = Gear("goblin_club", "Goblin Club", EquipmentSlot.Weapon, RarityTier.Common, "Mace",

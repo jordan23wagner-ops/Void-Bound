@@ -26,6 +26,10 @@ Void Bound evolved from RunePortal (a Three.js browser ARPG). All gameplay syste
 ## Current Phase
 **Phase 8: Zone 3 — Bleakwood** (not yet started). Phase 7 completed and play-mode verified 2026-07-04.
 
+## Archmage Showpiece Set + Material Styling (2026-07-05)
+- **Material styling by name** (`EquipmentVisuals.TintMain`): FBX import flattens every material to gray (Blender's `diffuse_color` doesn't export), so colours are assigned in Unity by material name — `Main`→rarity tint, `Gold`→gold trim, `Gem`→glowing cyan (emissive), `Accent`→dark charcoal-violet. Any model can now use those four material names for a rich palette. `build_equipment_models.py` COLORS extended with Gold/Gem (placeholders; Unity is authoritative).
+- **Archmage set** (Epic → purple): `mage_hat` (Archmage's Hat — wide gold-rimmed brim, a 3-segment cone that bends/droops forward, jewelled band + gem-tipped point), `mage_robe_top` (Body — tapered torso, gold front trim, high collar, gem brooch, gem-tipped pauldrons), `mage_robe_bottom` (Legs — jewelled belt, hanging sash w/ tassel, per-leg split skirt with gold hems + dark lining). Replaces the old single `mage_robe` (deleted). Mage kit = hat + robe_top + robe_bottom + wand. Robe bottom keeps the per-leg split (panels on UpperLeg_R/L, belt/sash on Hips).
+
 ## Ranged/Mage Combat — Projectiles + Cast/Shoot Anims (2026-07-05)
 - **Projectiles** (`Scripts/Combat/Projectile.cs`): a homing arrow (ranged) / bolt of magic (mage), built from runtime primitives (no imported asset). Flies to the target and resolves damage + the floating number + XP on impact (via `DamageCalculator`). Reusable for enemy ranged attacks later (attacker/target-agnostic `Spawn`).
 - **`PlayerCombat`** now branches on `WeaponStyleMap.GetStyle`: melee reach `attackRange` (2.5u) deals instant damage as before; ranged/magic use `rangedAttackRange` (~11u) and loose a `Projectile` instead — so those fights play out at a distance. Faces the target first; muzzle = chest height + forward.

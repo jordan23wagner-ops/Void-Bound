@@ -250,12 +250,30 @@ namespace VoidBound.Combat
 
         private static string VisualName(GearItemSO item) => "Gear_" + item.itemId;
 
+        private static readonly Color GoldColor = new(0.85f, 0.66f, 0.20f);
+        private static readonly Color GemColor = new(0.40f, 0.85f, 1f);
+        private static readonly Color AccentColor = new(0.16f, 0.13f, 0.20f); // dark charcoal-violet
+
+        // Restyle a piece's materials by name (FBX import gives everything a flat
+        // gray, so colours are assigned here): Main -> rarity tint, Gold -> gold
+        // trim, Gem -> glowing gemstone, Accent -> dark trim/lining.
         private static void TintMain(GameObject go, Color color)
         {
             foreach (var r in go.GetComponentsInChildren<Renderer>())
                 foreach (var m in r.materials)
-                    if (m != null && m.name.StartsWith("Main"))
-                        m.color = color;
+                {
+                    if (m == null) continue;
+                    if (m.name.StartsWith("Main")) m.color = color;
+                    else if (m.name.StartsWith("Gold")) m.color = GoldColor;
+                    else if (m.name.StartsWith("Accent")) m.color = AccentColor;
+                    else if (m.name.StartsWith("Gem"))
+                    {
+                        m.color = GemColor;
+                        m.EnableKeyword("_EMISSION");
+                        m.SetColor("_EmissionColor", GemColor * 1.4f);
+                        m.globalIlluminationFlags = MaterialGlobalIlluminationFlags.RealtimeEmissive;
+                    }
+                }
         }
     }
 }

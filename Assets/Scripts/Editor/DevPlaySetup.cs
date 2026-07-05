@@ -47,8 +47,9 @@ namespace VoidBound.Editor
                 };
                 case "Mage": return new[]
                 {
-                    G + "mage_hat.asset", G + "mage_robe.asset", G + "iron_boots.asset",
-                    G + "iron_gauntlets.asset", G + "iron_amulet.asset", G + "apprentice_wand.asset",
+                    G + "mage_hat.asset", G + "mage_robe_top.asset", G + "mage_robe_bottom.asset",
+                    G + "iron_boots.asset", G + "iron_gauntlets.asset", G + "iron_amulet.asset",
+                    G + "apprentice_wand.asset",
                 };
                 default: return new[]
                 {
