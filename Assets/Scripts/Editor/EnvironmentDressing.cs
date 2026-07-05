@@ -193,7 +193,8 @@ namespace VoidBound.Editor
             // doors turned toward the fire (varied).
             var homes = new (string prop, float x, float z, float jit)[] {
                 ("House", 2.5f, 6.0f, 10f), ("Cottage", 6.0f, 6.0f, -12f),
-                ("Cottage", 6.5f, 2.5f, 8f), ("Cottage", 2.5f, 2.5f, -8f),
+                ("Cottage", 6.5f, 2.5f, 8f),
+                ("Cottage", 10.14f, 2.72f, -8f), // took the Merchant's old ring spot
             };
             foreach (var h in homes)
             {
@@ -212,10 +213,10 @@ namespace VoidBound.Editor
             foreach (var idx in new[] { 0, 4, 7 })
             {
                 Vector2 bp = ring[idx];
-                Vector2 inward = (-bp).normalized;
-                Vector2 side = new Vector2(-inward.y, inward.x);
-                var bpos = bp + inward * 2.2f + side * 0.9f;
-                var cpos = bp + inward * 2.2f - side * 0.9f;
+                Vector2 outward = bp.normalized;
+                Vector2 side = new Vector2(-outward.y, outward.x);
+                var bpos = bp + side * 1.3f + outward * 0.3f;   // beside the building, never toward the fire
+                var cpos = bp - side * 1.3f + outward * 0.3f;
                 Place(root, mats, "Barrel", bpos.x, bpos.y, 0f, 1f); taken.Add(bpos);
                 Place(root, mats, "Crate", cpos.x, cpos.y, 30f, 1f); taken.Add(cpos);
             }

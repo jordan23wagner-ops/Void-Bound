@@ -22,7 +22,7 @@ namespace VoidBound.Editor
         // x, z, wanderRadius, attend, faceX, faceZ, tunic
         private static readonly (float x, float z, float r, bool attend, float fx, float fz, string tunic)[] Specs =
         {
-            (7.9f, 2.1f, 0f, true, 0.97f, 0.26f, "TunicBlue"),  // customer facing the merchant (NE of square)
+            (1.4f, 3.6f, 0f, true, 0.71f, -0.71f, "TunicBlue"), // customer beside the merchant (now by the square)
             (3.5f, -3.5f, 3.0f, false, 0f, 0f, "TunicBrown"),   // strolling the square
             (-4f, 3f, 3.0f, false, 0f, 0f, "TunicGreen"),
             (4f, 4.5f, 2.5f, false, 0f, 0f, "TunicRed"),        // near the homes

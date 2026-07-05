@@ -20,7 +20,7 @@ namespace VoidBound.Editor
         // (GameObject name, angle°, radius) — jittered so the ring isn't perfect.
         public static readonly (string name, float ang, float r)[] Ring =
         {
-            ("Merchant",            15f, 10.5f),
+            ("Merchant",            45f,  3.54f), // moved in beside the square (swapped with the nearest home)
             ("Watchtower",          52f, 12.5f),
             ("Fast Travel Portal",  88f, 12.0f),
             ("Mages Guild",        120f, 11.5f),
