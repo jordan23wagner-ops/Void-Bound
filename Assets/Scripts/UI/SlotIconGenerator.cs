@@ -35,6 +35,32 @@ namespace VoidBound.UI
             return sprite;
         }
 
+        // Weapon items pick their icon by WeaponType (bow/staff/wand/…); every
+        // other slot (and an unspecified weapon) falls through to the slot icon.
+        private static readonly Dictionary<WeaponType, Sprite> weaponCache = new();
+
+        public static Sprite SpriteFor(EquipmentSlot slot, WeaponType weaponType)
+        {
+            if (slot != EquipmentSlot.Weapon || weaponType == WeaponType.None)
+                return SpriteFor(slot);
+
+            if (weaponCache.TryGetValue(weaponType, out var cached)) return cached;
+            Texture2D tex = weaponType switch
+            {
+                WeaponType.Bow      => GenerateBow(),
+                WeaponType.Crossbow => GenerateCrossbow(),
+                WeaponType.Staff    => GenerateStaff(),
+                WeaponType.Wand     => GenerateWand(),
+                WeaponType.Mace     => GenerateMace(),
+                WeaponType.Dagger   => GenerateDagger(),
+                WeaponType.Sword2H  => GenerateSword2H(),
+                _ => GenerateSword(),
+            };
+            var sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100f);
+            weaponCache[weaponType] = sprite;
+            return sprite;
+        }
+
         public static Texture2D GenerateHelm()
         {
             var tex = CreateTex();
@@ -100,6 +126,87 @@ namespace VoidBound.UI
             DrawLine(tex, 12, 38, 26, 38);
             DrawLine(tex, 20, 38, 38, 8);
             DrawLine(tex, 36, 12, 40, 8);
+            tex.Apply();
+            return tex;
+        }
+
+        public static Texture2D GenerateBow()
+        {
+            var tex = CreateTex();
+            DrawLine(tex, 16, 6, 9, 16, 7, 28, 9, 40, 16, 50); // bow limb (arc via segments)
+            DrawVLine(tex, 16, 6, 50);                          // string
+            DrawLine(tex, 16, 28, 44, 28);                      // arrow shaft
+            DrawLine(tex, 44, 28, 38, 22);                      // arrowhead
+            DrawLine(tex, 44, 28, 38, 34);
+            tex.Apply();
+            return tex;
+        }
+
+        public static Texture2D GenerateCrossbow()
+        {
+            var tex = CreateTex();
+            DrawLine(tex, 6, 16, 16, 14, 24, 14, 32, 14, 42, 16); // prod (bow limbs)
+            DrawLine(tex, 6, 16, 24, 24, 42, 16);                 // string drawn back
+            DrawVLine(tex, 24, 14, 50);                            // stock / loaded bolt
+            DrawHLine(tex, 20, 28, 50);                            // butt
+            tex.Apply();
+            return tex;
+        }
+
+        public static Texture2D GenerateStaff()
+        {
+            var tex = CreateTex();
+            DrawVLine(tex, 24, 14, 52);                            // shaft
+            DrawLine(tex, 24, 4, 31, 11, 24, 18, 17, 11, 24, 4);   // orb (faceted diamond)
+            DrawHLine(tex, 20, 28, 30);                            // binding
+            tex.Apply();
+            return tex;
+        }
+
+        public static Texture2D GenerateWand()
+        {
+            var tex = CreateTex();
+            DrawLine(tex, 14, 48, 33, 19);                         // rod
+            DrawLine(tex, 34, 10, 39, 15, 34, 20, 29, 15, 34, 10); // gem tip
+            SetPixelSafe(tex, 42, 8, Color.white);                 // sparkles
+            SetPixelSafe(tex, 43, 9, Color.white);
+            SetPixelSafe(tex, 26, 10, Color.white);
+            tex.Apply();
+            return tex;
+        }
+
+        public static Texture2D GenerateMace()
+        {
+            var tex = CreateTex();
+            DrawLine(tex, 16, 52, 26, 30);                         // handle
+            DrawLine(tex, 20, 22, 27, 30, 34, 22, 27, 14, 20, 22); // spiked head (diamond)
+            DrawLine(tex, 27, 12, 27, 6);                          // top spike
+            DrawLine(tex, 35, 19, 41, 14);                         // right spike
+            DrawLine(tex, 19, 19, 13, 14);                         // left spike
+            tex.Apply();
+            return tex;
+        }
+
+        public static Texture2D GenerateDagger()
+        {
+            var tex = CreateTex();
+            DrawLine(tex, 20, 52, 24, 42);                         // handle
+            DrawHLine(tex, 17, 31, 42);                            // guard
+            DrawLine(tex, 24, 42, 30, 16);                         // short blade
+            DrawLine(tex, 30, 16, 27, 21);                         // tip
+            tex.Apply();
+            return tex;
+        }
+
+        public static Texture2D GenerateSword2H()
+        {
+            var tex = CreateTex();
+            DrawVLine(tex, 24, 12, 40);                            // broad blade
+            DrawLine(tex, 24, 6, 20, 12);                          // tip
+            DrawLine(tex, 24, 6, 28, 12);
+            DrawHLine(tex, 13, 35, 42);                            // wide crossguard
+            DrawVLine(tex, 24, 42, 52);                            // grip
+            DrawHLine(tex, 21, 27, 52);                            // pommel
             tex.Apply();
             return tex;
         }

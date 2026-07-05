@@ -212,6 +212,12 @@ namespace VoidBound.UI
                     if (w.iconImg != null) w.iconImg.color = EmptyIcon;
                     if (w.label != null) w.label.color = EmptyLabel;
                 }
+
+                // The weapon slot's icon reflects the equipped weapon's type
+                // (bow/staff/wand/…); empty falls back to the generic sword.
+                if (pair.Key == EquipmentSlot.Weapon && w.iconImg != null)
+                    w.iconImg.sprite = SlotIconGenerator.SpriteFor(
+                        EquipmentSlot.Weapon, item != null ? item.weaponType : WeaponType.None);
             }
 
             RefreshStatReadout();

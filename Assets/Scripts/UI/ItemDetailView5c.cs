@@ -164,7 +164,7 @@ namespace VoidBound.UI
             rarityTMP.text = item.rarity.ToString();
             rarityTMP.color = RarityVisualEffects.GetRarityColor(item.rarity);
 
-            var iconSprite = SlotIconGenerator.SpriteFor(item.slot);
+            var iconSprite = SlotIconGenerator.SpriteFor(item.slot, item.weaponType);
             iconImg.enabled = iconSprite != null;
             if (iconSprite != null)
             {

@@ -157,7 +157,7 @@ namespace VoidBound.UI
             Color rarityColor = RarityVisualEffects.GetRarityColor(item.rarity);
             var slot = CreateSlotBase("InvSlot_" + item.name, rarityColor);
 
-            var sprite = SlotIconGenerator.SpriteFor(item.slot);
+            var sprite = SlotIconGenerator.SpriteFor(item.slot, item.weaponType);
             if (sprite != null)
             {
                 var iconGO = new GameObject("Icon", typeof(RectTransform), typeof(Image));
