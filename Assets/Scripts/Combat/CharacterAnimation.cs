@@ -15,6 +15,8 @@ namespace VoidBound.Combat
 
         private static readonly int SpeedId = Animator.StringToHash("Speed");
         private static readonly int AttackId = Animator.StringToHash("Attack");
+        private static readonly int ShootId = Animator.StringToHash("Shoot");
+        private static readonly int CastId = Animator.StringToHash("Cast");
         private static readonly int HitId = Animator.StringToHash("Hit");
         private static readonly int DeadId = Animator.StringToHash("Dead");
         private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
@@ -74,6 +76,16 @@ namespace VoidBound.Combat
         public void TriggerAttack()
         {
             if (animator != null) animator.SetTrigger(AttackId);
+        }
+
+        public void TriggerShoot()
+        {
+            if (animator != null) animator.SetTrigger(ShootId);
+        }
+
+        public void TriggerCast()
+        {
+            if (animator != null) animator.SetTrigger(CastId);
         }
 
         // Clear the Death state so a respawned player returns to Idle, and undo

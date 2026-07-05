@@ -63,6 +63,8 @@ namespace VoidBound.Editor
             var ac = AnimatorController.CreateAnimatorControllerAtPath(path);
             ac.AddParameter("Speed", AnimatorControllerParameterType.Float);
             ac.AddParameter("Attack", AnimatorControllerParameterType.Trigger);
+            ac.AddParameter("Shoot", AnimatorControllerParameterType.Trigger);
+            ac.AddParameter("Cast", AnimatorControllerParameterType.Trigger);
             ac.AddParameter("Hit", AnimatorControllerParameterType.Trigger);
             ac.AddParameter("Dead", AnimatorControllerParameterType.Bool);
 
@@ -70,6 +72,8 @@ namespace VoidBound.Editor
             var idle = sm.AddState("Idle");   idle.motion = FindClip(fbx, "Idle");
             var walk = sm.AddState("Walk");   walk.motion = FindClip(fbx, "Walk");
             var attack = sm.AddState("Attack"); attack.motion = FindClip(fbx, "Attack");
+            var shoot = sm.AddState("Shoot"); shoot.motion = FindClip(fbx, "Shoot");
+            var cast = sm.AddState("Cast");   cast.motion = FindClip(fbx, "Cast");
             var hit = sm.AddState("Hit");     hit.motion = FindClip(fbx, "Hit");
             var death = sm.AddState("Death"); death.motion = FindClip(fbx, "Death");
             sm.defaultState = idle;
@@ -80,10 +84,14 @@ namespace VoidBound.Editor
             var wi = walk.AddTransition(idle); wi.hasExitTime = false; wi.duration = 0.12f;
             wi.AddCondition(AnimatorConditionMode.Less, 0.1f, "Speed");
 
-            // Any -> Attack / Hit (triggers), then return to Idle after playing
+            // Any -> Attack / Shoot / Cast / Hit (triggers), then return to Idle
             AnyTo(sm, attack, "Attack");
+            AnyTo(sm, shoot, "Shoot");
+            AnyTo(sm, cast, "Cast");
             AnyTo(sm, hit, "Hit");
             Return(attack, idle);
+            Return(shoot, idle);
+            Return(cast, idle);
             Return(hit, idle);
 
             // Any -> Death (bool)

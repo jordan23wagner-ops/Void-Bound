@@ -86,7 +86,8 @@ namespace VoidBound.Combat
                 var wt = weaponType;
                 Projectile.Spawn(muzzle, stats, closestTarget, closestStats, baseDamage, kind,
                     d => CombatXPCalculator.AwardCombatXP(skills, wt, d));
-                anim?.TriggerAttack(); // TODO: distinct Shoot/Cast clips (stage 2)
+                if (style == WeaponStyle.Ranged) anim?.TriggerShoot();
+                else anim?.TriggerCast();
             }
         }
 

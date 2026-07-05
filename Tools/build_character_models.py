@@ -149,6 +149,22 @@ def author_animations(arm):
     key("UpperArm_L", 1, 0); key("UpperArm_L", 20, -40); key("UpperArm_L", 32, -40)
     key("UpperArm_R", 1, 0); key("UpperArm_R", 20, -40); key("UpperArm_R", 32, -40)
 
+    # SHOOT — raise the bow arm to aim, off-hand draws the string then releases
+    # forward, with a slight torso twist toward the target, 24f once.
+    new_action("Shoot")
+    key("UpperArm_R", 1, 0); key("UpperArm_R", 6, 82); key("UpperArm_R", 20, 80); key("UpperArm_R", 24, 0)
+    key("UpperArm_L", 1, 0); key("UpperArm_L", 6, 68); key("UpperArm_L", 12, 52); key("UpperArm_L", 14, 92); key("UpperArm_L", 24, 0)
+    key("Hand_L", 1, 0); key("Hand_L", 12, -25); key("Hand_L", 14, 8); key("Hand_L", 24, 0)
+    key("Chest", 1, 0); key("Chest", 8, 0, 0, 10); key("Chest", 24, 0)
+
+    # CAST — raise the staff hand back, then thrust it forward to release the
+    # spell; the torso leans back then drives into the cast, 26f once.
+    new_action("Cast")
+    key("UpperArm_R", 1, 0); key("UpperArm_R", 7, -72); key("UpperArm_R", 15, 55); key("UpperArm_R", 20, 46); key("UpperArm_R", 26, 0)
+    key("Hand_R", 1, 0); key("Hand_R", 15, 35); key("Hand_R", 26, 0)
+    key("UpperArm_L", 1, 0); key("UpperArm_L", 10, -26); key("UpperArm_L", 26, 0)
+    key("Chest", 1, 0); key("Chest", 9, -10); key("Chest", 16, 8); key("Chest", 26, 0)
+
     bpy.ops.object.mode_set(mode='OBJECT')
 
 def export(arm, body, filename):
