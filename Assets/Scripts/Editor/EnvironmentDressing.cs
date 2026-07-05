@@ -45,6 +45,7 @@ namespace VoidBound.Editor
                 ("Metal",     new Color(0.45f, 0.47f, 0.50f), null),
                 ("Gold",      new Color(0.82f, 0.63f, 0.20f), null),
                 ("Thatch",    new Color(0.72f, 0.60f, 0.30f), null),
+                ("Path",      new Color(0.42f, 0.35f, 0.26f), null),
                 ("Water",     new Color(0.25f, 0.60f, 0.90f), null),
                 ("ClothRed",  new Color(0.70f, 0.20f, 0.18f), null),
                 ("Leaf",      new Color(0.28f, 0.55f, 0.24f), null),
@@ -118,6 +119,29 @@ namespace VoidBound.Editor
             }
         }
 
+        // A worn dirt path strip from the bonfire out toward a building (a thin
+        // stretched quad laid on the ground, trimmed at both ends).
+        private static void Path(Transform root, Material mat, Vector2 target)
+        {
+            float dist = target.magnitude;
+            float start = 1.7f, end = dist - 2.0f;
+            if (end <= start + 0.5f) return;
+            Vector2 dir = target / dist;
+            float len = end - start;
+            Vector2 mid = dir * (start + len * 0.5f);
+
+            var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            var col = go.GetComponent<Collider>();
+            if (col != null) Object.DestroyImmediate(col);
+            go.name = "Path";
+            go.transform.SetParent(root, false);
+            go.transform.localPosition = new Vector3(mid.x, 0.04f, mid.y);
+            go.transform.localRotation = Quaternion.Euler(0f, Mathf.Atan2(dir.x, dir.y) * Mathf.Rad2Deg, 0f);
+            go.transform.localScale = new Vector3(1.6f, 0.06f, len);
+            go.GetComponent<MeshRenderer>().sharedMaterial = mat;
+            go.isStatic = true;
+        }
+
         // Seeded scatter of a prop across an annulus, rejecting keep-out zones.
         private static void Scatter(Transform root, Dictionary<string, Material> mats, string prop,
             int count, float minScale, float maxScale, System.Random rng,
@@ -148,45 +172,58 @@ namespace VoidBound.Editor
             var scene = EditorSceneManager.OpenScene("Assets/Scenes/Homestead.unity");
             var root = RebuildRoot(scene);
 
-            var buildings = new[]
-            {
-                new Vector2(-8, 8), new Vector2(0, 10), new Vector2(8, 8), new Vector2(10, -8),
-                new Vector2(-6, 4), new Vector2(0, -15), new Vector2(0, -10), new Vector2(-10, -2),
-                new Vector2(-10, -8), new Vector2(-10, -14), new Vector2(10, -2), new Vector2(12, 4),
-                new Vector2(0, 0), // player spawn
-            };
+            var ring = HomesteadLayout.WorldPositions();          // 12 interactive buildings
+            var buildings = new List<Vector2>(ring) { new Vector2(0f, -4.5f) }; // + player spawn
             var taken = new List<Vector2>();
             var rng = new System.Random(1337);
 
-            // Hero props (hand-placed).
-            Place(root, mats, "Well", 5f, -4f, 20f, 1f);
-            taken.Add(new Vector2(5, -4));
-            foreach (var l in new[] { new Vector2(5, 0.5f), new Vector2(-4, -5), new Vector2(7.5f, 2.5f),
-                                      new Vector2(-6.5f, -4.5f), new Vector2(2.5f, -8.5f) })
-            { Place(root, mats, "Lamppost", l.x, l.y, 0f, 1f); taken.Add(l); }
-            // Perimeter fence arcs (leave gaps for entry).
-            foreach (var f in new (float x, float z, float r)[] {
-                (-6,18,0),(-2,18.5f,0),(2,18.5f,0),(6,18,0),
-                (18,6,90),(18.5f,2,90),(18.5f,-2,90),(18,-6,90),
-                (-18,6,90),(-18.5f,2,90),(-18,-6,90) })
-            { Place(root, mats, "Fence", f.x, f.z, f.r, 1f); taken.Add(new Vector2(f.x, f.z)); }
-            // Barrels & crates clustered by working buildings.
-            foreach (var b in new[] { new Vector2(8.6f, -9.2f), new Vector2(-9.4f, 6.6f), new Vector2(-4.4f, 5.6f) })
-            { Place(root, mats, "Barrel", b.x, b.y, 0f, 1f); taken.Add(b); }
-            foreach (var c in new[] { new Vector2(9.4f, -8.4f), new Vector2(-7f, 5.4f), new Vector2(11.2f, -1.2f) })
-            { Place(root, mats, "Crate", c.x, c.y, 30f, 1f); taken.Add(c); }
-            // A little residential cluster of homes.
-            Place(root, mats, "House", -4f, -5f, 30f, 1f); taken.Add(new Vector2(-4, -5));
-            Place(root, mats, "Cottage", 4.5f, -6.5f, 205f, 1f); taken.Add(new Vector2(4.5f, -6.5f));
-            Place(root, mats, "Cottage", 3.5f, 6.8f, 160f, 1f); taken.Add(new Vector2(3.5f, 6.8f));
-            Place(root, mats, "Cottage", 7.8f, -11.5f, 215f, 1f); taken.Add(new Vector2(7.8f, -11.5f));
+            // Central bonfire + radial dirt paths out to every interactive building.
+            Place(root, mats, "Bonfire", 0f, 0f, 0f, 1f);
+            taken.Add(Vector2.zero);
+            foreach (var b in ring) Path(root, mats["Path"], b);
 
-            // Scattered nature.
-            Scatter(root, mats, "Tree", 16, 0.85f, 1.35f, rng, buildings, 4.0f, taken, 4.0f, 12f, 19f);
-            Scatter(root, mats, "Bush", 14, 0.8f, 1.2f, rng, buildings, 3.2f, taken, 2.4f, 5f, 18f);
-            Scatter(root, mats, "Rock", 8, 0.7f, 1.3f, rng, buildings, 3.2f, taken, 3f, 5f, 18f);
-            Scatter(root, mats, "Flowers", 10, 0.9f, 1.3f, rng, buildings, 3.0f, taken, 1.8f, 4f, 16f);
-            Scatter(root, mats, "GrassTuft", 26, 0.8f, 1.4f, rng, buildings, 2.6f, taken, 1.4f, 4f, 19f);
+            // Residential nook (NE): homes grouped, doors turned toward the fire (varied).
+            var homes = new (string prop, float x, float z, float jit)[] {
+                ("House", 4.6f, 4.2f, 12f), ("Cottage", 6.9f, 2.7f, -14f),
+                ("Cottage", 3.1f, 6.4f, 8f), ("Cottage", 7.0f, 5.6f, -20f),
+            };
+            foreach (var h in homes)
+            {
+                var p = new Vector2(h.x, h.z);
+                Place(root, mats, h.prop, h.x, h.z, HomesteadLayout.FaceCentreYaw(p) + h.jit, 1f);
+                buildings.Add(p); taken.Add(p);
+            }
+
+            // Lamp-lit square corners + a village well.
+            foreach (var ang in new[] { 40f, 130f, 220f, 310f })
+            { var p = HomesteadLayout.PosOf(ang, 5.5f); Place(root, mats, "Lamppost", p.x, p.y, 0f, 1f); taken.Add(p); }
+            var wp = new Vector2(-4.5f, 4.6f);
+            Place(root, mats, "Well", wp.x, wp.y, HomesteadLayout.FaceCentreYaw(wp), 1f); taken.Add(wp);
+
+            // Barrels & crates by the working buildings (Merchant/Storage/Forge).
+            foreach (var idx in new[] { 0, 4, 7 })
+            {
+                Vector2 bp = ring[idx];
+                Vector2 inward = (-bp).normalized;
+                Vector2 side = new Vector2(-inward.y, inward.x);
+                var bpos = bp + inward * 2.2f + side * 0.9f;
+                var cpos = bp + inward * 2.2f - side * 0.9f;
+                Place(root, mats, "Barrel", bpos.x, bpos.y, 0f, 1f); taken.Add(bpos);
+                Place(root, mats, "Crate", cpos.x, cpos.y, 30f, 1f); taken.Add(cpos);
+            }
+
+            // Fences flanking the south entrance (toward the player spawn).
+            foreach (var f in new (float x, float z, float r)[] { (-4, -14, 80), (-2, -15, 80), (2, -15, 100), (4, -14, 100) })
+            { Place(root, mats, "Fence", f.x, f.z, f.r, 1f); taken.Add(new Vector2(f.x, f.z)); }
+
+            // Trees: sparse around the fire, a denser forest ring on the outskirts.
+            var treeKeep = new List<Vector2>(buildings) { Vector2.zero }.ToArray();
+            Scatter(root, mats, "Tree", 6, 0.85f, 1.25f, rng, treeKeep, 4.5f, taken, 5f, 7.5f, 13.5f);
+            Scatter(root, mats, "Tree", 34, 0.9f, 1.5f, rng, treeKeep, 3.0f, taken, 3f, 16f, 26f);
+            Scatter(root, mats, "Bush", 16, 0.8f, 1.2f, rng, buildings.ToArray(), 3.0f, taken, 2.2f, 5f, 24f);
+            Scatter(root, mats, "Rock", 9, 0.7f, 1.3f, rng, buildings.ToArray(), 3.0f, taken, 3f, 6f, 24f);
+            Scatter(root, mats, "Flowers", 12, 0.9f, 1.3f, rng, buildings.ToArray(), 2.6f, taken, 1.8f, 4f, 20f);
+            Scatter(root, mats, "GrassTuft", 30, 0.8f, 1.4f, rng, buildings.ToArray(), 2.4f, taken, 1.3f, 4f, 25f);
 
             TuneLighting(warm: true);
             SetGround("Homestead", new Color(0.40f, 0.52f, 0.30f), new Color(0.33f, 0.45f, 0.25f),

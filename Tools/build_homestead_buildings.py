@@ -41,6 +41,7 @@ PALETTE = {
     "Water":      (0.25, 0.60, 0.90, 1),
     "Crystal":    (0.65, 0.35, 0.90, 1),
     "GemCyan":    (0.40, 0.85, 1.00, 1),
+    "Void":       (0.30, 0.12, 0.42, 1),
     "ClothRed":   (0.70, 0.20, 0.18, 1),
     "ClothGreen": (0.25, 0.55, 0.25, 1),
     "ClothBlue":  (0.25, 0.40, 0.75, 1),
@@ -222,18 +223,23 @@ def storage_chest():
     p.append(sphere("ClothWhite", 0.24, (0.92, 0.22, 0.36), scale=(1, 1, 1.1)))  # sack
     export(p, "StorageChest")
 
+# Pool of Refreshment — a dark, mysterious scrying pool: obsidian basin, a
+# glowing dark-purple void surface, violet crystal shards + rune stones. A
+# floating orb + rotating shard ring are added at runtime (PoolMysticEffect).
 def pool():
     p = dais_round(1.18)
-    p.append(cyl("Stone", 1.05, 0.44, (0, 0, 0.40), vertices=12))            # basin
-    p.append(torus("Gold", 1.05, 0.055, (0, 0, 0.60)))                      # gold rim ring
-    p.append(cyl("Water", 0.90, 0.42, (0, 0, 0.42), vertices=12))           # water
-    for i in range(4):
-        a = rad(45 + i * 90)
-        p.append(sphere("GemCyan", 0.10, (1.0 * math.cos(a), 1.0 * math.sin(a), 0.68),
-                        segments=4, rings=3))                                # rim gems
-    p.append(cyl("Stone", 0.12, 0.62, (0, 0, 0.66), vertices=6))            # fountain column
-    p.append(cyl("Gold", 0.14, 0.05, (0, 0, 0.96), vertices=8))            # gold collar
-    p.append(sphere("GemCyan", 0.16, (0, 0, 1.12), segments=4, rings=3))    # glowing orb
+    p.append(cyl("StoneDark", 1.05, 0.5, (0, 0, 0.4), vertices=12))          # obsidian basin
+    p.append(torus("Gold", 1.05, 0.05, (0, 0, 0.62)))                       # gold rim
+    p.append(cyl("Void", 0.9, 0.46, (0, 0, 0.42), vertices=12))             # dark-purple void surface
+    for i in range(6):                                                      # rune stones on the rim
+        a = rad(i * 60)
+        p.append(box("Crystal", (0.98 * math.cos(a), 0.98 * math.sin(a), 0.66),
+                     (0.12, 0.12, 0.06), rotation=(0, 0, a)))
+    for i in range(4):                                                      # crystal shards from the void
+        a = rad(30 + i * 90)
+        p.append(cone("Crystal", 0.08, 0.005, 0.42, (0.62 * math.cos(a), 0.62 * math.sin(a), 0.6),
+                      rotation=(rad(10), 0, a), vertices=5))
+    p.append(cyl("StoneDark", 0.13, 0.5, (0, 0, 0.62), vertices=6))         # central plinth
     export(p, "Pool")
 
 def shrine():

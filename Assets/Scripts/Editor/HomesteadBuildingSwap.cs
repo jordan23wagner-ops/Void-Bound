@@ -47,6 +47,7 @@ namespace VoidBound.Editor
             { "Water",      (new Color(0.25f, 0.60f, 0.90f), new Color(0.10f, 0.35f, 0.70f) * 0.8f) },
             { "Crystal",    (new Color(0.65f, 0.35f, 0.90f), new Color(0.50f, 0.20f, 0.85f) * 1.4f) },
             { "GemCyan",    (new Color(0.40f, 0.85f, 1.00f), new Color(0.40f, 0.85f, 1.00f) * 1.5f) },
+            { "Void",       (new Color(0.30f, 0.12f, 0.42f), new Color(0.34f, 0.10f, 0.55f) * 0.9f) },
             { "ClothRed",   (new Color(0.70f, 0.20f, 0.18f), null) },
             { "ClothGreen", (new Color(0.25f, 0.55f, 0.25f), null) },
             { "ClothBlue",  (new Color(0.25f, 0.40f, 0.75f), null) },
