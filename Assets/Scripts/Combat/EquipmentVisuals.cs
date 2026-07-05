@@ -43,9 +43,12 @@ namespace VoidBound.Combat
         [Tooltip("Bow/Crossbow held pose (limbs vertical).")]
         [SerializeField] private Vector3 bowPosOffset = new(0f, 0.02f, 0f);
         [SerializeField] private Vector3 bowEuler = new(0f, 180f, 180f);
-        [Tooltip("Staff/Wand held pose (pole upright).")]
+        [Tooltip("Staff held pose (pole upright).")]
         [SerializeField] private Vector3 staffPosOffset = new(0f, 0.02f, 0f);
         [SerializeField] private Vector3 staffEuler = new(0f, 180f, 180f);
+        [Tooltip("Wand held pose (angled down/forward, like aiming).")]
+        [SerializeField] private Vector3 wandPosOffset = new(0f, 0.02f, 0f);
+        [SerializeField] private Vector3 wandEuler = new(115f, 180f, 180f);
 
         private float BodyScale => bodyType == BodyType.Goblin ? 0.68f : 1f;
 
@@ -120,8 +123,8 @@ namespace VoidBound.Combat
             {
                 case WeaponType.Bow:
                 case WeaponType.Crossbow: return (bowPosOffset, bowEuler);
-                case WeaponType.Staff:
-                case WeaponType.Wand:     return (staffPosOffset, staffEuler);
+                case WeaponType.Staff:    return (staffPosOffset, staffEuler);
+                case WeaponType.Wand:     return (wandPosOffset, wandEuler);
                 default:                  return (weaponPosOffset, weaponEuler);
             }
         }
