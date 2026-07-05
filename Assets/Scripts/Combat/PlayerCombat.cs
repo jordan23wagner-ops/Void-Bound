@@ -10,7 +10,8 @@ namespace VoidBound.Combat
     public class PlayerCombat : MonoBehaviour
     {
         [SerializeField] private int baseDamage = 10;
-        [SerializeField] private float attackRange = 2.5f;
+        [SerializeField] private float attackRange = 2.5f;         // melee reach
+        [SerializeField] private float rangedAttackRange = 11f;    // bow/staff engage distance
         [SerializeField] private LayerMask enemyLayer = ~0;
 
         private StatsComponent stats;
@@ -32,7 +33,11 @@ namespace VoidBound.Combat
             float attackCooldown = stats.AttackInterval;
             if (Time.time - lastAttackTime < attackCooldown) return;
 
-            var hits = Physics.OverlapSphere(transform.position, attackRange, enemyLayer);
+            WeaponType weaponType = GetEquippedWeaponType();
+            var style = WeaponStyleMap.GetStyle(weaponType);
+            float range = style == WeaponStyle.Melee ? attackRange : rangedAttackRange;
+
+            var hits = Physics.OverlapSphere(transform.position, range, enemyLayer);
 
             float closestDist = float.MaxValue;
             Health closestTarget = null;
@@ -58,17 +63,31 @@ namespace VoidBound.Combat
             if (closestTarget == null) return;
 
             lastAttackTime = Time.time;
-            int damage = DamageCalculator.CalculateDamage(stats, closestStats, baseDamage);
-            closestTarget.TakeDamage(damage);
-            anim?.TriggerAttack();
 
-            WeaponType equippedWeapon = GetEquippedWeaponType();
-            CombatXPCalculator.AwardCombatXP(skills, equippedWeapon, damage);
-
+            // Face the target before firing/striking.
             Vector3 faceDir = closestTarget.transform.position - transform.position;
             faceDir.y = 0f;
             if (faceDir.sqrMagnitude > 0.01f)
                 transform.rotation = Quaternion.LookRotation(faceDir);
+
+            if (style == WeaponStyle.Melee)
+            {
+                int damage = DamageCalculator.CalculateDamage(stats, closestStats, baseDamage);
+                closestTarget.TakeDamage(damage);
+                CombatXPCalculator.AwardCombatXP(skills, weaponType, damage);
+                anim?.TriggerAttack();
+            }
+            else
+            {
+                // Ranged/magic: loose a homing projectile that resolves damage +
+                // XP on impact, so the fight plays out at a distance.
+                var kind = style == WeaponStyle.Ranged ? ProjectileKind.Arrow : ProjectileKind.Magic;
+                Vector3 muzzle = transform.position + Vector3.up * 1.2f + transform.forward * 0.4f;
+                var wt = weaponType;
+                Projectile.Spawn(muzzle, stats, closestTarget, closestStats, baseDamage, kind,
+                    d => CombatXPCalculator.AwardCombatXP(skills, wt, d));
+                anim?.TriggerAttack(); // TODO: distinct Shoot/Cast clips (stage 2)
+            }
         }
 
         private WeaponType GetEquippedWeaponType()
