@@ -253,51 +253,87 @@ def shrine():
         p.append(cone("Fire", 0.10, 0.02, 0.22, (cx, 0, 0.92)))
     export(p, "Shrine")
 
-def _hut(banner_cloth, sign_parts, window="Fire"):
-    p = dais_square(1.5, 1.3)
-    p.append(box("WoodLight", (0, 0, 0.78), (1.45, 1.25, 1.2)))            # walls
-    p.append(box("WoodDark", (0, 0.64, 0.55), (0.42, 0.06, 0.82)))         # door
-    p.append(box("Gold", (0, 0.66, 0.98), (0.5, 0.04, 0.06)))            # gold door lintel
-    for wx in (-0.52, 0.52):
-        p.append(box(window, (wx, 0.64, 1.0), (0.22, 0.05, 0.24)))       # hearth-lit windows
-    p.append(cone("Thatch", 1.2, 0.04, 1.05, (0, 0, 1.92)))              # roof
-    p.extend(gold_finial(2.48))                                          # gold roof finial
-    p.append(cyl("WoodDark", 0.03, 1.5, (0.86, 0.55, 0.95), vertices=6))  # banner pole
-    p.append(box(banner_cloth, (0.86, 0.55, 1.25), (0.03, 0.30, 0.5)))    # banner cloth
-    p.extend(sign_parts())
-    return p
-
+# Warriors Guild — a fortified stone keep: crenellated hall, timber corners,
+# a central red-roofed turret, crossed-swords emblem, flanking war banners.
 def warriors_guild():
-    def sign():
-        return [
-            box("Metal", (-0.42, 0.66, 1.12), (0.05, 0.04, 0.42), rotation=(0, rad(40), 0)),
-            box("Metal", (-0.42, 0.66, 1.12), (0.05, 0.04, 0.42), rotation=(0, rad(-40), 0)),
-            box("Gold", (-0.42, 0.66, 0.96), (0.24, 0.05, 0.06)),          # crossed-swords guard
-        ]
-    export(_hut("ClothRed", sign), "WarriorsGuild")
+    p = dais_square(1.9, 1.7)
+    p.append(box("StoneDark", (0, 0, 0.36), (2.5, 2.1, 0.42)))              # base course
+    p.append(box("Stone", (0, 0, 1.10), (2.3, 1.9, 1.5)))                  # hall body
+    for sx in (-1.1, 1.1):                                                  # timber corner posts
+        for sy in (-0.9, 0.9):
+            p.append(box("WoodDark", (sx, sy, 1.1), (0.16, 0.16, 1.6)))
+    for mx in (-0.9, -0.3, 0.3, 0.9):                                       # crenellations (front/back)
+        p.append(box("StoneDark", (mx, 0.95, 2.0), (0.26, 0.24, 0.4)))
+        p.append(box("StoneDark", (mx, -0.95, 2.0), (0.26, 0.24, 0.4)))
+    for my in (-0.55, 0.0, 0.55):                                           # crenellations (sides)
+        p.append(box("StoneDark", (1.15, my, 2.0), (0.24, 0.26, 0.4)))
+        p.append(box("StoneDark", (-1.15, my, 2.0), (0.24, 0.26, 0.4)))
+    p.append(cyl("Stone", 0.5, 1.1, (0, 0, 2.45), vertices=8))              # central turret
+    p.append(torus("Gold", 0.5, 0.05, (0, 0, 2.95)))                       # turret gold band
+    p.append(cone("ClothRed", 0.72, 0.02, 0.95, (0, 0, 3.45), vertices=8))         # red turret roof
+    p.append(box("WoodDark", (0, 0.96, 0.9), (0.66, 0.14, 1.3)))            # door
+    p.append(box("Gold", (0, 1.0, 1.6), (0.82, 0.06, 0.1)))               # door lintel
+    p.append(box("Metal", (0, 1.02, 1.92), (0.06, 0.05, 0.72), rotation=(0, rad(32), 0)))   # crossed swords
+    p.append(box("Metal", (0, 1.02, 1.92), (0.06, 0.05, 0.72), rotation=(0, rad(-32), 0)))
+    p.append(box("Gold", (0, 1.02, 1.7), (0.42, 0.06, 0.08)))             # crossguard
+    for sx in (-1.4, 1.4):                                                  # war banners
+        p.append(cyl("WoodDark", 0.05, 3.0, (sx, 0.9, 1.5), vertices=6))
+        p.append(box("ClothRed", (sx, 0.92, 2.35), (0.03, 0.42, 0.9)))
+        p.append(sphere("Gold", 0.09, (sx, 0.9, 3.05)))
+    export(p, "WarriorsGuild")
 
+# Rangers Guild — an elevated timber lodge on stilts under a layered leaf
+# canopy, with a ladder, a bow-and-arrow emblem, and green pennants.
 def rangers_guild():
-    def sign():
-        return [
-            box("WoodDark", (-0.42, 0.66, 1.05), (0.05, 0.04, 0.5), rotation=(0, rad(45), 0)),
-            box("WoodDark", (-0.42, 0.66, 1.05), (0.05, 0.04, 0.5), rotation=(0, rad(-45), 0)),
-            cone("Gold", 0.05, 0.01, 0.1, (-0.27, 0.66, 1.22), rotation=(0, rad(45), 0), vertices=5),
-            cone("Gold", 0.05, 0.01, 0.1, (-0.57, 0.66, 1.22), rotation=(0, rad(-45), 0), vertices=5),
-        ]
-    export(_hut("ClothGreen", sign), "RangersGuild")
+    p = dais_round(1.4)
+    for (sx, sy) in [(-1.0, -0.9), (1.0, -0.9), (-1.0, 0.9), (1.0, 0.9)]:   # stilts
+        p.append(cyl("WoodDark", 0.1, 1.5, (sx, sy, 0.75), vertices=6))
+    p.append(box("WoodDark", (0, -0.9, 0.7), (2.0, 0.08, 0.08)))           # cross braces
+    p.append(box("WoodDark", (0, 0.9, 0.7), (2.0, 0.08, 0.08)))
+    p.append(box("WoodDark", (0, 0, 1.55), (2.5, 2.3, 0.16)))              # platform
+    p.append(box("Gold", (0, 0, 1.64), (2.5, 2.3, 0.03)))                 # platform gold rim
+    p.append(box("WoodLight", (0, 0, 2.28), (1.9, 1.7, 1.15)))             # cabin
+    p.append(box("WoodDark", (0, 0.86, 2.08), (0.5, 0.08, 0.9)))           # door
+    for wx in (-0.62, 0.62):
+        p.append(box("Fire", (wx, 0.86, 2.4), (0.24, 0.05, 0.28)))         # lit windows
+    p.append(cone("Leaf", 1.95, 0.05, 1.15, (0, 0, 3.3), vertices=7))             # canopy roof (layered)
+    p.append(cone("Leaf", 1.45, 0.03, 0.85, (0.25, 0.2, 3.85), vertices=6))
+    p.append(cone("Leaf", 1.15, 0.03, 0.7, (-0.3, -0.2, 3.75), vertices=6))
+    for lx in (0.0, 0.24):                                                  # ladder rails
+        p.append(box("WoodDark", (lx, 1.3, 0.85), (0.08, 0.06, 1.7), rotation=(rad(9), 0, 0)))
+    for i in range(4):                                                      # ladder rungs
+        p.append(box("WoodDark", (0.12, 1.32, 0.5 + i * 0.35), (0.34, 0.06, 0.05)))
+    p.append(torus("Gold", 0.32, 0.03, (0, 0.92, 2.72), rotation=(rad(90), 0, 0)))  # bow ring
+    p.append(box("Gold", (0, 0.92, 2.72), (0.02, 0.02, 0.82)))            # arrow shaft
+    p.append(cone("Gold", 0.06, 0.005, 0.13, (0, 0.92, 3.18), vertices=4))       # arrowhead
+    for sx in (-1.3, 1.3):                                                  # green pennants
+        p.append(cyl("WoodDark", 0.04, 2.2, (sx, 0.9, 1.9), vertices=6))
+        p.append(box("ClothGreen", (sx, 0.92, 2.5), (0.03, 0.34, 0.6)))
+    export(p, "RangersGuild")
 
+# Mages Guild — a tall tiered arcane spire: gold-banded tapering tower, glowing
+# windows, a blue steeple, a crystal orb finial, and orbiting rune stones.
 def mages_guild():
-    p = dais_round(0.82)
-    p.append(cyl("Stone", 0.68, 1.7, (0, 0, 1.0), vertices=12))            # tower
-    p.append(box("WoodDark", (0, 0.64, 0.60), (0.40, 0.12, 0.84)))         # door
-    p.append(box("Gold", (0, 0.66, 1.05), (0.46, 0.04, 0.06)))          # gold door arch
-    for wz in (1.15, 1.65):
-        p.append(box("GemCyan", (0, 0.66, wz), (0.16, 0.06, 0.24)))       # glowing windows
-    p.append(torus("Gold", 0.7, 0.05, (0, 0, 1.86)))                     # gold ring at eaves
-    p.append(cone("ClothBlue", 0.85, 0.03, 0.9, (0, 0, 2.32), vertices=12))  # conical roof
-    p.append(cyl("Gold", 0.05, 0.2, (0, 0, 2.82), vertices=6))           # finial stem
-    p.append(sphere("Crystal", 0.13, (0, 0, 3.0), segments=4, rings=3))    # crystal orb finial
-    p.append(box("ClothBlue", (0, 0.72, 1.35), (0.28, 0.05, 0.7)))         # banner
+    p = dais_round(1.1)
+    p.append(cyl("Stone", 0.95, 1.6, (0, 0, 0.85), vertices=12))           # base tier
+    p.append(cyl("StoneDark", 0.78, 1.4, (0, 0, 2.25), vertices=12))       # mid tier
+    p.append(cyl("Stone", 0.60, 1.3, (0, 0, 3.45), vertices=12))           # upper tier
+    p.append(torus("Gold", 0.97, 0.06, (0, 0, 1.65)))                     # gold bands
+    p.append(torus("Gold", 0.80, 0.055, (0, 0, 2.95)))
+    p.append(torus("Gold", 0.62, 0.05, (0, 0, 4.05)))
+    p.append(box("WoodDark", (0, 0.92, 0.65), (0.46, 0.12, 0.95)))         # door
+    p.append(box("Gold", (0, 0.95, 1.15), (0.52, 0.05, 0.07)))          # gold arch
+    for (wz, wy) in [(1.25, 0.86), (2.3, 0.70), (3.4, 0.52)]:
+        p.append(box("GemCyan", (0, wy, wz), (0.18, 0.06, 0.32)))         # glowing windows
+    p.append(cone("ClothBlue", 0.66, 0.02, 1.5, (0, 0, 4.85), vertices=12))  # blue steeple
+    p.append(cyl("Gold", 0.05, 0.26, (0, 0, 5.55), vertices=6))           # finial stem
+    p.append(sphere("Crystal", 0.20, (0, 0, 5.82), segments=5, rings=4))    # crystal orb
+    p.append(sphere("GemCyan", 0.10, (0, 0, 5.82), segments=4, rings=3))    # glowing core
+    for a in (30, 150, 270):                                               # orbiting rune stones
+        aa = rad(a)
+        p.append(box("GemCyan", (1.18 * math.cos(aa), 1.18 * math.sin(aa), 2.6),
+                     (0.14, 0.14, 0.22), rotation=(0, 0, aa)))
+    p.append(box("ClothBlue", (0, 1.0, 1.55), (0.28, 0.05, 0.7)))          # banner
     export(p, "MagesGuild")
 
 def watchtower():
