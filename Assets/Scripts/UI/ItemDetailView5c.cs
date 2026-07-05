@@ -28,6 +28,7 @@ namespace VoidBound.UI
         private TextMeshProUGUI setTMP;
         private Button actionButton;
         private TextMeshProUGUI actionLabel;
+        private Image iconImg;
         private Action onAction;
 
         public static ItemDetailView5c Create(RectTransform panel)
@@ -60,6 +61,18 @@ namespace VoidBound.UI
 
         private void BuildContent(RectTransform rt)
         {
+            // Rarity-tinted line-art icon, top-right (consistent with the slots).
+            var iconGO = new GameObject("Icon", typeof(RectTransform), typeof(Image));
+            iconGO.transform.SetParent(rt, false);
+            var iconRT = iconGO.GetComponent<RectTransform>();
+            iconRT.anchorMin = iconRT.anchorMax = new Vector2(1, 1);
+            iconRT.pivot = new Vector2(1, 1);
+            iconRT.anchoredPosition = new Vector2(-16f, -34f);
+            iconRT.sizeDelta = new Vector2(46f, 52f);
+            iconImg = iconGO.GetComponent<Image>();
+            iconImg.raycastTarget = false;
+            iconImg.preserveAspect = true;
+
             nameTMP   = MakeText(rt, "Name",   -12f, 20f, 13f, TextPrimary, FontStyles.Bold);
             rarityTMP = MakeText(rt, "Rarity", -34f, 16f, 11f, TextMuted, FontStyles.Normal);
             slotTMP   = MakeText(rt, "Slot",   -52f, 16f, 10f, TextMuted, FontStyles.Normal);
@@ -150,6 +163,14 @@ namespace VoidBound.UI
             nameTMP.text = stackCount > 1 ? $"{item.displayName}  ×{stackCount}" : item.displayName;
             rarityTMP.text = item.rarity.ToString();
             rarityTMP.color = RarityVisualEffects.GetRarityColor(item.rarity);
+
+            var iconSprite = SlotIconGenerator.SpriteFor(item.slot);
+            iconImg.enabled = iconSprite != null;
+            if (iconSprite != null)
+            {
+                iconImg.sprite = iconSprite;
+                iconImg.color = RarityVisualEffects.GetRarityColor(item.rarity);
+            }
             slotTMP.text = item.slot == EquipmentSlot.Weapon
                 ? $"{item.slot} ({item.weaponType})"
                 : item.slot.ToString();
@@ -171,6 +192,7 @@ namespace VoidBound.UI
         public void ShowEmpty(string slotName)
         {
             onAction = null;
+            if (iconImg != null) iconImg.enabled = false;
             nameTMP.text = slotName;
             rarityTMP.text = "Empty";
             rarityTMP.color = Color.gray;

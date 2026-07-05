@@ -39,34 +39,6 @@ namespace VoidBound.UI
             public Image iconImg;
         }
 
-        // Real line-art slot icons (SlotIconGenerator) replace the placeholder
-        // letter glyphs. Sprites are built once and tinted per rarity at refresh.
-        private static readonly Dictionary<EquipmentSlot, Sprite> iconCache = new();
-
-        private static Sprite IconFor(EquipmentSlot slot)
-        {
-            if (iconCache.TryGetValue(slot, out var cached)) return cached;
-            Texture2D tex = slot switch
-            {
-                EquipmentSlot.Helm   => SlotIconGenerator.GenerateHelm(),
-                EquipmentSlot.Body   => SlotIconGenerator.GenerateBody(),
-                EquipmentSlot.Legs   => SlotIconGenerator.GenerateLegs(),
-                EquipmentSlot.Boots  => SlotIconGenerator.GenerateBoots(),
-                EquipmentSlot.Gloves => SlotIconGenerator.GenerateGlove(),
-                EquipmentSlot.Amulet => SlotIconGenerator.GenerateAmulet(),
-                EquipmentSlot.Ring   => SlotIconGenerator.GenerateRing(),
-                EquipmentSlot.Cape   => SlotIconGenerator.GenerateCape(),
-                EquipmentSlot.Weapon => SlotIconGenerator.GenerateSword(),
-                EquipmentSlot.Shield => SlotIconGenerator.GenerateShield(),
-                _ => null,
-            };
-            Sprite sprite = tex != null
-                ? Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100f)
-                : null;
-            iconCache[slot] = sprite;
-            return sprite;
-        }
-
         private PlayerInventory inventory;
         private StatsComponent stats;
         private PlayerSkills skills;
@@ -170,7 +142,7 @@ namespace VoidBound.UI
                 };
 
                 // Swap the placeholder letter glyph for a real line-art icon.
-                var sprite = IconFor(slot);
+                var sprite = SlotIconGenerator.SpriteFor(slot);
                 if (sprite != null && widgets.icon != null)
                 {
                     widgets.icon.text = "";

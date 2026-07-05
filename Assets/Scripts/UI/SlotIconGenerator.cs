@@ -1,9 +1,40 @@
+using System.Collections.Generic;
 using UnityEngine;
+using VoidBound.Data;
 
 namespace VoidBound.UI
 {
     public static class SlotIconGenerator
     {
+        // Shared cache so every panel reuses one sprite per slot (the line-art
+        // textures are white; callers tint by rarity). Weapon uses the sword icon
+        // for all weapon types; Ammo has no icon (callers fall back to a label).
+        private static readonly Dictionary<EquipmentSlot, Sprite> spriteCache = new();
+
+        public static Sprite SpriteFor(EquipmentSlot slot)
+        {
+            if (spriteCache.TryGetValue(slot, out var cached)) return cached;
+            Texture2D tex = slot switch
+            {
+                EquipmentSlot.Helm   => GenerateHelm(),
+                EquipmentSlot.Body   => GenerateBody(),
+                EquipmentSlot.Legs   => GenerateLegs(),
+                EquipmentSlot.Boots  => GenerateBoots(),
+                EquipmentSlot.Gloves => GenerateGlove(),
+                EquipmentSlot.Amulet => GenerateAmulet(),
+                EquipmentSlot.Ring   => GenerateRing(),
+                EquipmentSlot.Cape   => GenerateCape(),
+                EquipmentSlot.Weapon => GenerateSword(),
+                EquipmentSlot.Shield => GenerateShield(),
+                _ => null,
+            };
+            Sprite sprite = tex != null
+                ? Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100f)
+                : null;
+            spriteCache[slot] = sprite;
+            return sprite;
+        }
+
         public static Texture2D GenerateHelm()
         {
             var tex = CreateTex();

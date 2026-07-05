@@ -157,16 +157,35 @@ namespace VoidBound.UI
             Color rarityColor = RarityVisualEffects.GetRarityColor(item.rarity);
             var slot = CreateSlotBase("InvSlot_" + item.name, rarityColor);
 
-            var icon = MakeTMP("Icon", slot);
-            var iconRT = icon.rectTransform;
-            iconRT.anchorMin = new Vector2(0.5f, 0.5f);
-            iconRT.anchorMax = new Vector2(0.5f, 0.5f);
-            iconRT.anchoredPosition = new Vector2(0, 4);
-            iconRT.sizeDelta = new Vector2(56, 56);
-            icon.text = IconChar(item);
-            icon.fontSize = 22f;
-            icon.color = rarityColor;
-            icon.alignment = TextAlignmentOptions.Center;
+            var sprite = SlotIconGenerator.SpriteFor(item.slot);
+            if (sprite != null)
+            {
+                var iconGO = new GameObject("Icon", typeof(RectTransform), typeof(Image));
+                iconGO.transform.SetParent(slot, false);
+                var iconRT = (RectTransform)iconGO.transform;
+                iconRT.anchorMin = new Vector2(0.5f, 0.5f);
+                iconRT.anchorMax = new Vector2(0.5f, 0.5f);
+                iconRT.anchoredPosition = new Vector2(0, 6);
+                iconRT.sizeDelta = new Vector2(36, 40);
+                var iconImg = iconGO.GetComponent<Image>();
+                iconImg.sprite = sprite;
+                iconImg.preserveAspect = true;
+                iconImg.raycastTarget = false;
+                iconImg.color = rarityColor;
+            }
+            else
+            {
+                var icon = MakeTMP("Icon", slot); // fallback letter (e.g. Ammo)
+                var iconRT = icon.rectTransform;
+                iconRT.anchorMin = new Vector2(0.5f, 0.5f);
+                iconRT.anchorMax = new Vector2(0.5f, 0.5f);
+                iconRT.anchoredPosition = new Vector2(0, 4);
+                iconRT.sizeDelta = new Vector2(56, 56);
+                icon.text = IconChar(item);
+                icon.fontSize = 22f;
+                icon.color = rarityColor;
+                icon.alignment = TextAlignmentOptions.Center;
+            }
 
             var label = MakeTMP("Label", slot);
             var labelRT = label.rectTransform;
