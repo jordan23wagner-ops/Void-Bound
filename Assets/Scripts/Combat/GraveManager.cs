@@ -46,7 +46,19 @@ namespace VoidBound.Combat
             var m = Instance;
             m.ClearVisual();
             m.pending = new Grave { scene = scene, position = position, items = items, gold = gold, shards = shards };
-            m.TrySpawnVisual(SceneManager.GetActiveScene().name);
+            // The visual is NOT spawned here: at the moment of death the corpse is
+            // lying on the death spot, so a stone would appear under/over the body.
+            // It's revealed at respawn (RevealGrave) or when the origin zone is
+            // (re)loaded (OnSceneLoaded).
+        }
+
+        // Spawn the visual for the current scene if a grave belongs here. Called
+        // once the player has respawned away, so the stone appears as the player
+        // leaves rather than under the fresh corpse.
+        public static void RevealGrave()
+        {
+            if (instance == null) return;
+            instance.TrySpawnVisual(SceneManager.GetActiveScene().name);
         }
 
         public static void Collect(GameObject player)

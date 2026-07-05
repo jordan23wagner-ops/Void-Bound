@@ -86,11 +86,17 @@ namespace VoidBound.Editor
             Return(attack, idle);
             Return(hit, idle);
 
-            // Any -> Death (bool), terminal
+            // Any -> Death (bool)
             var toDeath = sm.AddAnyStateTransition(death);
             toDeath.hasExitTime = false; toDeath.duration = 0.1f;
             toDeath.canTransitionToSelf = false;
             toDeath.AddCondition(AnimatorConditionMode.If, 0f, "Dead");
+
+            // Death -> Idle when revived (Dead cleared) — the character stands
+            // back up on respawn instead of being stuck in the death pose.
+            var revive = death.AddTransition(idle);
+            revive.hasExitTime = false; revive.duration = 0.15f;
+            revive.AddCondition(AnimatorConditionMode.IfNot, 0f, "Dead");
 
             EditorUtility.SetDirty(ac);
         }

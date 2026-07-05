@@ -118,6 +118,10 @@ namespace VoidBound.Combat
             anim?.Revive();
             if (controller != null) controller.enabled = true;
             if (combat != null) combat.enabled = true;
+            // Now that the player has respawned away from the death spot, reveal
+            // the gravestone (same-scene deaths; cross-scene ones appear when the
+            // origin zone is next loaded).
+            GraveManager.RevealGrave();
             dying = false;
         }
 

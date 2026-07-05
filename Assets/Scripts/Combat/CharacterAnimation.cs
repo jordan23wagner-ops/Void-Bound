@@ -20,6 +20,8 @@ namespace VoidBound.Combat
         private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
 
         private Animator animator;
+        private Transform modelRoot;            // child that holds the Animator; the death-grounding offset target
+        private SkinnedMeshRenderer bodyRenderer;
         private Health health;
         private Coroutine flashCo;
 
@@ -31,11 +33,28 @@ namespace VoidBound.Combat
         private void Start()
         {
             animator = GetComponentInChildren<Animator>();
+            if (animator != null) modelRoot = animator.transform;
+            bodyRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
             if (health != null)
             {
                 health.OnDamaged += OnDamaged;
                 health.OnDeath += OnDeath;
             }
+        }
+
+        // The Death clip topples the body around the hips and holds it there,
+        // which leaves it floating ~0.5u above the floor (the hips pivot sits at
+        // standing height). While dead, sink the visual so the body's lowest
+        // point rests on the ground — self-adapting to hero/goblin height.
+        private void LateUpdate()
+        {
+            if (animator == null || modelRoot == null || bodyRenderer == null) return;
+            if (!animator.GetBool(DeadId)) return;
+
+            float adjust = transform.position.y - bodyRenderer.bounds.min.y; // root sits at ground level
+            var lp = modelRoot.localPosition;
+            lp.y += adjust;
+            modelRoot.localPosition = lp;
         }
 
         private void OnDestroy()
@@ -57,10 +76,17 @@ namespace VoidBound.Combat
             if (animator != null) animator.SetTrigger(AttackId);
         }
 
-        // Clear the Death state so a respawned player returns to Idle.
+        // Clear the Death state so a respawned player returns to Idle, and undo
+        // the death-grounding offset so the standing model sits correctly.
         public void Revive()
         {
             if (animator != null) animator.SetBool(DeadId, false);
+            if (modelRoot != null)
+            {
+                var lp = modelRoot.localPosition;
+                lp.y = 0f;
+                modelRoot.localPosition = lp;
+            }
         }
 
         private void OnDamaged()
