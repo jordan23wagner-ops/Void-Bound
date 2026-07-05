@@ -18,8 +18,10 @@ namespace VoidBound.Homestead
             public string displayName;
             public CharacterStats bonus;
             public float expiresAt;
+            public float totalDuration;
 
             public float Remaining => Mathf.Max(0f, expiresAt - Time.time);
+            public float Fraction => totalDuration > 0f ? Mathf.Clamp01(Remaining / totalDuration) : 0f;
         }
 
         private readonly List<ActiveBuff> buffs = new();
@@ -54,7 +56,8 @@ namespace VoidBound.Homestead
                 id = id,
                 displayName = displayName,
                 bonus = bonus,
-                expiresAt = Time.time + duration
+                expiresAt = Time.time + duration,
+                totalDuration = duration
             });
             if (health != null) health.RefreshMaxHP();
             OnBuffsChanged?.Invoke();
