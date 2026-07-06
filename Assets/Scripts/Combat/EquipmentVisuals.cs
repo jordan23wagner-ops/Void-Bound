@@ -266,7 +266,6 @@ namespace VoidBound.Combat
 
         private static void TintMain(GameObject go, RarityTier rarity)
         {
-            bool shimmer = false;
             foreach (var r in go.GetComponentsInChildren<Renderer>())
                 foreach (var m in r.materials)
                 {
@@ -274,7 +273,7 @@ namespace VoidBound.Combat
                     var n = m.name;
                     // "Main" gets the full rarity treatment (albedo + reflectivity +
                     // emission); the other named materials keep their fixed palette.
-                    if (n.StartsWith("Main")) shimmer |= RarityVisualEffects.StyleMainMaterial(m, rarity);
+                    if (n.StartsWith("Main")) RarityVisualEffects.StyleMainMaterial(m, rarity);
                     else if (n.StartsWith("Gold")) m.color = GoldColor;
                     else if (n.StartsWith("Dark")) m.color = DarkColor;
                     else if (n.StartsWith("Crimson")) m.color = CrimsonColor;
@@ -284,8 +283,7 @@ namespace VoidBound.Combat
                     else if (n.StartsWith("GemG")) SetGem(m, GemGreen);
                     else if (n.StartsWith("Gem")) SetGem(m, GemCyan);
                 }
-            if (shimmer && go.GetComponent<RarityShimmer>() == null)
-                go.AddComponent<RarityShimmer>();
+            RarityVisualEffects.ApplyAnim(go, rarity); // Radiant shimmer / Obsidian sheen / Void crackle
         }
 
         private static void SetGem(Material m, Color c)

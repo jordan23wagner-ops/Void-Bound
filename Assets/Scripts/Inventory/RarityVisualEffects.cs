@@ -3,6 +3,9 @@ using VoidBound.Data;
 
 namespace VoidBound.Inventory
 {
+    // Which runtime animation a rarity's emissive gear surface uses.
+    public enum RarityAnim { None, Shimmer, ObsidianSheen, Void }
+
     public static class RarityVisualEffects
     {
         // Canonical rarity colours.
@@ -44,7 +47,7 @@ namespace VoidBound.Inventory
             public float smoothness;
             public float metallic;
             public Color emission;   // Color.black = no emission
-            public bool shimmer;     // rainbow hue-cycle (Radiant)
+            public RarityAnim anim;  // runtime animated treatment (top tiers)
         }
 
         public static RarityStyle GetStyle(RarityTier r)
@@ -57,23 +60,21 @@ namespace VoidBound.Inventory
                 case RarityTier.Rare:      return Style(RareColor, 0.42f, 0.20f, RareColor * 0.45f);
                 case RarityTier.Epic:      return Style(EpicColor, 0.46f, 0.20f, EpicColor * 0.55f);
                 case RarityTier.Legendary: return Style(LegendaryColor, 0.55f, 0.30f, LegendaryColor * 0.70f);
-                case RarityTier.Obsidian:  return Style(new Color(0.04f, 0.04f, 0.055f), 0.93f, 0.80f, new Color(0.52f, 0.55f, 0.64f) * 0.20f);
-                case RarityTier.Radiant:   return ShimmerStyle(new Color(0.97f, 0.98f, 1.00f), 0.96f, 0.35f, Color.white * 0.35f);
-                case RarityTier.Void:      return Style(new Color(0.16f, 0.05f, 0.26f), 0.62f, 0.45f, new Color(0.55f, 0.14f, 0.80f) * 0.85f);
+                case RarityTier.Obsidian:  return Style(new Color(0.04f, 0.04f, 0.055f), 0.93f, 0.80f, new Color(0.30f, 0.33f, 0.42f) * 0.20f, RarityAnim.ObsidianSheen);
+                case RarityTier.Radiant:   return Style(new Color(0.97f, 0.98f, 1.00f), 0.96f, 0.35f, Color.white * 0.35f, RarityAnim.Shimmer);
+                case RarityTier.Void:      return Style(new Color(0.14f, 0.03f, 0.22f), 0.62f, 0.45f, new Color(0.55f, 0.14f, 0.80f) * 0.85f, RarityAnim.Void);
                 default:                   return Style(Color.white, 0.2f, 0f, Color.black);
             }
         }
 
-        private static RarityStyle Style(Color a, float s, float m, Color e) =>
-            new RarityStyle { albedo = a, smoothness = s, metallic = m, emission = e, shimmer = false };
-        private static RarityStyle ShimmerStyle(Color a, float s, float m, Color e) =>
-            new RarityStyle { albedo = a, smoothness = s, metallic = m, emission = e, shimmer = true };
+        private static RarityStyle Style(Color a, float s, float m, Color e, RarityAnim anim = RarityAnim.None) =>
+            new RarityStyle { albedo = a, smoothness = s, metallic = m, emission = e, anim = anim };
 
-        // Apply the rarity treatment to one "Main" material. Returns true if the
-        // rarity should shimmer (caller wires the runtime component).
-        public static bool StyleMainMaterial(Material m, RarityTier rarity)
+        // Apply the rarity treatment to one "Main" material (albedo + reflectivity +
+        // emission). The runtime animation (if any) is wired separately via ApplyAnim.
+        public static void StyleMainMaterial(Material m, RarityTier rarity)
         {
-            if (m == null) return false;
+            if (m == null) return;
             var s = GetStyle(rarity);
             m.color = s.albedo;
             if (m.HasProperty("_BaseColor")) m.SetColor("_BaseColor", s.albedo);
@@ -86,7 +87,22 @@ namespace VoidBound.Inventory
                 m.globalIlluminationFlags = MaterialGlobalIlluminationFlags.RealtimeEmissive;
             }
             else m.DisableKeyword("_EMISSION");
-            return s.shimmer;
+        }
+
+        // Attach (or swap) the animated rarity component on a gear piece so its
+        // emissive "Main" material comes alive at the top tiers.
+        public static void ApplyAnim(GameObject go, RarityTier rarity)
+        {
+            var want = GetStyle(rarity).anim;
+            var existing = go.GetComponents<RarityAnimBase>();
+            if (want != RarityAnim.None && existing.Length == 1 && existing[0].AnimType == want) return;
+            foreach (var a in existing) Object.Destroy(a);
+            switch (want)
+            {
+                case RarityAnim.Shimmer:       go.AddComponent<RarityShimmer>(); break;
+                case RarityAnim.ObsidianSheen: go.AddComponent<RarityObsidianSheen>(); break;
+                case RarityAnim.Void:          go.AddComponent<RarityVoidEffect>(); break;
+            }
         }
 
         public static void ApplyToRenderers(GameObject target, RarityTier rarity)

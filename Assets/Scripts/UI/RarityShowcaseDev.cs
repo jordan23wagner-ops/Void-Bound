@@ -83,13 +83,10 @@ namespace VoidBound.UI
                 foreach (var rend in player.GetComponentsInChildren<Renderer>())
                 {
                     if (!rend.gameObject.name.StartsWith("Gear_")) continue;
-                    bool shimmer = false;
                     foreach (var m in rend.materials)
                         if (m != null && m.name.StartsWith("Main"))
-                            shimmer |= RarityVisualEffects.StyleMainMaterial(m, r);
-                    var shim = rend.GetComponent<RarityShimmer>();
-                    if (shimmer && shim == null) rend.gameObject.AddComponent<RarityShimmer>();
-                    else if (!shimmer && shim != null) Destroy(shim);
+                            RarityVisualEffects.StyleMainMaterial(m, r);
+                    RarityVisualEffects.ApplyAnim(rend.gameObject, r);
                 }
             if (label != null)
             {
