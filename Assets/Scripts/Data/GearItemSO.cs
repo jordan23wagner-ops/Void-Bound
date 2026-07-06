@@ -13,6 +13,7 @@ namespace VoidBound.Data
         public CharacterStats statModifiers;
         public GameObject visualPrefab;
         public string setId;
+        public bool untradable; // crafted/smithed pieces — reclaimable on death (§4A), can't be traded
 
         [Header("Combat")]
         public int baseDamage;

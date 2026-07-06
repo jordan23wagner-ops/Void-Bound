@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af091b2bbaf098641b37ea4d77d93ea9, type: 3}
+  m_Name: smelt_copper
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Data.RecipeDefinitionSO
+  recipeId: smelt_copper
+  displayName: Smelt Copper
+  requiredSkill: 3
+  requiredToolTier: 0
+  requiredSkillLevel: 0
+  requiredStation: Forge
+  ingredients:
+  - material: {fileID: 11400000, guid: d3ed01d0541cc3546a162bfeb6aebe63, type: 2}
+    quantity: 2
+  outputType: 0
+  outputMaterial: {fileID: 11400000, guid: a9b8df5e419b7f9428bfca60a3ec8b5b, type: 2}
+  outputGear: {fileID: 0}
+  outputTool: {fileID: 0}
+  outputQuantity: 1
+  xpReward: 0
