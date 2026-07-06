@@ -18,7 +18,9 @@ MonoBehaviour:
   requiredToolTier: 6
   requiredSkillLevel: 0
   requiredStation: crafting_bench
-  ingredients: []
+  ingredients:
+  - material: {fileID: 11400000, guid: f5af3269c957f5344989073286b10d7b, type: 2}
+    quantity: 2
   outputType: 2
   outputMaterial: {fileID: 0}
   outputGear: {fileID: 0}

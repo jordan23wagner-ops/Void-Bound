@@ -96,7 +96,17 @@ namespace VoidBound.Editor
             r.requiredToolTier = (RarityTier)Mathf.Max(0, tier - 1); // need the previous tool
             r.requiredSkillLevel = 0;
             r.requiredStation = "crafting_bench";
-            r.ingredients = new RecipeIngredient[0];          // material costs deferred to resource slices
+            // Each tool tier costs logs of the previous rank — gathered with the
+            // tool you already have (the Woodcutting bootstrap). Common = starter.
+            if (tier >= 1)
+            {
+                var log = AssetDatabase.LoadAssetAtPath<MaterialItemSO>(
+                    $"Assets/ScriptableObjects/Materials/Logs/log_{tier - 1}.asset");
+                r.ingredients = log != null
+                    ? new[] { new RecipeIngredient { material = log, quantity = 2 } }
+                    : new RecipeIngredient[0];
+            }
+            else r.ingredients = new RecipeIngredient[0];
             r.outputType = RecipeOutputType.Tool;
             r.outputTool = tool;
             r.outputMaterial = null;
