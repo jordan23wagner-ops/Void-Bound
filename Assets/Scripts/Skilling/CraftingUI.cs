@@ -96,8 +96,6 @@ namespace VoidBound.Skilling
             if (currentStation == null || currentInstigator == null) return;
 
             var tools = currentInstigator.GetComponent<PlayerTools>();
-            RarityTier toolTier = tools != null ? tools.GetToolTier(currentStation.StationType) : RarityTier.Common;
-
             skillInfo.text = currentStation.StationType.ToString();
 
             for (int i = recipeList.childCount - 1; i >= 0; i--)
@@ -109,6 +107,7 @@ namespace VoidBound.Skilling
                 {
                     if (recipe == null) continue;
                     var captured = recipe;
+                    RarityTier toolTier = tools != null ? tools.GetToolTier(recipe.requiredSkill) : RarityTier.Common;
                     bool locked = (int)toolTier < (int)recipe.requiredToolTier;
 
                     var row = Panel5cFactory.CreateListRow(recipeList,
@@ -152,7 +151,9 @@ namespace VoidBound.Skilling
             }
 
             detail += "\nOutput: ";
-            if (recipe.outputType == RecipeOutputType.Gear && recipe.outputGear != null)
+            if (recipe.outputType == RecipeOutputType.Tool && recipe.outputTool != null)
+                detail += recipe.outputTool.displayName;
+            else if (recipe.outputType == RecipeOutputType.Gear && recipe.outputGear != null)
                 detail += recipe.outputGear.displayName;
             else if (recipe.outputMaterial != null)
                 detail += $"{recipe.outputMaterial.displayName} x{recipe.outputQuantity}";
@@ -181,7 +182,12 @@ namespace VoidBound.Skilling
                 }
             }
 
-            if (selectedRecipe.outputType == RecipeOutputType.Gear && selectedRecipe.outputGear != null)
+            if (selectedRecipe.outputType == RecipeOutputType.Tool && selectedRecipe.outputTool != null)
+            {
+                var tools = currentInstigator.GetComponent<PlayerTools>();
+                tools?.SetToolTier(selectedRecipe.outputTool.skill, selectedRecipe.outputTool.tier);
+            }
+            else if (selectedRecipe.outputType == RecipeOutputType.Gear && selectedRecipe.outputGear != null)
                 gearInv?.AddItem(selectedRecipe.outputGear);
             else if (selectedRecipe.outputMaterial != null)
                 matInv?.AddMaterial(selectedRecipe.outputMaterial, selectedRecipe.outputQuantity);

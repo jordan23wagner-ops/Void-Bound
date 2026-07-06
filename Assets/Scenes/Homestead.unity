@@ -22680,7 +22680,45 @@ MonoBehaviour:
   tooltipDescription: Craft tools, ammo, refined materials and untradables.
   stationId: crafting_bench
   skillType: 4
-  availableRecipes: []
+  availableRecipes:
+  - {fileID: 11400000, guid: ad469a98b4b6c08459b26c50290b52d0, type: 2}
+  - {fileID: 11400000, guid: 7990dc4914ac5f4488d0ff63d8714e11, type: 2}
+  - {fileID: 11400000, guid: a4c21dccf47b10a4bb1999294e4406cc, type: 2}
+  - {fileID: 11400000, guid: 873c8f55fee96564da1c2deaddd0ad85, type: 2}
+  - {fileID: 11400000, guid: 30c1ac71527d7be47b65b22f0ca88562, type: 2}
+  - {fileID: 11400000, guid: 48708f0c83325824d8414a1c9bbd4b96, type: 2}
+  - {fileID: 11400000, guid: 6d9bfab6af4b4ee40863162d7ae232ce, type: 2}
+  - {fileID: 11400000, guid: 9e9e3539bc741a74884c0810af5cb487, type: 2}
+  - {fileID: 11400000, guid: 10a01ba4980a0b24ebd27f08660efec0, type: 2}
+  - {fileID: 11400000, guid: b98ae51b7c37f9b4ca59da69bc13d47f, type: 2}
+  - {fileID: 11400000, guid: 68a91af23f019334d9fdab7b07bfe0ec, type: 2}
+  - {fileID: 11400000, guid: 6f79fb28587032e40b26f8e764b68dfa, type: 2}
+  - {fileID: 11400000, guid: a96ccdc6a9a677644851792c99cf441b, type: 2}
+  - {fileID: 11400000, guid: cdd504b181e84e44e9e0451bf30eb905, type: 2}
+  - {fileID: 11400000, guid: e3e2444fb45d8d04aa84df69ff280dbc, type: 2}
+  - {fileID: 11400000, guid: 29e8eb18f186b4646a331f8946a9d6ea, type: 2}
+  - {fileID: 11400000, guid: 9710059f1681f59439bdb5f0a10c8c40, type: 2}
+  - {fileID: 11400000, guid: 5a7d97347c729924b8193b1697ba63ce, type: 2}
+  - {fileID: 11400000, guid: d6825b0ad4ef76547bc007446c8adee9, type: 2}
+  - {fileID: 11400000, guid: 5725bb90093faa24694fb332a819964e, type: 2}
+  - {fileID: 11400000, guid: 850f6bad88373a34ea7e3280856bbbd8, type: 2}
+  - {fileID: 11400000, guid: 4127677e0b62c6246bbdca730339e1cc, type: 2}
+  - {fileID: 11400000, guid: 21ae7ac1215c57943859600838a499db, type: 2}
+  - {fileID: 11400000, guid: 0e6aff539ac6c374baeeb6938761d642, type: 2}
+  - {fileID: 11400000, guid: 224ea4052f466344f99394043d6c7cde, type: 2}
+  - {fileID: 11400000, guid: 5fcd78cca6a9d74448941fbd9599f328, type: 2}
+  - {fileID: 11400000, guid: 486cead48bd98a3438f548464ff91b29, type: 2}
+  - {fileID: 11400000, guid: c2e13c7dd73cedb48b49e959387c7d81, type: 2}
+  - {fileID: 11400000, guid: 821ef5aded3004247a0ab0a42078b8c6, type: 2}
+  - {fileID: 11400000, guid: 052ccd8763370f44bb7ca7e89c903b8f, type: 2}
+  - {fileID: 11400000, guid: 577f154ebe0d02f4da6606302102b415, type: 2}
+  - {fileID: 11400000, guid: 63dbfc24f0919a44e9aa20089e50e579, type: 2}
+  - {fileID: 11400000, guid: 6faa16103275efe48b6bbc4c8f24bcb1, type: 2}
+  - {fileID: 11400000, guid: ee0e8470c846fa241bef2ef2981d2b31, type: 2}
+  - {fileID: 11400000, guid: a3330c2e11dab234287a119e7ef5ec1d, type: 2}
+  - {fileID: 11400000, guid: be79eb9f205242e45bde3203c7fecd83, type: 2}
+  - {fileID: 11400000, guid: 4cf62aff793f1df40bc7c670fefe9e1b, type: 2}
+  - {fileID: 11400000, guid: 31fce030a5145c8458baea2f1e0c5482, type: 2}
 --- !u!1 &1471526662
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,7 +10,7 @@ namespace VoidBound.Data
         public int quantity;
     }
 
-    public enum RecipeOutputType { Material, Gear }
+    public enum RecipeOutputType { Material, Gear, Tool }
 
     [CreateAssetMenu(fileName = "New RecipeDefinition", menuName = "VoidBound/Recipe Definition")]
     public class RecipeDefinitionSO : ScriptableObject
@@ -29,6 +29,7 @@ namespace VoidBound.Data
         public RecipeOutputType outputType;
         public MaterialItemSO outputMaterial;
         public GearItemSO outputGear;
+        public ToolItemSO outputTool;
         public int outputQuantity = 1;
 
         [Header("XP")]

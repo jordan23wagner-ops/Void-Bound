@@ -69,6 +69,7 @@ namespace VoidBound.Data
         CombatVIG,
         CombatSTR,
         CombatDEX,
-        CombatINT
+        CombatINT,
+        Woodcutting // added last to preserve existing serialized indices
     }
 }
