@@ -5926,6 +5926,125 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 404638740}
   m_CullTransparentMesh: 1
+--- !u!1001 &409710680
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 5123f518b2f900843b2d1cda36a51c54, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 20.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5123f518b2f900843b2d1cda36a51c54, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5123f518b2f900843b2d1cda36a51c54, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5123f518b2f900843b2d1cda36a51c54, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5123f518b2f900843b2d1cda36a51c54, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5123f518b2f900843b2d1cda36a51c54, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5123f518b2f900843b2d1cda36a51c54, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5123f518b2f900843b2d1cda36a51c54, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5123f518b2f900843b2d1cda36a51c54, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5123f518b2f900843b2d1cda36a51c54, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5123f518b2f900843b2d1cda36a51c54, type: 3}
+      propertyPath: m_Name
+      value: Fishing Spot 2
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5123f518b2f900843b2d1cda36a51c54, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 409710683}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5123f518b2f900843b2d1cda36a51c54, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 409710682}
+  m_SourcePrefab: {fileID: 100100000, guid: 5123f518b2f900843b2d1cda36a51c54, type: 3}
+--- !u!1 &409710681 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 5123f518b2f900843b2d1cda36a51c54, type: 3}
+  m_PrefabInstance: {fileID: 409710680}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &409710682
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 409710681}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b7a31b3b4776be458733366c71611b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Skilling.ResourceNode
+  interactPrompt: Fish
+  interactRange: 2.5
+  tooltipDescription: 
+  gatherMaterial: {fileID: 0}
+  tieredMaterials:
+  - {fileID: 11400000, guid: b8d5dbf819b8e984398d94d984dfa5c0, type: 2}
+  - {fileID: 11400000, guid: 0ee6c9cda3a591b4492b1149f6fe29d8, type: 2}
+  - {fileID: 11400000, guid: c48f4e743c5adff4283b43df793df12d, type: 2}
+  - {fileID: 11400000, guid: c0d133e44b0c1a546988f95975b046dc, type: 2}
+  - {fileID: 11400000, guid: d0d85c9e6bc6eca40b406d4f4a211c04, type: 2}
+  - {fileID: 11400000, guid: 90fe259f6af7c2c40a32604a4faa7e0a, type: 2}
+  - {fileID: 11400000, guid: 47e29486c03e6c54094986ad72f49462, type: 2}
+  - {fileID: 11400000, guid: 0545c5c99358a7743a8dadaead8e5e2c, type: 2}
+  - {fileID: 11400000, guid: e61a9a18c4729ea4c9d4d68fa51392c0, type: 2}
+  gatherQuantity: 1
+  gatherSkill: 0
+  xpPerGather: 15
+  respawnTime: 4
+--- !u!135 &409710683
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 409710681}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 1.2
+  m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!1 &416291739
 GameObject:
   m_ObjectHideFlags: 0
@@ -30893,6 +31012,125 @@ MonoBehaviour:
   baseCostPerLevel: 10
   xpPerSession: 50
   vigXpPerSession: 25
+--- !u!1001 &2093862267
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 5123f518b2f900843b2d1cda36a51c54, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 14.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5123f518b2f900843b2d1cda36a51c54, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5123f518b2f900843b2d1cda36a51c54, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 13.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5123f518b2f900843b2d1cda36a51c54, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5123f518b2f900843b2d1cda36a51c54, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5123f518b2f900843b2d1cda36a51c54, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5123f518b2f900843b2d1cda36a51c54, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5123f518b2f900843b2d1cda36a51c54, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5123f518b2f900843b2d1cda36a51c54, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5123f518b2f900843b2d1cda36a51c54, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5123f518b2f900843b2d1cda36a51c54, type: 3}
+      propertyPath: m_Name
+      value: Fishing Spot
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5123f518b2f900843b2d1cda36a51c54, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2093862270}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5123f518b2f900843b2d1cda36a51c54, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2093862269}
+  m_SourcePrefab: {fileID: 100100000, guid: 5123f518b2f900843b2d1cda36a51c54, type: 3}
+--- !u!1 &2093862268 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 5123f518b2f900843b2d1cda36a51c54, type: 3}
+  m_PrefabInstance: {fileID: 2093862267}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2093862269
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2093862268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b7a31b3b4776be458733366c71611b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Skilling.ResourceNode
+  interactPrompt: Fish
+  interactRange: 2.5
+  tooltipDescription: 
+  gatherMaterial: {fileID: 0}
+  tieredMaterials:
+  - {fileID: 11400000, guid: b8d5dbf819b8e984398d94d984dfa5c0, type: 2}
+  - {fileID: 11400000, guid: 0ee6c9cda3a591b4492b1149f6fe29d8, type: 2}
+  - {fileID: 11400000, guid: c48f4e743c5adff4283b43df793df12d, type: 2}
+  - {fileID: 11400000, guid: c0d133e44b0c1a546988f95975b046dc, type: 2}
+  - {fileID: 11400000, guid: d0d85c9e6bc6eca40b406d4f4a211c04, type: 2}
+  - {fileID: 11400000, guid: 90fe259f6af7c2c40a32604a4faa7e0a, type: 2}
+  - {fileID: 11400000, guid: 47e29486c03e6c54094986ad72f49462, type: 2}
+  - {fileID: 11400000, guid: 0545c5c99358a7743a8dadaead8e5e2c, type: 2}
+  - {fileID: 11400000, guid: e61a9a18c4729ea4c9d4d68fa51392c0, type: 2}
+  gatherQuantity: 1
+  gatherSkill: 0
+  xpPerGather: 15
+  respawnTime: 4
+--- !u!135 &2093862270
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2093862268}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 1.2
+  m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!1001 &2101788793
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -31736,3 +31974,5 @@ SceneRoots:
   - {fileID: 416291740}
   - {fileID: 1221690811}
   - {fileID: 1044894395}
+  - {fileID: 2093862267}
+  - {fileID: 409710680}
