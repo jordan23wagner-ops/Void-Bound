@@ -37,6 +37,25 @@ Common grey · Uncommon white · Magic blue · Rare yellow · Epic purple · Leg
 
 **Set system:** Carried from RunePortal — multi-piece bonuses for themed gear sets.
 
+**Ammo slot:** **Arrows** for bow/crossbow, **Runes** for staff/wand — both crafted (§5.2), consumed in combat, and stocked as prep (§5.7).
+
+---
+
+## 2A. Inventory & Backpack
+
+- **Base inventory: 8 slots.**
+- Expanded by **Backpack Upgrade Kits** — rare drops from *any* gather action (fishing, woodcutting, gathering, mining) or *any* monster kill.
+- **Four kits, each rarer than the last, each +4 slots:**
+
+| Kit | Grade | Slots after |
+|---|---|---|
+| Backpack Upgrade Kit I | Magic | 12 |
+| Backpack Upgrade Kit II | Rare | 16 |
+| Backpack Upgrade Kit III | Epic | 20 |
+| Backpack Upgrade Kit IV | Legendary | 24 |
+
+Max inventory is **24 slots** (8 + 4×4). Because nearly everything you carry drops on death (§4A), a bigger pack is *both* more carrying power *and* more to lose — every upgrade raises your ceiling and your risk.
+
 ---
 
 ## 3. Character Stats
@@ -112,56 +131,91 @@ This makes depth a deliberate wager: the more you carry, the longer and deadlier
 
 ## 5. Skilling System — tool-gated, no levels
 
-**Skills are not leveled.** There is no skilling XP, level cap, or 99 grind. What you can catch, gather, mine, or make is gated entirely by your **tool / equipment tier** — upgrade the tool and the next rank of resource opens up. *(The four **combat** stats — VIG/STR/DEX/INT — still level via combat XP per §3. That is a separate axis; "no levels" applies only to the gathering/crafting skills below.)*
+**Skills are not leveled.** There is no skilling XP, level cap, or 99 grind. What you can catch, chop, gather, mine, or make is gated entirely by your **tool tier**: each gather skill has its own **9-tier tool ladder** (one grade per rarity, Common → Void), and each tool tier unlocks the **next of 9 resource ranks** — a **1:1 ladder**, tools and resources sharing the rarity spine. *(The four **combat** stats — VIG/STR/DEX/INT — still level via combat XP per §3; that is the game's one leveling axis. "No levels" applies only to the skills below.)*
 
-**Tool tiers — banded.** A handful of named grades (e.g. **Bronze → Iron → Steel → … → Void**), each unlocking a *band* of resource ranks rather than one at a time — clear milestones, fewer craft steps. Tools are made and upgraded through **Crafting** (§5.4), which makes Crafting the spine that advances every other skill.
+> Supersedes the earlier "banded / 10-rank" note — it is now **9 ranks, 1:1** with the 9-tier tool ladders.
 
-The seven skills pair up — a **gather** skill feeds a **produce** skill:
+**Eight skills, four gather → produce pairs.** Tools are made and upgraded through **Crafting**, which makes Crafting the spine that advances every gather skill.
 
 ### 5.1 Fishing → Cooking
-- **Fishing** — 10 fish types of ascending rarity; rod tier gates what bites. Field-based water nodes (lake / dock).
-- **Cooking** — cook raw fish at the **Campfire**. Cooked food grants a **heal-over-time** buff (rarer fish → stronger / longer HoT). Backbone of the prep loop.
+- **Fishing** — the Rod ladder gates which of 9 fish bite. Field-based water nodes (lake / dock).
+- **Cooking** — cook raw fish at the **Campfire** into **heal-over-time** food. HoT scales **5 → 21** (+2 per fish rank). Backbone of the prep loop.
 
-### 5.2 Gathering → Alchemy
-- **Gathering** — 10 primary flora (flowers, roots, plants); harvest gated by tool tier. Field nodes + the **Garden**.
+| # | Fish *(placeholder names)* | HoT |
+|---|---|---|
+| 1 | Minnow | 5 |
+| 2 | Sardine | 7 |
+| 3 | Trout | 9 |
+| 4 | Bass | 11 |
+| 5 | Pike | 13 |
+| 6 | Salmon | 15 |
+| 7 | Obsidian Eel | 17 |
+| 8 | Radiant Koi | 19 |
+| 9 | Voidfin | 21 |
+
+### 5.2 Woodcutting → Crafting
+- **Woodcutting** — the Axe ladder gates which of 9 logs you can fell.
+- **Crafting** — the hub skill. From logs (+ metal bars from Smithing + refined materials):
+  - **Tools** — every gather ladder (axes, rods, pickaxes, sickles); this is how all skill tiers advance.
+  - **Ranger bows** and **Arrows** (ammo); **Runes** (mage ammo — §5.6).
+  - **Untradables** (via crafting recipes), **planks / parts**.
+  - **Refined materials** — inputs to Alchemy, and the fuel for **upgrading untradables** (§5.6).
+
+### 5.3 Gathering → Alchemy
+- **Gathering** — the Sickle ladder gates which of 9 flora (flowers, roots, plants) you can harvest. Field nodes + the **Garden**.
 - **Secondaries** — 20 secondary reagents, obtained **both** from gathering **and** as monster drops.
-- **Alchemy** — combine primaries + secondaries (+ refined materials from Crafting) into potions.
+- **Alchemy** — combine flora + secondaries (+ refined materials) into potions.
 
-### 5.3 Mining → Smithing
-- **Mining** — 10 node types; pickaxe tier gates how deep / rare you can mine. Field nodes.
-- **Smithing** — smelt ore into bars at the **Furnace / Forge**, then smith bars into **gear upgrades** and **untradable** equipment.
+### 5.4 Mining → Smithing
+- **Mining** — the Pickaxe ladder gates which of 9 ore nodes you can mine. Field nodes.
+- **Smithing** — smelt ore into bars at the **Furnace / Forge**, then smith **gear upgrades** and **untradable** equipment.
 
-### 5.4 Crafting
-- Crafts and **upgrades untradables**.
-- Makes **tools** — fishing rods, hatchets, pickaxes, etc. — which is how you raise every other skill's tier.
-- **Refines** raw materials into Alchemy inputs.
+### 5.5 Tool ladders (the 9 grades)
 
-### 5.5 The prep-for-adventuring loop *(core tension)*
+| Rarity grade | Woodcutting (Axe) | Fishing (Rod) | Mining (Pickaxe) | Gathering (Sickle) |
+|---|---|---|---|---|
+| Common | Flimsy Axe | Old Fishing Rod | Flimsy Pickaxe | Flimsy Sickle |
+| Uncommon | Woodcutting Axe | Fishing Rod | Pickaxe | Sickle |
+| Magic | Hunter's Axe | Expert's Fishing Rod | Miner's Pickaxe | Herbalist's Sickle |
+| Rare | Master Woodcutting Axe | Master Fishing Pole | Master Pickaxe | Master Sickle |
+| Epic | Magic Axe | Magic Fishing Pole | Magic Pickaxe | Magic Sickle |
+| Legendary | Enchanted Woodcutting Axe | Enchanted Fishing Rod | Enchanted Pickaxe | Enchanted Sickle |
+| Obsidian | Obsidian Woodcutting Axe | Obsidian Rod | Obsidian Pickaxe | Obsidian Sickle |
+| Radiant | Radiant Woodcutting Axe | Radiant Rod | Radiant Pickaxe | Radiant Sickle |
+| Void | Void Axe | Void Pole | Void Pickaxe | Void Sickle |
+
+### 5.6 Untradables, upgrades & ammo
+- **Untradables** are crafted (Crafting) or smithed (Smithing) and cannot be traded.
+- **Enchanted Chest** (Homestead station, §6): consumes **refined materials** to **upgrade an untradable** to higher tiers — the untradable progression sink.
+- **Ammo** (equipment slot): **Arrows** for rangers, **Runes** for mages — both crafted, both consumed in combat, both stocked as prep (§5.7).
+
+### 5.7 The prep-for-adventuring loop *(core tension)*
 The heart of the game. Before a run the player chooses **how much to risk**:
 - **Play it however you want — risky, safe, or balanced.** Prep is a *strong advantage, never a hard requirement.* You can push a deeper zone underprepared and simply be more likely to die — or get lucky with drops and snowball off them with little prep at all.
-- **Underprepared → you die → you prep & plan → you survive and push deeper.** That loop is the point: time spent cooking food, brewing potions, and upgrading tools/gear is what buys survival and depth.
+- **Underprepared → you die → you prep & plan → you survive and push deeper.** That loop is the point: time spent cooking food, brewing potions, stocking ammo, and upgrading tools/gear is what buys survival and depth.
 - **Shortcut:** the **Merchant** at the Homestead sells low-tier **raw fish** and **healing potions** — **expensive**, but it lets you spend gold instead of time when you'd rather just go.
 
-Fishing and Mining are field-based resource nodes, not Homestead buildings (Phase 5 resolution).
+Fishing, Woodcutting, Gathering, and Mining are field-based resource nodes, not Homestead buildings (Phase 5 resolution).
 
 ---
 
 ## 6. Homestead Hub
 
-Full 12-building hub carried from RunePortal `HS_BUILDINGS` (list resolved Phase 0, count corrected Phase 6 — this section previously said 9), re-skinned in low-poly Unity style:
+Full 12-building hub carried from RunePortal `HS_BUILDINGS` (list resolved Phase 0, count corrected Phase 6 — this section previously said 9), re-skinned in low-poly Unity style. The **Enchanted Chest** is a new station added with the untradable-upgrade system (§5.6); a home for the **Crafting** skill's bench is still TBD:
 
 - **Forge** → Smithing (functional Phase 5)
 - **Campfire** → Cooking (functional Phase 5)
 - **Garden** → Gathering + Alchemy (functional Phase 5)
 - **Merchant** → buy/sell shop, data-driven stock (functional Phase 6). Also stocks low-tier **raw fish** and **healing potions** — expensive, a gold-for-time shortcut to self-prepping (§5.5)
 - **Storage Chest** → bank: 48-slot gear storage with deposit/withdraw (functional Phase 6)
+- **Enchanted Chest** → upgrades untradables using refined materials from Crafting (§5.6)
 - **Pool of Refreshment** → full heal + timed all-stat buff, cooldown; 4 upgrade tiers as data, tier 1 live (functional Phase 6)
 - **Shrine** → gold offering for a timed STR/INT blessing, cooldown (functional Phase 6; +% damage from RunePortal adapted to flat stats)
 - **Warriors' / Rangers' / Mages' Guilds** → combat stat training (STR / DEX / INT + 50% VIG side-XP), gold cost scaling with level (functional Phase 6)
 - **Fast Travel Portal** → destination UI in place; actual travel lands with the zone phases
 - **Watchtower** → flavor stub; real function TBD in a future phase (RunePortal source unavailable)
 
-Fishing and Mining are field-based resource nodes (Phase 5 resolution), not Homestead buildings.
+Fishing, Woodcutting, Gathering, and Mining are field-based resource nodes (Phase 5 resolution), not Homestead buildings.
 
 Homestead = safe zone, no combat, full crafting/progression hub. This is the player's persistent base between runs.
 
@@ -211,7 +265,7 @@ This mirrors RunePortal's data-driven gear/drop table approach almost exactly �
 | 2 | Combat system (attack button, enemy AI base, STR/DEX/VIG/INT damage calc) |
 | 3 | Gear & Inventory (11 slots, equip/unequip, stat application, rarity visual tiers) |
 | 4 | Loot & Drop tables (tier-weighted, zone-modified) |
-| 5 | Skilling systems (7 skills) + Homestead crafting stations |
+| 5 | Skilling systems (8 skills, tool-gated) + Homestead crafting stations |
 | 6 | Homestead full build-out (all 12 buildings, low-poly art pass) |
 | 7 | Zone 2: Ashfields (Weak/Standard enemies, first loot loop) |
 | 8 | Zone 3: Bleakwood (Elite/Rare Elite tiers, first Mini Boss) |
