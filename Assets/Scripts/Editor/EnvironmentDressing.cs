@@ -120,6 +120,22 @@ namespace VoidBound.Editor
             return go;
         }
 
+        // Places a home beside a building's path, turned so its door fronts onto
+        // that path. `along` = distance from the fire along the path; `side` =
+        // signed offset perpendicular to the path (which side it sits on).
+        private static void PlaceHouseOnPath(Transform root, Dictionary<string, Material> mats,
+            string prop, Vector2 buildingPos, float along, float side,
+            List<Vector2> buildings, List<Vector2> taken)
+        {
+            Vector2 d = buildingPos.normalized;
+            Vector2 perp = new Vector2(-d.y, d.x);
+            Vector2 pathPt = d * along;
+            Vector2 pos = pathPt + perp * side;
+            Vector2 doorDir = (pathPt - pos).normalized; // door faces onto the path
+            Place(root, mats, prop, pos.x, pos.y, HomesteadLayout.FaceDirYaw(doorDir), 1f);
+            buildings.Add(pos); taken.Add(pos);
+        }
+
         // A worn dirt path strip from the bonfire out toward a building (a thin
         // stretched quad laid on the ground, trimmed at both ends).
         private static void Path(Transform root, Material mat, Vector2 target)
@@ -189,19 +205,15 @@ namespace VoidBound.Editor
             }
             foreach (var b in ring) Path(root, mats["Path"], b);
 
-            // Residential nook (NE): homes spread into a small neighbourhood,
-            // doors turned toward the fire (varied).
-            var homes = new (string prop, float x, float z, float jit)[] {
-                ("House", 2.5f, 6.0f, 10f), ("Cottage", 6.0f, 6.0f, -12f),
-                ("Cottage", 6.5f, 2.5f, 8f),
-                ("Cottage", 10.14f, 2.72f, -8f), // took the Merchant's old ring spot
-            };
-            foreach (var h in homes)
-            {
-                var p = new Vector2(h.x, h.z);
-                Place(root, mats, h.prop, h.x, h.z, HomesteadLayout.FaceCentreYaw(p) + h.jit, 1f);
-                buildings.Add(p); taken.Add(p);
-            }
+            // Three homes fronting the main paths (door onto the path), plus one
+            // tucked behind the storage chest facing the fire. Ring order:
+            // 0 Merchant, 1 Watchtower, 2 Portal, 3 Mages, 4 Storage, ... 11 Pool.
+            PlaceHouseOnPath(root, mats, "Cottage", ring[2], 6.0f, 3.0f, buildings, taken);   // faces the teleporter path
+            PlaceHouseOnPath(root, mats, "Cottage", ring[1], 6.5f, -3.0f, buildings, taken);  // faces the watchtower path
+            PlaceHouseOnPath(root, mats, "Cottage", ring[11], 7.0f, -3.0f, buildings, taken); // faces the pool path
+            var behind = ring[4].normalized * (ring[4].magnitude + 3.2f);                     // behind the storage chest
+            Place(root, mats, "House", behind.x, behind.y, HomesteadLayout.FaceCentreYaw(behind), 1f);
+            buildings.Add(behind); taken.Add(behind);
 
             // Lamp-lit square corners + a village well.
             foreach (var ang in new[] { 40f, 130f, 220f, 310f })

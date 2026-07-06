@@ -41,6 +41,9 @@ namespace VoidBound.Editor
         // facing away from local +Z, so the inward heading needs a 180° flip.
         public static float FaceCentreYaw(Vector2 p) => Mathf.Atan2(-p.x, -p.y) * Mathf.Rad2Deg + 180f;
 
+        // Turns the door toward an arbitrary world direction (same +Z-away convention).
+        public static float FaceDirYaw(Vector2 doorDir) => Mathf.Atan2(-doorDir.x, -doorDir.y) * Mathf.Rad2Deg;
+
         public static List<Vector2> WorldPositions() => Ring.Select(b => PosOf(b.ang, b.r)).ToList();
 
         [MenuItem("VoidBound/Polish - Rearrange Homestead")]
