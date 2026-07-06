@@ -2149,7 +2149,15 @@ MonoBehaviour:
   stationId: Campfire
   skillType: 5
   availableRecipes:
-  - {fileID: 11400000, guid: 903f216ca5e56ed41bf6e949026ff14b, type: 2}
+  - {fileID: 11400000, guid: 60f76f9b699df3c4fac03b652caa2124, type: 2}
+  - {fileID: 11400000, guid: 28904e277e02467499084c62d1432ab3, type: 2}
+  - {fileID: 11400000, guid: d3e0c455bffee5a4baf3ccef317bd126, type: 2}
+  - {fileID: 11400000, guid: 42e3c7c1c603c3346a8b8235af2a4134, type: 2}
+  - {fileID: 11400000, guid: 79c6222ede8ddd142bbc0f9265009484, type: 2}
+  - {fileID: 11400000, guid: 5b287f29b61f63a46a3a1f1016f52ea3, type: 2}
+  - {fileID: 11400000, guid: 842191eafd0f25c4badbe22ab23c6e3b, type: 2}
+  - {fileID: 11400000, guid: 3ca7565dd9392784fbbce956b9a9569b, type: 2}
+  - {fileID: 11400000, guid: 77672d5383fa6f447b742b640d4f7091, type: 2}
 --- !u!65 &138133388
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -10868,6 +10876,15 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7983d41f5b490ab49b8cd8f7fccc2df6, type: 3}
       insertIndex: -1
       addedObject: {fileID: 751173377}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7983d41f5b490ab49b8cd8f7fccc2df6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 751173380}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7983d41f5b490ab49b8cd8f7fccc2df6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 751173379}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7983d41f5b490ab49b8cd8f7fccc2df6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 751173378}
   m_SourcePrefab: {fileID: 100100000, guid: 7983d41f5b490ab49b8cd8f7fccc2df6, type: 3}
 --- !u!1 &751173360 stripped
 GameObject:
@@ -11129,6 +11146,42 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Combat.CharacterAnimation
   hitFlashColor: {r: 1, g: 0.3, b: 0.25, a: 1}
   hitFlashDuration: 0.2
+--- !u!114 &751173378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 751173360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64b9f0f672976f54e9f1e7dd231ad327, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Inventory.FoodConsumer
+--- !u!114 &751173379
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 751173360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0844e95822fc5c4fabc660907e35fd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Combat.HealOverTime
+--- !u!114 &751173380
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 751173360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 977c3ea8bb24fb94f8a4605ee8802bed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Skilling.PlayerTools
 --- !u!1001 &761486670
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13738,6 +13791,7 @@ GameObject:
   - component: {fileID: 925212599}
   - component: {fileID: 925212600}
   - component: {fileID: 925212601}
+  - component: {fileID: 925212602}
   m_Layer: 0
   m_Name: HUDCanvas
   m_TagString: Untagged
@@ -13963,6 +14017,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d70db6ebfd2cc84c8f8dbb8d00d14a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.UI.RarityShowcaseDev
+--- !u!114 &925212602
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 925212588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a80507a0a626414abbcb4a434d56bac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.UI.ConsumablesHUD
 --- !u!1001 &930745624
 PrefabInstance:
   m_ObjectHideFlags: 0

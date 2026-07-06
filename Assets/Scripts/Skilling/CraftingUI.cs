@@ -95,12 +95,10 @@ namespace VoidBound.Skilling
         {
             if (currentStation == null || currentInstigator == null) return;
 
-            var skills = currentInstigator.GetComponent<PlayerSkills>();
-            int level = skills?.GetLevel(currentStation.StationType) ?? 1;
-            int xp = skills?.GetXP(currentStation.StationType) ?? 0;
-            int xpNext = skills?.GetXPToNext(currentStation.StationType) ?? 100;
+            var tools = currentInstigator.GetComponent<PlayerTools>();
+            RarityTier toolTier = tools != null ? tools.GetToolTier(currentStation.StationType) : RarityTier.Common;
 
-            skillInfo.text = $"{currentStation.StationType}  Lv {level}    XP {xp} / {xpNext}";
+            skillInfo.text = currentStation.StationType.ToString();
 
             for (int i = recipeList.childCount - 1; i >= 0; i--)
                 Destroy(recipeList.GetChild(i).gameObject);
@@ -111,11 +109,11 @@ namespace VoidBound.Skilling
                 {
                     if (recipe == null) continue;
                     var captured = recipe;
-                    bool locked = level < recipe.requiredSkillLevel;
+                    bool locked = (int)toolTier < (int)recipe.requiredToolTier;
 
                     var row = Panel5cFactory.CreateListRow(recipeList,
                         recipe.displayName,
-                        locked ? $"Lv {recipe.requiredSkillLevel}" : "",
+                        locked ? $"{recipe.requiredToolTier} tool" : "",
                         locked ? (Color)Panel5cFactory.TextMuted : (Color)Panel5cFactory.TextPrimary,
                         Panel5cFactory.TextMuted,
                         interactable: !locked);
@@ -134,7 +132,10 @@ namespace VoidBound.Skilling
 
             var matInv = currentInstigator?.GetComponent<MaterialInventory>();
             string detail = $"<b>{recipe.displayName}</b>\n";
-            detail += $"<color=#888d84>{recipe.requiredSkill} Lv {recipe.requiredSkillLevel}   +{recipe.xpReward} XP</color>\n\nIngredients:\n";
+            string gate = recipe.requiredToolTier > RarityTier.Common
+                ? $"Requires {recipe.requiredToolTier} tool"
+                : recipe.requiredSkill.ToString();
+            detail += $"<color=#888d84>{gate}</color>\n\nIngredients:\n";
 
             bool canCraft = true;
             if (recipe.ingredients != null)
@@ -166,7 +167,6 @@ namespace VoidBound.Skilling
 
             var matInv = currentInstigator.GetComponent<MaterialInventory>();
             var gearInv = currentInstigator.GetComponent<PlayerInventory>();
-            var skills = currentInstigator.GetComponent<PlayerSkills>();
 
             if (selectedRecipe.ingredients != null)
             {
@@ -185,8 +185,6 @@ namespace VoidBound.Skilling
                 gearInv?.AddItem(selectedRecipe.outputGear);
             else if (selectedRecipe.outputMaterial != null)
                 matInv?.AddMaterial(selectedRecipe.outputMaterial, selectedRecipe.outputQuantity);
-
-            skills?.AddXP(selectedRecipe.requiredSkill, selectedRecipe.xpReward);
 
             Combat.FloatingDamageNumber.SpawnText(currentInstigator.transform.position,
                 $"Crafted: {selectedRecipe.displayName}", new Color(0.3f, 0.8f, 1f));

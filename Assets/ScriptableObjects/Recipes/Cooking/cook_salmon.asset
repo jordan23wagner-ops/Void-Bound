@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af091b2bbaf098641b37ea4d77d93ea9, type: 3}
+  m_Name: cook_salmon
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Data.RecipeDefinitionSO
+  recipeId: cook_salmon
+  displayName: Cook Salmon
+  requiredSkill: 5
+  requiredToolTier: 0
+  requiredSkillLevel: 0
+  requiredStation: Campfire
+  ingredients:
+  - material: {fileID: 11400000, guid: 90fe259f6af7c2c40a32604a4faa7e0a, type: 2}
+    quantity: 1
+  outputType: 0
+  outputMaterial: {fileID: 11400000, guid: 41044fdf3cda2d945badb7b936e1292b, type: 2}
+  outputGear: {fileID: 0}
+  outputQuantity: 1
+  xpReward: 0

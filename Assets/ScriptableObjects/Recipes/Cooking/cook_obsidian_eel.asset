@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af091b2bbaf098641b37ea4d77d93ea9, type: 3}
+  m_Name: cook_obsidian_eel
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Data.RecipeDefinitionSO
+  recipeId: cook_obsidian_eel
+  displayName: Cook Obsidian Eel
+  requiredSkill: 5
+  requiredToolTier: 0
+  requiredSkillLevel: 0
+  requiredStation: Campfire
+  ingredients:
+  - material: {fileID: 11400000, guid: 47e29486c03e6c54094986ad72f49462, type: 2}
+    quantity: 1
+  outputType: 0
+  outputMaterial: {fileID: 11400000, guid: cb59400ee33e4ab4d87caa4966bf5559, type: 2}
+  outputGear: {fileID: 0}
+  outputQuantity: 1
+  xpReward: 0

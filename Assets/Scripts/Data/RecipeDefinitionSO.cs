@@ -18,7 +18,8 @@ namespace VoidBound.Data
         public string recipeId;
         public string displayName;
         public SkillType requiredSkill;
-        public int requiredSkillLevel;
+        public RarityTier requiredToolTier; // tool-tier gate for gather/craft (Common = ungated)
+        public int requiredSkillLevel;      // legacy; no longer gates (skills are tool-gated)
         public string requiredStation;
 
         [Header("Inputs")]
