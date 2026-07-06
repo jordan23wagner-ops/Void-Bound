@@ -19,6 +19,7 @@ namespace VoidBound.Combat
         private PlayerSkills skills;
         private CharacterAnimation anim;
         private MaterialInventory matInv;
+        private PlayerUpgrades upgrades;
         private float lastAttackTime = -999f;
 
         // Ranged fires cost 1 Arrow; casts cost 1 rune (first available element).
@@ -31,6 +32,7 @@ namespace VoidBound.Combat
             skills = GetComponent<PlayerSkills>();
             anim = GetComponent<CharacterAnimation>();
             matInv = GetComponent<MaterialInventory>();
+            upgrades = GetComponent<PlayerUpgrades>();
         }
 
         private void Update()
@@ -113,16 +115,33 @@ namespace VoidBound.Combat
             return weapon != null ? weapon.weaponType : WeaponType.Sword;
         }
 
-        // Spends ammo for a ranged/magic fire. Ranged → 1 Arrow; Mage → 1 rune of
-        // the first available element. Returns false if none in stock.
+        // Spends ammo for a ranged/magic fire: 1 Arrow (ranged) or 1 rune of the
+        // first available element (mage). An equipped saver offhand (Quiver /
+        // Mage's Book) has a tier-scaled chance to fire without consuming.
+        // Returns false only if there's no ammo in stock.
         private bool ConsumeAmmo(WeaponStyle style)
         {
             if (matInv == null) return true; // e.g. no material inventory
+
+            string ammoId = null;
             if (style == WeaponStyle.Ranged)
-                return matInv.ConsumeMaterial("arrows", 1);
-            foreach (var id in RuneIds)
-                if (matInv.GetCount(id) > 0) return matInv.ConsumeMaterial(id, 1);
-            return false;
+            {
+                if (matInv.GetCount("arrows") > 0) ammoId = "arrows";
+            }
+            else
+            {
+                foreach (var id in RuneIds)
+                    if (matInv.GetCount(id) > 0) { ammoId = id; break; }
+            }
+            if (ammoId == null) return false; // nothing to fire with
+
+            var offhand = inventory != null ? inventory.GetEquipped(EquipmentSlot.Shield) : null;
+            if (offhand != null && offhand.ammoSaver)
+            {
+                var tier = upgrades != null ? upgrades.GetTier(offhand) : offhand.rarity;
+                if (Random.value < 0.10f + (int)tier * 0.08f) return true; // saved — no consumption
+            }
+            return matInv.ConsumeMaterial(ammoId, 1);
         }
 
         private void OnDrawGizmosSelected()
