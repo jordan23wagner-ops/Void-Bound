@@ -17,7 +17,7 @@ namespace VoidBound.Inventory
         private static readonly Color LegendaryColor = new(1.00f, 0.55f, 0.10f); // orange
         private static readonly Color ObsidianColor  = new(0.80f, 0.83f, 0.90f); // silver sheen (UI swatch)
         private static readonly Color RadiantColor   = new(0.95f, 0.97f, 1.00f); // diamond white (UI swatch)
-        private static readonly Color VoidColor      = new(0.62f, 0.22f, 0.85f); // bright void purple (UI swatch)
+        private static readonly Color VoidColor      = new(0.50f, 0.12f, 0.92f); // deep cold blue-violet (UI swatch)
 
         public static Color GetRarityColor(RarityTier rarity)
         {
@@ -62,7 +62,7 @@ namespace VoidBound.Inventory
                 case RarityTier.Legendary: return Style(LegendaryColor, 0.55f, 0.30f, LegendaryColor * 0.70f);
                 case RarityTier.Obsidian:  return Style(new Color(0.04f, 0.04f, 0.055f), 0.93f, 0.80f, new Color(0.30f, 0.33f, 0.42f) * 0.20f, RarityAnim.ObsidianSheen);
                 case RarityTier.Radiant:   return Style(new Color(0.97f, 0.98f, 1.00f), 0.96f, 0.35f, Color.white * 0.35f, RarityAnim.Shimmer);
-                case RarityTier.Void:      return Style(new Color(0.14f, 0.03f, 0.22f), 0.62f, 0.45f, new Color(0.55f, 0.14f, 0.80f) * 0.85f, RarityAnim.Void);
+                case RarityTier.Void:      return Style(new Color(0.045f, 0.015f, 0.075f), 0.60f, 0.55f, new Color(0.32f, 0.08f, 0.62f) * 0.6f, RarityAnim.Void);
                 default:                   return Style(Color.white, 0.2f, 0f, Color.black);
             }
         }

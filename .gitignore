@@ -40,3 +40,10 @@ crashlytics-build.properties
 
 # Compile check logs (local verification only)
 compile_check.log
+
+# Dev QA screenshots (regenerable, not versioned)
+/Assets/Screenshots/
+/Assets/Screenshots.meta
+
+# Local setup logs
+setup_*.log
