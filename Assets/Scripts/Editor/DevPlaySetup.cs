@@ -172,6 +172,26 @@ namespace VoidBound.Editor
         private static bool EquipMageValidate() { Menu.SetChecked(MageMenu, Kit() == "Mage"); return Application.isPlaying; }
 
         private static string Kit() => EditorPrefs.GetString(KitKey, "Melee");
+
+        // ── Rarity showcase: gates the in-scene RarityShowcaseDev on HUDCanvas.
+        // When ON, playing Homestead auto-equips a full Main set; [ and ] cycle
+        // it through all 9 rarities (name shown top-centre).
+        private const string RarityShowcaseMenu = "VoidBound/Dev - Rarity Showcase (Homestead)";
+
+        [MenuItem(RarityShowcaseMenu, false, 30)]
+        private static void ToggleRarityShowcase()
+        {
+            bool v = !EditorPrefs.GetBool(UI.RarityShowcaseDev.EnabledKey, false);
+            EditorPrefs.SetBool(UI.RarityShowcaseDev.EnabledKey, v);
+            Debug.Log($"[Dev] Rarity Showcase: {(v ? "ON — Play Homestead, use [ and ] to cycle" : "OFF")}");
+        }
+
+        [MenuItem(RarityShowcaseMenu, true)]
+        private static bool ToggleRarityShowcaseValidate()
+        {
+            Menu.SetChecked(RarityShowcaseMenu, EditorPrefs.GetBool(UI.RarityShowcaseDev.EnabledKey, false));
+            return true;
+        }
     }
 }
 #endif

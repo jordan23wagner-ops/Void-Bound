@@ -13737,6 +13737,7 @@ GameObject:
   - component: {fileID: 925212594}
   - component: {fileID: 925212599}
   - component: {fileID: 925212600}
+  - component: {fileID: 925212601}
   m_Layer: 0
   m_Name: HUDCanvas
   m_TagString: Untagged
@@ -13950,6 +13951,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea77dbb7c0cab1d479373425a403c6d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Skilling.CraftingUI
+--- !u!114 &925212601
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 925212588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d70db6ebfd2cc84c8f8dbb8d00d14a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.UI.RarityShowcaseDev
 --- !u!1001 &930745624
 PrefabInstance:
   m_ObjectHideFlags: 0
