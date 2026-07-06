@@ -183,7 +183,6 @@ namespace VoidBound.Combat
             RemoveVisual(slot);
 
             var (bone, grip) = Target(slot);
-            var color = RarityVisualEffects.GetRarityColor(item.rarity);
             var parts = new List<GameObject>();
 
             if (grip)
@@ -193,7 +192,7 @@ namespace VoidBound.Combat
                 go.name = VisualName(item);
                 go.transform.SetParent(bone, false);
                 ApplyGripOffset(go.transform, bone, item);
-                TintMain(go, color);
+                TintMain(go, item.rarity);
                 parts.Add(go);
             }
             else
@@ -217,7 +216,7 @@ namespace VoidBound.Combat
                 {
                     // Single-mesh model (fallback): whole piece on the slot bone.
                     root.transform.SetParent(bone, worldPositionStays: true);
-                    TintMain(root, color);
+                    TintMain(root, item.rarity);
                     parts.Add(root);
                 }
                 else
@@ -227,7 +226,7 @@ namespace VoidBound.Combat
                         var boneName = c.name; // sub-part is named for its bone
                         c.SetParent(Bone(boneName), worldPositionStays: true);
                         c.gameObject.name = VisualName(item) + "_" + boneName; // don't shadow the bone name
-                        TintMain(c.gameObject, color);
+                        TintMain(c.gameObject, item.rarity);
                         parts.Add(c.gameObject);
                     }
                     Destroy(root); // emptied shell
@@ -265,14 +264,17 @@ namespace VoidBound.Combat
         private static readonly Color GemRed = new(0.95f, 0.18f, 0.20f);
         private static readonly Color GemGreen = new(0.35f, 0.95f, 0.45f);
 
-        private static void TintMain(GameObject go, Color rarity)
+        private static void TintMain(GameObject go, RarityTier rarity)
         {
+            bool shimmer = false;
             foreach (var r in go.GetComponentsInChildren<Renderer>())
                 foreach (var m in r.materials)
                 {
                     if (m == null) continue;
                     var n = m.name;
-                    if (n.StartsWith("Main")) m.color = rarity;
+                    // "Main" gets the full rarity treatment (albedo + reflectivity +
+                    // emission); the other named materials keep their fixed palette.
+                    if (n.StartsWith("Main")) shimmer |= RarityVisualEffects.StyleMainMaterial(m, rarity);
                     else if (n.StartsWith("Gold")) m.color = GoldColor;
                     else if (n.StartsWith("Dark")) m.color = DarkColor;
                     else if (n.StartsWith("Crimson")) m.color = CrimsonColor;
@@ -282,6 +284,8 @@ namespace VoidBound.Combat
                     else if (n.StartsWith("GemG")) SetGem(m, GemGreen);
                     else if (n.StartsWith("Gem")) SetGem(m, GemCyan);
                 }
+            if (shimmer && go.GetComponent<RarityShimmer>() == null)
+                go.AddComponent<RarityShimmer>();
         }
 
         private static void SetGem(Material m, Color c)

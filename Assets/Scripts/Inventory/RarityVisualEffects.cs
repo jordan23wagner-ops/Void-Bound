@@ -12,9 +12,9 @@ namespace VoidBound.Inventory
         private static readonly Color RareColor      = new(1.00f, 0.84f, 0.14f); // yellow
         private static readonly Color EpicColor      = new(0.66f, 0.30f, 0.90f); // purple
         private static readonly Color LegendaryColor = new(1.00f, 0.55f, 0.10f); // orange
-        private static readonly Color ObsidianColor  = new(0.78f, 0.80f, 0.86f); // blackish-white (cool silver)
-        private static readonly Color RadiantColor   = new(0.98f, 0.82f, 0.82f); // reddish-white (rose)
-        private static readonly Color VoidColor      = new(0.40f, 0.10f, 0.50f); // purple/black
+        private static readonly Color ObsidianColor  = new(0.80f, 0.83f, 0.90f); // silver sheen (UI swatch)
+        private static readonly Color RadiantColor   = new(0.95f, 0.97f, 1.00f); // diamond white (UI swatch)
+        private static readonly Color VoidColor      = new(0.62f, 0.22f, 0.85f); // bright void purple (UI swatch)
 
         public static Color GetRarityColor(RarityTier rarity)
         {
@@ -31,6 +31,62 @@ namespace VoidBound.Inventory
                 RarityTier.Void => VoidColor,
                 _ => Color.white
             };
+        }
+
+        // ── Full material treatment for a gear surface (the "Main" material) ──
+        // The rarity's look is more than a tint: reflectivity (smoothness/metallic)
+        // and emission define the high tiers. Obsidian = near-black reflective glass
+        // with a white sheen; Radiant = diamond-bright with a runtime rainbow
+        // shimmer; Void = corrupted purple-black glow.
+        public struct RarityStyle
+        {
+            public Color albedo;
+            public float smoothness;
+            public float metallic;
+            public Color emission;   // Color.black = no emission
+            public bool shimmer;     // rainbow hue-cycle (Radiant)
+        }
+
+        public static RarityStyle GetStyle(RarityTier r)
+        {
+            switch (r)
+            {
+                case RarityTier.Common:    return Style(CommonColor, 0.08f, 0.00f, Color.black);
+                case RarityTier.Uncommon:  return Style(UncommonColor, 0.18f, 0.00f, Color.black);
+                case RarityTier.Magic:     return Style(MagicColor, 0.35f, 0.10f, MagicColor * 0.45f);
+                case RarityTier.Rare:      return Style(RareColor, 0.42f, 0.20f, RareColor * 0.45f);
+                case RarityTier.Epic:      return Style(EpicColor, 0.46f, 0.20f, EpicColor * 0.55f);
+                case RarityTier.Legendary: return Style(LegendaryColor, 0.55f, 0.30f, LegendaryColor * 0.70f);
+                case RarityTier.Obsidian:  return Style(new Color(0.04f, 0.04f, 0.055f), 0.93f, 0.80f, new Color(0.52f, 0.55f, 0.64f) * 0.20f);
+                case RarityTier.Radiant:   return ShimmerStyle(new Color(0.97f, 0.98f, 1.00f), 0.96f, 0.35f, Color.white * 0.35f);
+                case RarityTier.Void:      return Style(new Color(0.16f, 0.05f, 0.26f), 0.62f, 0.45f, new Color(0.55f, 0.14f, 0.80f) * 0.85f);
+                default:                   return Style(Color.white, 0.2f, 0f, Color.black);
+            }
+        }
+
+        private static RarityStyle Style(Color a, float s, float m, Color e) =>
+            new RarityStyle { albedo = a, smoothness = s, metallic = m, emission = e, shimmer = false };
+        private static RarityStyle ShimmerStyle(Color a, float s, float m, Color e) =>
+            new RarityStyle { albedo = a, smoothness = s, metallic = m, emission = e, shimmer = true };
+
+        // Apply the rarity treatment to one "Main" material. Returns true if the
+        // rarity should shimmer (caller wires the runtime component).
+        public static bool StyleMainMaterial(Material m, RarityTier rarity)
+        {
+            if (m == null) return false;
+            var s = GetStyle(rarity);
+            m.color = s.albedo;
+            if (m.HasProperty("_BaseColor")) m.SetColor("_BaseColor", s.albedo);
+            if (m.HasProperty("_Smoothness")) m.SetFloat("_Smoothness", s.smoothness);
+            if (m.HasProperty("_Metallic")) m.SetFloat("_Metallic", s.metallic);
+            if (s.emission != Color.black)
+            {
+                m.EnableKeyword("_EMISSION");
+                m.SetColor("_EmissionColor", s.emission);
+                m.globalIlluminationFlags = MaterialGlobalIlluminationFlags.RealtimeEmissive;
+            }
+            else m.DisableKeyword("_EMISSION");
+            return s.shimmer;
         }
 
         public static void ApplyToRenderers(GameObject target, RarityTier rarity)
