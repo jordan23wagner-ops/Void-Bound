@@ -1,4 +1,5 @@
 using System.Collections;
+using System.IO;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
@@ -68,12 +69,68 @@ namespace VoidBound.UI
             Apply(0);
         }
 
+        private bool capturing;
+
         private void Update()
         {
             var kb = Keyboard.current;
             if (kb == null) return;
             if (kb.rightBracketKey.wasPressedThisFrame) { idx = (idx + 1) % 9; Apply(idx); }
             else if (kb.leftBracketKey.wasPressedThisFrame) { idx = (idx + 8) % 9; Apply(idx); }
+            else if (kb.cKey.wasPressedThisFrame && !capturing && player != null) StartCoroutine(CaptureSheet());
+        }
+
+        // Renders the set at every rarity from a dedicated camera framing the hero
+        // and stitches a labelled 9-cell strip PNG for at-a-glance QA.
+        private IEnumerator CaptureSheet()
+        {
+            capturing = true;
+            if (label != null) label.text = "capturing contact sheet…";
+
+            var camGo = new GameObject("ContactCam");
+            var cam = camGo.AddComponent<Camera>();
+            cam.clearFlags = CameraClearFlags.SolidColor;
+            cam.backgroundColor = new Color(0.11f, 0.11f, 0.13f);
+            cam.fieldOfView = 32f;
+            const int cell = 340;
+            var rt = new RenderTexture(cell, cell, 16);
+            cam.targetTexture = rt;
+            var sheet = new Texture2D(cell * 9, cell, TextureFormat.RGB24, false);
+
+            for (int i = 0; i < 9; i++)
+            {
+                Apply(i);
+                var focus = player.position + Vector3.up * 1.0f;
+                camGo.transform.position = focus - player.forward * 3.4f + Vector3.up * 0.25f + player.right * 0.15f;
+                camGo.transform.LookAt(focus);
+                yield return null; yield return null; yield return null; // let the anim advance
+                cam.Render();
+                var prev = RenderTexture.active;
+                RenderTexture.active = rt;
+                var tmp = new Texture2D(cell, cell, TextureFormat.RGB24, false);
+                tmp.ReadPixels(new Rect(0, 0, cell, cell), 0, 0);
+                tmp.Apply();
+                // rarity-coloured label strip along the bottom of each cell
+                var col = RarityVisualEffects.GetRarityColor((RarityTier)i);
+                for (int y = 0; y < 10; y++)
+                    for (int x = 0; x < cell; x++)
+                        tmp.SetPixel(x, y, col);
+                tmp.Apply();
+                sheet.SetPixels(i * cell, 0, cell, cell, tmp.GetPixels());
+                Destroy(tmp);
+                RenderTexture.active = prev;
+            }
+            sheet.Apply();
+            Directory.CreateDirectory(Application.dataPath + "/Screenshots");
+            File.WriteAllBytes(Application.dataPath + "/Screenshots/RarityContactSheet.png", sheet.EncodeToPNG());
+            Debug.Log("[Showcase] Contact sheet saved: Assets/Screenshots/RarityContactSheet.png (Common→Void)");
+#if UNITY_EDITOR
+            UnityEditor.AssetDatabase.Refresh();
+#endif
+            cam.targetTexture = null;
+            Destroy(camGo); rt.Release(); Destroy(rt); Destroy(sheet);
+            if (label != null) label.text = $"[  ◄   {(RarityTier)idx}   ►  ]";
+            capturing = false;
         }
 
         private void Apply(int i)
