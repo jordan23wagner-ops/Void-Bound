@@ -72,4 +72,8 @@ namespace VoidBound.Data
         CombatINT,
         Woodcutting // added last to preserve existing serialized indices
     }
+
+    // Effect a consumable applies when used (potions). Food leaves this None and
+    // uses the heal-over-time fields on MaterialItemSO instead.
+    public enum ConsumableEffect { None, Heal, BuffSTR, BuffDEX, BuffINT, BuffVIG, Swiftness, CurePoison, Luck }
 }

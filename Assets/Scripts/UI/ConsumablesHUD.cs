@@ -23,7 +23,7 @@ namespace VoidBound.UI
             rt.sizeDelta = new Vector2(128f, 42f);
 
             go.AddComponent<Image>().color = new Color(0.5f, 0.28f, 0.16f, 0.92f);
-            go.AddComponent<Button>().onClick.AddListener(Eat);
+            go.AddComponent<Button>().onClick.AddListener(OpenPanel);
             go.AddComponent<Outline>().effectColor = new Color(0f, 0f, 0f, 0.6f);
 
             var textGO = new GameObject("Label", typeof(RectTransform));
@@ -36,25 +36,14 @@ namespace VoidBound.UI
             label.fontSize = 15;
             label.alignment = TextAnchor.MiddleCenter;
             label.color = Color.white;
-            label.text = "Eat Food";
+            label.text = "Items";
         }
 
-        private void Eat()
+        private void OpenPanel()
         {
+            var panel = GetComponent<ConsumablesPanel>() ?? gameObject.AddComponent<ConsumablesPanel>();
             var player = GameObject.FindGameObjectWithTag("Player");
-            var fc = player != null ? player.GetComponent<FoodConsumer>() : null;
-            if (fc == null) return;
-
-            var food = fc.LowestFood();
-            if (food == null || !fc.EatLowest())
-            {
-                if (player != null)
-                    FloatingDamageNumber.SpawnText(player.transform.position, "No food",
-                        new Color(0.8f, 0.5f, 0.3f));
-                return;
-            }
-            FloatingDamageNumber.SpawnText(player.transform.position,
-                $"Ate {food.displayName} (+{food.healOverTime} HoT)", new Color(0.5f, 0.9f, 0.4f));
+            if (player != null) panel.Open(player);
         }
     }
 }

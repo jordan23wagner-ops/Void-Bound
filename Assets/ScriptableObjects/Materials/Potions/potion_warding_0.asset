@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ccf3d09145cb58043af35bce30af400a, type: 3}
+  m_Name: potion_warding_0
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Data.MaterialItemSO
+  itemId: potion_warding_0
+  displayName: Common Warding Potion
+  description: 
+  icon: {fileID: 0}
+  tier: 0
+  goldValue: 5
+  isConsumable: 1
+  healOverTime: 0
+  hotDuration: 8
+  effect: 5
+  effectMagnitude: 2
+  effectDuration: 60

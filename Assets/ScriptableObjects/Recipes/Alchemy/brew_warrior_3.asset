@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af091b2bbaf098641b37ea4d77d93ea9, type: 3}
+  m_Name: brew_warrior_3
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Data.RecipeDefinitionSO
+  recipeId: brew_warrior_3
+  displayName: Brew Rare Warrior
+  requiredSkill: 6
+  requiredToolTier: 0
+  requiredSkillLevel: 0
+  requiredStation: Garden
+  ingredients:
+  - material: {fileID: 11400000, guid: 591465ccb8673594791b64af7f020c84, type: 2}
+    quantity: 2
+  outputType: 0
+  outputMaterial: {fileID: 11400000, guid: 7aa823388718f4b47a08f1b6e1e0fdd2, type: 2}
+  outputGear: {fileID: 0}
+  outputTool: {fileID: 0}
+  outputQuantity: 1
+  xpReward: 0

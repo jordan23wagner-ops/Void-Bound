@@ -2126,6 +2126,149 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4116137d92599fd43afeacd7cb5f1c81, type: 3}
   m_PrefabInstance: {fileID: 117822603}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &131617249
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 131617254}
+  - component: {fileID: 131617253}
+  - component: {fileID: 131617252}
+  - component: {fileID: 131617251}
+  - component: {fileID: 131617250}
+  m_Layer: 0
+  m_Name: Herb Patch
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &131617250
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 131617249}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b7a31b3b4776be458733366c71611b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Skilling.ResourceNode
+  interactPrompt: Gather
+  interactRange: 2.5
+  tooltipDescription: 
+  gatherMaterial: {fileID: 0}
+  tieredMaterials:
+  - {fileID: 11400000, guid: 53030763607894a4ba199c1646de88d7, type: 2}
+  - {fileID: 11400000, guid: 104f7bd90a4423147902e5cc36aace15, type: 2}
+  - {fileID: 11400000, guid: 9f06291833911824692609957c029db6, type: 2}
+  - {fileID: 11400000, guid: 591465ccb8673594791b64af7f020c84, type: 2}
+  - {fileID: 11400000, guid: ea4238292ce1b564bb411be3e0e0ef71, type: 2}
+  - {fileID: 11400000, guid: c56955a8a5b52c9498c779339ccbeb83, type: 2}
+  - {fileID: 11400000, guid: 613e64e110d46bc4daf16a929d86b22a, type: 2}
+  - {fileID: 11400000, guid: aa825037cf589b7428192b3160e918c8, type: 2}
+  - {fileID: 11400000, guid: dbddb3122222dea47ad7e3d39cb0546a, type: 2}
+  gatherQuantity: 1
+  gatherSkill: 1
+  xpPerGather: 15
+  respawnTime: 4
+--- !u!23 &131617251
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 131617249}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 1366801470}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!135 &131617252
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 131617249}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!33 &131617253
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 131617249}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &131617254
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 131617249}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -12, y: 0, z: 6}
+  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &138133386 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 0939e355accdadb40b9ccc6d7eaa4f9a, type: 3}
@@ -14497,6 +14640,126 @@ MonoBehaviour:
   interactRange: 3
   tooltipDescription: Upgrade untradables with refined materials. (coming soon)
   comingSoonNote: Untradable upgrades coming soon.
+--- !u!21 &941748025
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Universal Render Pipeline/Lit
+  m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BaseMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SpecGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _AddPrecomputedVelocity: 0
+    - _AlphaClip: 0
+    - _AlphaToMask: 0
+    - _Blend: 0
+    - _BlendModePreserveSpecular: 1
+    - _BumpScale: 1
+    - _ClearCoatMask: 0
+    - _ClearCoatSmoothness: 0
+    - _Cull: 2
+    - _Cutoff: 0.5
+    - _DetailAlbedoMapScale: 1
+    - _DetailNormalMapScale: 1
+    - _DstBlend: 0
+    - _DstBlendAlpha: 0
+    - _EnvironmentReflections: 1
+    - _GlossMapScale: 0
+    - _Glossiness: 0
+    - _GlossyReflections: 0
+    - _Metallic: 0
+    - _OcclusionStrength: 1
+    - _Parallax: 0.005
+    - _QueueOffset: 0
+    - _ReceiveShadows: 1
+    - _Smoothness: 0.5
+    - _SmoothnessTextureChannel: 0
+    - _SpecularHighlights: 1
+    - _SrcBlend: 1
+    - _SrcBlendAlpha: 1
+    - _Surface: 0
+    - _WorkflowMode: 1
+    - _XRMotionVectorsPass: 1
+    - _ZWrite: 1
+    m_Colors:
+    - _BaseColor: {r: 0.3, g: 0.6, b: 0.25, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!1001 &945953144
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14579,6 +14842,149 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4116137d92599fd43afeacd7cb5f1c81, type: 3}
   m_PrefabInstance: {fileID: 945953144}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &948365765
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 948365770}
+  - component: {fileID: 948365769}
+  - component: {fileID: 948365768}
+  - component: {fileID: 948365767}
+  - component: {fileID: 948365766}
+  m_Layer: 0
+  m_Name: Herb Patch 2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &948365766
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 948365765}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b7a31b3b4776be458733366c71611b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Skilling.ResourceNode
+  interactPrompt: Gather
+  interactRange: 2.5
+  tooltipDescription: 
+  gatherMaterial: {fileID: 0}
+  tieredMaterials:
+  - {fileID: 11400000, guid: 53030763607894a4ba199c1646de88d7, type: 2}
+  - {fileID: 11400000, guid: 104f7bd90a4423147902e5cc36aace15, type: 2}
+  - {fileID: 11400000, guid: 9f06291833911824692609957c029db6, type: 2}
+  - {fileID: 11400000, guid: 591465ccb8673594791b64af7f020c84, type: 2}
+  - {fileID: 11400000, guid: ea4238292ce1b564bb411be3e0e0ef71, type: 2}
+  - {fileID: 11400000, guid: c56955a8a5b52c9498c779339ccbeb83, type: 2}
+  - {fileID: 11400000, guid: 613e64e110d46bc4daf16a929d86b22a, type: 2}
+  - {fileID: 11400000, guid: aa825037cf589b7428192b3160e918c8, type: 2}
+  - {fileID: 11400000, guid: dbddb3122222dea47ad7e3d39cb0546a, type: 2}
+  gatherQuantity: 1
+  gatherSkill: 1
+  xpPerGather: 15
+  respawnTime: 4
+--- !u!23 &948365767
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 948365765}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 941748025}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!135 &948365768
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 948365765}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!33 &948365769
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 948365765}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &948365770
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 948365765}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -9.5, y: 0, z: 6.5}
+  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &949347688
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20996,6 +21402,126 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1366020218}
   m_CullTransparentMesh: 1
+--- !u!21 &1366801470
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Universal Render Pipeline/Lit
+  m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BaseMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SpecGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _AddPrecomputedVelocity: 0
+    - _AlphaClip: 0
+    - _AlphaToMask: 0
+    - _Blend: 0
+    - _BlendModePreserveSpecular: 1
+    - _BumpScale: 1
+    - _ClearCoatMask: 0
+    - _ClearCoatSmoothness: 0
+    - _Cull: 2
+    - _Cutoff: 0.5
+    - _DetailAlbedoMapScale: 1
+    - _DetailNormalMapScale: 1
+    - _DstBlend: 0
+    - _DstBlendAlpha: 0
+    - _EnvironmentReflections: 1
+    - _GlossMapScale: 0
+    - _Glossiness: 0
+    - _GlossyReflections: 0
+    - _Metallic: 0
+    - _OcclusionStrength: 1
+    - _Parallax: 0.005
+    - _QueueOffset: 0
+    - _ReceiveShadows: 1
+    - _Smoothness: 0.5
+    - _SmoothnessTextureChannel: 0
+    - _SpecularHighlights: 1
+    - _SrcBlend: 1
+    - _SrcBlendAlpha: 1
+    - _Surface: 0
+    - _WorkflowMode: 1
+    - _XRMotionVectorsPass: 1
+    - _ZWrite: 1
+    m_Colors:
+    - _BaseColor: {r: 0.3, g: 0.6, b: 0.25, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!1001 &1368599067
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -23745,7 +24271,79 @@ MonoBehaviour:
   tooltipDescription: Tend herbs and brew mixtures. (Gathering, Alchemy)
   stationId: Garden
   skillType: 1
-  availableRecipes: []
+  availableRecipes:
+  - {fileID: 11400000, guid: 5e104dabd1902614d95449fdba167fb9, type: 2}
+  - {fileID: 11400000, guid: 33c22cdd4518ebe439f3b6df58fea765, type: 2}
+  - {fileID: 11400000, guid: 694686d22b2ee3648be53a18af890960, type: 2}
+  - {fileID: 11400000, guid: 508717d0c17ece54fa17c87c3e874fd3, type: 2}
+  - {fileID: 11400000, guid: 339f591192980d84c900056e3be13108, type: 2}
+  - {fileID: 11400000, guid: b12993d2ce7eb794ead8af2e2032eea8, type: 2}
+  - {fileID: 11400000, guid: 594111f93a26b614b9f244cf74d14a8d, type: 2}
+  - {fileID: 11400000, guid: 407b977f08dd0514bb357306de1ffb11, type: 2}
+  - {fileID: 11400000, guid: 6a0facdd4db15644ba77c7d50542a3bd, type: 2}
+  - {fileID: 11400000, guid: 9c7431552cf50cd4195611d7e1a5fef7, type: 2}
+  - {fileID: 11400000, guid: 2530e9bbec65b66478b549a338b3b5b5, type: 2}
+  - {fileID: 11400000, guid: 2c97aaeb17e2acc4da008cc162ca5306, type: 2}
+  - {fileID: 11400000, guid: 0a6f30e4c8d8a4946b0670bb8c3b663d, type: 2}
+  - {fileID: 11400000, guid: e2d26ed8ff856654684c9391ad9dddee, type: 2}
+  - {fileID: 11400000, guid: 14757ec35bdaa3d488d0099fd27e5441, type: 2}
+  - {fileID: 11400000, guid: d4d737edf8f20834daabd9d49eb4c5ba, type: 2}
+  - {fileID: 11400000, guid: e36e5599d86d27445b8d23d61e5f6b69, type: 2}
+  - {fileID: 11400000, guid: 05d26cf14cfaeb844bcc04686f9bdcee, type: 2}
+  - {fileID: 11400000, guid: 78d3dbbfc00cddb4d887a0a0f9bc2dfb, type: 2}
+  - {fileID: 11400000, guid: ca59af6e984ffd5458257090691e6a4f, type: 2}
+  - {fileID: 11400000, guid: 86e5ea65dae25244e8bb60af4bfac2be, type: 2}
+  - {fileID: 11400000, guid: e4fb349bee102ca43ac672159bc1a75a, type: 2}
+  - {fileID: 11400000, guid: 11a41cda725c5ee4cab424297992fec0, type: 2}
+  - {fileID: 11400000, guid: d36f04dce6cb07f4e9fe1ea05c1448b5, type: 2}
+  - {fileID: 11400000, guid: 165f1aed1877fb543b64f274997e27bc, type: 2}
+  - {fileID: 11400000, guid: 5a42e439893c1d74b8187a717a4601af, type: 2}
+  - {fileID: 11400000, guid: 58a0dba224a619a47bc920a09905a681, type: 2}
+  - {fileID: 11400000, guid: 735a98e35566c494da560f2546bf810b, type: 2}
+  - {fileID: 11400000, guid: 36d69a447cfcf95468c9e091d299e74e, type: 2}
+  - {fileID: 11400000, guid: db25332d39c70004bb48771547884cf8, type: 2}
+  - {fileID: 11400000, guid: 61f73b74c87bd0743a7b0ddf390c7008, type: 2}
+  - {fileID: 11400000, guid: a9e4d1dadc86df7428d922ef9bd54947, type: 2}
+  - {fileID: 11400000, guid: da46c91cd61ef0e4d9cf8182c093352f, type: 2}
+  - {fileID: 11400000, guid: 964efb4b9114fc64597e4e2f627bc816, type: 2}
+  - {fileID: 11400000, guid: f44d222c59409b44f91a8ece18f8e19d, type: 2}
+  - {fileID: 11400000, guid: e6e9dc43ee77951489bc5430942919a6, type: 2}
+  - {fileID: 11400000, guid: 0bfac47de36aaec459e6bb9a058ff900, type: 2}
+  - {fileID: 11400000, guid: 794520f716400ef4ab496d363bd228e0, type: 2}
+  - {fileID: 11400000, guid: 125e2bbb3db91a7419aa6c94b569c038, type: 2}
+  - {fileID: 11400000, guid: 355053e8afeee13488998282d46fc2f0, type: 2}
+  - {fileID: 11400000, guid: 4ddcf12444827cf44a35bfd5c998881a, type: 2}
+  - {fileID: 11400000, guid: f79f9ec59a1051440b597dab468deddb, type: 2}
+  - {fileID: 11400000, guid: ebcddd3debeeab340a31c60cbccac565, type: 2}
+  - {fileID: 11400000, guid: 3f075b9f0d5bf254b9b2469303d2ba53, type: 2}
+  - {fileID: 11400000, guid: d88df57bc85d4b148938944598b5449f, type: 2}
+  - {fileID: 11400000, guid: decad02b9904a2b43844571b81b88a23, type: 2}
+  - {fileID: 11400000, guid: 4a6a43959d054ba48a4a99eee2852528, type: 2}
+  - {fileID: 11400000, guid: 855c1b14030b99746b97febdf195045b, type: 2}
+  - {fileID: 11400000, guid: 89c5dc3caa209d448a2df93575dc3c5f, type: 2}
+  - {fileID: 11400000, guid: 6fb9244b7b69fb64c8b95dddf9b0136a, type: 2}
+  - {fileID: 11400000, guid: c8f22eefc9dae984198486c07dd49f56, type: 2}
+  - {fileID: 11400000, guid: b96f48471bf420047af475006e34187b, type: 2}
+  - {fileID: 11400000, guid: 7650739a002826e46acfb6d3cca5b6dc, type: 2}
+  - {fileID: 11400000, guid: d00ca37dad20f014185683223716d65c, type: 2}
+  - {fileID: 11400000, guid: 23a8cb29f884de54193c976263756f25, type: 2}
+  - {fileID: 11400000, guid: 9d989f14f29b3af4399ec1510fc85307, type: 2}
+  - {fileID: 11400000, guid: 317ef52eec7905e4ab0cbcd853cc4938, type: 2}
+  - {fileID: 11400000, guid: 709520dce04269d49a7585789a479ba9, type: 2}
+  - {fileID: 11400000, guid: c3c000f396c5b844cae94f3bcc944733, type: 2}
+  - {fileID: 11400000, guid: aa737e3efeba172438a401e3ccdf8522, type: 2}
+  - {fileID: 11400000, guid: f0ef66835e3b0cb42847d30d5abcca6d, type: 2}
+  - {fileID: 11400000, guid: 932b93f5a0f1eec479cf46a92c092325, type: 2}
+  - {fileID: 11400000, guid: 2eb3df215aee1e344adc209ba67cff25, type: 2}
+  - {fileID: 11400000, guid: fc58f4a915bed6644a2afbf7ca6a0a39, type: 2}
+  - {fileID: 11400000, guid: acba289f7f76f884e8f76934039c0b51, type: 2}
+  - {fileID: 11400000, guid: 78ece338594913f438ddecf5fd4dd828, type: 2}
+  - {fileID: 11400000, guid: 0ac5e8c836dae4948b17455f150cd01d, type: 2}
+  - {fileID: 11400000, guid: 0546fceea42177f498d660bf11d21c9c, type: 2}
+  - {fileID: 11400000, guid: e1c1d9ef9480b4e4caaec2ede9904267, type: 2}
+  - {fileID: 11400000, guid: 2cd4706e54ee85a4088003ae836b19d2, type: 2}
+  - {fileID: 11400000, guid: 7c41a71e35ac75f439be2f675084dcc7, type: 2}
+  - {fileID: 11400000, guid: 50bb7482964d1cc47a1a754172e5ef67, type: 2}
 --- !u!65 &1542226926
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -32264,3 +32862,5 @@ SceneRoots:
   - {fileID: 409710680}
   - {fileID: 508907076}
   - {fileID: 1621749224}
+  - {fileID: 131617254}
+  - {fileID: 948365770}

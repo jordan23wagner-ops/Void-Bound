@@ -16,7 +16,12 @@ namespace VoidBound.Data
 
         [Header("Consumable (food / potion)")]
         public bool isConsumable;
-        public int healOverTime;      // total HP healed over the duration (0 = none)
-        public float hotDuration = 8f; // seconds the heal-over-time lasts
+        public int healOverTime;      // food: total HP healed over the duration (0 = none)
+        public float hotDuration = 8f; // food: seconds the heal-over-time lasts
+
+        [Header("Potion effect (food leaves this None)")]
+        public ConsumableEffect effect;
+        public int effectMagnitude;      // heal amount, or stat bonus for a buff
+        public float effectDuration = 30f; // buff duration (seconds)
     }
 }
