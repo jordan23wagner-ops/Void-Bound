@@ -31,6 +31,9 @@ namespace VoidBound.Inventory
         public RarityTier GetTier(GearItemSO g) =>
             g == null ? RarityTier.Common : (tiers.TryGetValue(g.itemId, out var t) ? t : g.rarity);
 
+        // Gear stat/damage scaling by tier: +20% per rarity step (Common ×1 → Void ×2.6).
+        public static float StatMultiplier(RarityTier t) => 1f + (int)t * 0.2f;
+
         public bool CanUpgrade(GearItemSO g) =>
             !active && g != null && g.untradable && GetTier(g) < RarityTier.Void;
 

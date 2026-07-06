@@ -12,6 +12,10 @@ namespace VoidBound.Inventory
         private readonly List<GearItemSO> backpack = new();
 
         private StatsComponent stats;
+        private PlayerUpgrades upgrades;
+        // Exact stat bonus applied per slot, so unequip removes what equip added
+        // even if the item's tier changed (upgraded) while worn.
+        private readonly Dictionary<EquipmentSlot, CharacterStats> appliedMods = new();
 
         public IReadOnlyDictionary<EquipmentSlot, GearItemSO> Equipped => equipped;
         public IReadOnlyList<GearItemSO> Backpack => backpack;
@@ -21,6 +25,7 @@ namespace VoidBound.Inventory
         private void Awake()
         {
             stats = GetComponent<StatsComponent>();
+            upgrades = GetComponent<PlayerUpgrades>();
         }
 
         public void AddItem(GearItemSO item)
@@ -49,7 +54,9 @@ namespace VoidBound.Inventory
 
             equipped[slot] = item;
             backpack.Remove(item);
-            ApplyModifiers(item.statModifiers, 1);
+            var mods = ScaledMods(item);
+            if (stats != null) stats.AddGearBonus(mods);
+            appliedMods[slot] = mods;
 
             OnInventoryChanged?.Invoke();
             Debug.Log($"Equipped: {item.displayName} ({item.rarity}) → {slot}");
@@ -62,7 +69,8 @@ namespace VoidBound.Inventory
 
             equipped.Remove(slot);
             backpack.Add(item);
-            ApplyModifiers(item.statModifiers, -1);
+            if (stats != null && appliedMods.TryGetValue(slot, out var applied)) stats.RemoveGearBonus(applied);
+            appliedMods.Remove(slot);
 
             OnInventoryChanged?.Invoke();
             Debug.Log($"Unequipped: {item.displayName} from {slot}");
@@ -75,14 +83,33 @@ namespace VoidBound.Inventory
             return item;
         }
 
-        private void ApplyModifiers(CharacterStats mods, int sign)
+        // Re-scales an equipped item's stat bonus to its current effective tier
+        // (called after an Enchanted-Chest upgrade). Removes the exact bonus that
+        // was applied, then adds the new one.
+        public void RefreshEquipped(GearItemSO item)
         {
-            if (stats == null) return;
+            if (item == null) return;
+            var slot = item.slot;
+            if (!equipped.TryGetValue(slot, out var eq) || eq != item) return;
+            if (stats != null && appliedMods.TryGetValue(slot, out var old)) stats.RemoveGearBonus(old);
+            var mods = ScaledMods(item);
+            if (stats != null) stats.AddGearBonus(mods);
+            appliedMods[slot] = mods;
+            OnInventoryChanged?.Invoke();
+        }
 
-            if (sign > 0)
-                stats.AddGearBonus(mods);
-            else
-                stats.RemoveGearBonus(mods);
+        private RarityTier EffectiveTier(GearItemSO item) =>
+            upgrades != null ? upgrades.GetTier(item) : item.rarity;
+
+        // The item's stat modifiers scaled by its effective tier (upgrades make
+        // gear stronger as it climbs the ladder).
+        private CharacterStats ScaledMods(GearItemSO item)
+        {
+            float m = PlayerUpgrades.StatMultiplier(EffectiveTier(item));
+            var s = item.statModifiers;
+            return new CharacterStats(
+                Mathf.RoundToInt(s.str * m), Mathf.RoundToInt(s.dex * m),
+                Mathf.RoundToInt(s.vig * m), Mathf.RoundToInt(s.intel * m));
         }
     }
 }

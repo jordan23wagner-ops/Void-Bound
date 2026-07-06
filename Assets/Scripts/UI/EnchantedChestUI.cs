@@ -175,6 +175,12 @@ namespace VoidBound.UI
             if (upg.IsActive && upg.ActiveItemId == selected.itemId)
             {
                 bool ok = upg.CompleteNow();
+                if (ok)
+                {
+                    inv.RefreshEquipped(selected);                    // re-scale stats to the new tier
+                    var vis = player.GetComponentInChildren<EquipmentVisuals>();
+                    if (vis != null) vis.RestyleItem(selected);       // re-tint visuals to the new tier
+                }
                 FloatingDamageNumber.SpawnText(player.transform.position,
                     ok ? "Upgrade success!" : "Upgrade failed",
                     ok ? new Color(0.5f, 0.9f, 0.4f) : new Color(0.9f, 0.4f, 0.35f));

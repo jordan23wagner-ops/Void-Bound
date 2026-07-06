@@ -58,6 +58,22 @@ namespace VoidBound.Combat
         private readonly Dictionary<string, Transform> bones = new();
         private Transform modelRoot; // the "Model" child (holds the Animator + 180° facing flip)
         private PlayerInventory inventory;
+        private PlayerUpgrades upgrades; // effective tier for upgraded untradables (player mode)
+
+        // The tier a piece should render at — its upgraded tier if the player has
+        // upgraded it (Enchanted Chest), else the item's base rarity.
+        private RarityTier EffectiveTier(GearItemSO item) =>
+            upgrades != null && item != null ? upgrades.GetTier(item) : (item != null ? item.rarity : RarityTier.Common);
+
+        // Re-applies the rarity treatment to an equipped item's shown pieces at its
+        // current effective tier (called after an Enchanted-Chest upgrade).
+        public void RestyleItem(GearItemSO item)
+        {
+            if (item == null) return;
+            if (shownItem.TryGetValue(item.slot, out var cur) && cur == item &&
+                shown.TryGetValue(item.slot, out var parts))
+                foreach (var go in parts) if (go != null) TintMain(go, EffectiveTier(item));
+        }
 
         public void Configure(BodyType body, EnemyDefinitionSO enemyDef)
         {
@@ -74,6 +90,7 @@ namespace VoidBound.Combat
             if (enemyDefinition != null) { ShowEnemyGear(); return; }
 
             inventory = GetComponent<PlayerInventory>();
+            upgrades = GetComponent<PlayerUpgrades>();
             if (inventory != null)
             {
                 inventory.OnInventoryChanged += SyncPlayer;
@@ -192,7 +209,7 @@ namespace VoidBound.Combat
                 go.name = VisualName(item);
                 go.transform.SetParent(bone, false);
                 ApplyGripOffset(go.transform, bone, item);
-                TintMain(go, item.rarity);
+                TintMain(go, EffectiveTier(item));
                 parts.Add(go);
             }
             else
@@ -216,7 +233,7 @@ namespace VoidBound.Combat
                 {
                     // Single-mesh model (fallback): whole piece on the slot bone.
                     root.transform.SetParent(bone, worldPositionStays: true);
-                    TintMain(root, item.rarity);
+                    TintMain(root, EffectiveTier(item));
                     parts.Add(root);
                 }
                 else
@@ -226,7 +243,7 @@ namespace VoidBound.Combat
                         var boneName = c.name; // sub-part is named for its bone
                         c.SetParent(Bone(boneName), worldPositionStays: true);
                         c.gameObject.name = VisualName(item) + "_" + boneName; // don't shadow the bone name
-                        TintMain(c.gameObject, item.rarity);
+                        TintMain(c.gameObject, EffectiveTier(item));
                         parts.Add(c.gameObject);
                     }
                     Destroy(root); // emptied shell
