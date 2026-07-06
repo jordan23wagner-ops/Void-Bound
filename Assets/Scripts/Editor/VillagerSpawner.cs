@@ -22,11 +22,11 @@ namespace VoidBound.Editor
         // x, z, wanderRadius, attend, faceX, faceZ, tunic
         private static readonly (float x, float z, float r, bool attend, float fx, float fz, string tunic)[] Specs =
         {
-            (1.4f, 3.6f, 0f, true, 0.71f, -0.71f, "TunicBlue"), // customer beside the merchant (now by the square)
-            (3.5f, -3.5f, 3.0f, false, 0f, 0f, "TunicBrown"),   // strolling the square
-            (-4f, 3f, 3.0f, false, 0f, 0f, "TunicGreen"),
-            (4f, 4.5f, 2.5f, false, 0f, 0f, "TunicRed"),        // near the homes
-            (-3.5f, -3f, 3.0f, false, 0f, 0f, "TunicBlue"),
+            (2.2f, -2.2f, 0f, true, 0.71f, -0.71f, "TunicBlue"), // customer facing the merchant
+            (-4f, -1f, 3.0f, false, 0f, 0f, "TunicBrown"),       // strolling the green
+            (4f, 2f, 3.0f, false, 0f, 0f, "TunicGreen"),
+            (-1f, -6f, 3.0f, false, 0f, 0f, "TunicRed"),
+            (3f, -6f, 3.0f, false, 0f, 0f, "TunicBlue"),
         };
 
         [MenuItem("VoidBound/Polish - Spawn Villagers")]

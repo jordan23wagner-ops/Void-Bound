@@ -32,6 +32,7 @@ PALETTE = {
     "Fire":      (1.00, 0.45, 0.10, 1), "Water":     (0.25, 0.60, 0.90, 1),
     "GemCyan":   (0.40, 0.85, 1.00, 1), "Leaf":      (0.28, 0.55, 0.24, 1),
     "Soil":      (0.30, 0.22, 0.15, 1), "ClothRed":  (0.70, 0.20, 0.18, 1),
+    "Water":     (0.28, 0.58, 0.82, 1), "WaterDeep": (0.14, 0.34, 0.52, 1),
     "Grass":     (0.42, 0.62, 0.30, 1), "GrassDry":  (0.55, 0.50, 0.30, 1),
     "DeadWood":  (0.26, 0.24, 0.22, 1), "Bone":      (0.86, 0.83, 0.72, 1),
     "Ash":       (0.34, 0.33, 0.35, 1), "Thatch":    (0.72, 0.60, 0.30, 1),
@@ -150,6 +151,45 @@ def crate():
          box("WoodDark", (0, 0, 0.3), (0.08, 0.64, 0.64))]
     export(p, "Crate")
 
+# ─── Fishing lake + dock (corner water feature) ───
+def lake():
+    p = [cyl("Soil", 6.2, 0.18, (0, 0, 0.02), v=20)]                    # muddy bank (widest)
+    p.append(cyl("WaterDeep", 5.5, 0.14, (0, 0, 0.07), v=20))           # deep water
+    p.append(cyl("Water", 4.3, 0.06, (0, 0, 0.13), v=20))               # shallow top layer
+    for (lx, ly, fl) in [(2.6, 1.4, "ClothRed"), (-2.1, 2.2, "GemCyan"),
+                         (1.2, -2.6, ""), (-2.6, -1.1, ""), (3.2, -1.4, "Gold")]:
+        p.append(cyl("Leaf", 0.36, 0.03, (lx, ly, 0.16), v=8))          # lily pads
+        if fl:
+            p.append(sph(fl, 0.1, (lx, ly, 0.24), seg=5, ring=3))       # blossom
+    for ang in (25, 80, 150, 205, 300, 340):                           # reed clumps on the rim
+        aa = rad(ang)
+        bx, by = 5.0 * math.cos(aa), 5.0 * math.sin(aa)
+        for (ox, oy) in [(0, 0), (0.14, 0.1), (-0.1, 0.12)]:
+            p.append(cyl("Grass", 0.025, 0.8, (bx + ox, by + oy, 0.42), v=4))
+            p.append(cyl("DeadWood", 0.045, 0.14, (bx + ox, by + oy, 0.78), v=5))  # cattail head
+    export(p, "Lake")
+
+def dock():
+    p = [box("WoodLight", (0, 1.7, 0.55), (1.7, 3.4, 0.14))]            # deck (runs +Y over water)
+    for py in (0.4, 1.2, 2.0, 2.8):
+        p.append(box("WoodDark", (0, py, 0.63), (1.7, 0.05, 0.02)))     # plank seams
+    for (px, py) in [(-0.72, 0.3), (0.72, 0.3), (-0.72, 3.1), (0.72, 3.1)]:
+        p.append(cyl("WoodDark", 0.1, 1.5, (px, py, 0.0), v=6))         # posts into the water
+    for px in (-0.72, 0.72):
+        p.append(cyl("WoodDark", 0.06, 0.55, (px, 3.3, 0.85), v=6))     # end rail posts
+    p.append(box("WoodDark", (0, 3.35, 1.05), (1.5, 0.06, 0.06)))       # end rail
+    p.append(cyl("WoodLight", 0.24, 0.5, (0.55, 0.6, 0.85), v=10))      # barrel
+    p.append(cyl("Metal", 0.25, 0.04, (0.55, 0.6, 1.02), v=10))
+    p.append(cyl("WoodDark", 0.02, 1.9, (-0.55, 3.0, 1.5), rot=(rad(52), 0, 0), v=6))  # fishing rod
+    export(p, "Dock")
+
+def signpost():
+    p = [cyl("WoodDark", 0.06, 1.5, (0, 0, 0.75), v=6)]                 # post
+    p.append(box("WoodLight", (0.24, 0, 1.15), (0.55, 0.06, 0.26), rot=(0, 0, rad(-4))))  # boards
+    p.append(box("WoodLight", (-0.24, 0, 0.85), (0.55, 0.06, 0.26), rot=(0, 0, rad(3))))
+    p.append(sph("Gold", 0.05, (0, 0, 1.55)))                          # finial
+    export(p, "Signpost")
+
 # ─── Central town bonfire (focal landmark the village circles around) ───
 def bonfire():
     p = []
@@ -264,7 +304,7 @@ if __name__ == "__main__":
     bpy.ops.wm.read_factory_settings(use_empty=True)
     # Homestead
     tree(); bush(); rock(); grass_tuft(); flowers(); fence(); lamppost(); well(); barrel(); crate()
-    cottage(); house(); bonfire()
+    cottage(); house(); bonfire(); lake(); dock(); signpost()
     # Ashfields
     dead_tree(); boulder(); bones(); brazier(); broken_pillar(); spikes()
     print("[Props] Done - environment props exported.")

@@ -46,7 +46,8 @@ namespace VoidBound.Editor
                 ("Gold",      new Color(0.82f, 0.63f, 0.20f), null),
                 ("Thatch",    new Color(0.72f, 0.60f, 0.30f), null),
                 ("Path",      new Color(0.42f, 0.35f, 0.26f), null),
-                ("Water",     new Color(0.25f, 0.60f, 0.90f), null),
+                ("Water",     new Color(0.28f, 0.58f, 0.82f), null),
+                ("WaterDeep", new Color(0.14f, 0.34f, 0.52f), null),
                 ("ClothRed",  new Color(0.70f, 0.20f, 0.18f), null),
                 ("Leaf",      new Color(0.28f, 0.55f, 0.24f), null),
                 ("Soil",      new Color(0.30f, 0.22f, 0.15f), null),
@@ -183,18 +184,34 @@ namespace VoidBound.Editor
             }
         }
 
+        // Buildings + a ring of points blanketing the lake so scatter avoids the
+        // water (Scatter uses one keep radius, so the lake needs several points).
+        private static Vector2[] WithLake(List<Vector2> buildings, Vector2 lake)
+        {
+            var list = new List<Vector2>(buildings) { lake };
+            for (int i = 0; i < 8; i++)
+            {
+                float a = i * 45f * Mathf.Deg2Rad;
+                list.Add(lake + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * 5f);
+            }
+            return list.ToArray();
+        }
+
         // ─────────────────────────── Homestead ───────────────────────────
         private static void DressHomestead(Dictionary<string, Material> mats)
         {
             var scene = EditorSceneManager.OpenScene("Assets/Scenes/Homestead.unity");
             var root = RebuildRoot(scene);
 
-            var ring = HomesteadLayout.WorldPositions();          // 12 interactive buildings
-            var buildings = new List<Vector2>(ring) { new Vector2(0f, -4.5f) }; // + player spawn
+            var ring = HomesteadLayout.WorldPositions();
+            // Ring order: 0 Merchant, 1 Storage, 2 Forge, 3 Campfire, 4 Garden,
+            // 5 Warriors, 6 Rangers, 7 Mages, 8 Shrine, 9 Pool, 10 Portal, 11 Watchtower.
+            var lakeCentre = new Vector2(18f, 15f);
+            var buildings = new List<Vector2>(ring) { new Vector2(0f, -5f) }; // + player spawn
             var taken = new List<Vector2>();
-            var rng = new System.Random(1337);
+            var rng = new System.Random(4242);
 
-            // Central bonfire (bigger focal landmark, solid + animated) + radial paths.
+            // Central bonfire (solid + animated) — the town green. No radial paths.
             var bonfire = Place(root, mats, "Bonfire", 0f, 0f, 0f, 1.3f);
             taken.Add(Vector2.zero);
             if (bonfire != null)
@@ -203,26 +220,41 @@ namespace VoidBound.Editor
                 col.radius = 1.15f; col.height = 2.4f; col.center = new Vector3(0f, 1.0f, 0f);
                 bonfire.AddComponent<VoidBound.Homestead.BonfireEffect>();
             }
-            foreach (var b in ring) Path(root, mats["Path"], b);
 
-            // Three homes fronting the main paths (door onto the path), plus one
-            // tucked behind the storage chest facing the fire. Ring order:
-            // 0 Merchant, 1 Watchtower, 2 Portal, 3 Mages, 4 Storage, ... 11 Pool.
-            PlaceHouseOnPath(root, mats, "Cottage", ring[2], 6.0f, 3.0f, buildings, taken);   // faces the teleporter path
-            PlaceHouseOnPath(root, mats, "Cottage", ring[1], 6.5f, -3.0f, buildings, taken);  // faces the watchtower path
-            PlaceHouseOnPath(root, mats, "Cottage", ring[11], 7.0f, -3.0f, buildings, taken); // faces the pool path
-            var behind = ring[4].normalized * (ring[4].magnitude + 3.2f);                     // behind the storage chest
-            Place(root, mats, "House", behind.x, behind.y, HomesteadLayout.FaceCentreYaw(behind), 1f);
-            buildings.Add(behind); taken.Add(behind);
+            // Fishing lake + dock in the NE corner, ringed with shore rocks.
+            Place(root, mats, "Lake", lakeCentre.x, lakeCentre.y, 0f, 1f); taken.Add(lakeCentre);
+            var dockPos = lakeCentre + new Vector2(-0.707f, -0.707f) * 4.8f;   // SW shore, toward town
+            Place(root, mats, "Dock", dockPos.x, dockPos.y, 45f, 1f); taken.Add(dockPos);
+            for (int i = 0; i < 5; i++)
+            {
+                float a = i * 72f * Mathf.Deg2Rad + 0.4f;
+                var rp = lakeCentre + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * 6.4f;
+                Place(root, mats, "Rock", rp.x, rp.y, i * 55f, Mathf.Lerp(0.7f, 1.2f, (float)rng.NextDouble()));
+                taken.Add(rp);
+            }
 
-            // Lamp-lit square corners + a village well.
-            foreach (var ang in new[] { 40f, 130f, 220f, 310f })
-            { var p = HomesteadLayout.PosOf(ang, 5.5f); Place(root, mats, "Lamppost", p.x, p.y, 0f, 1f); taken.Add(p); }
-            var wp = new Vector2(-4.5f, 4.6f);
-            Place(root, mats, "Well", wp.x, wp.y, HomesteadLayout.FaceCentreYaw(wp), 1f); taken.Add(wp);
+            // Residential neighbourhood (SE), homes facing the green.
+            var homes = new (string prop, float x, float z)[] {
+                ("House", 7f, -9f), ("Cottage", 10.5f, -8f), ("Cottage", 5f, -12f), ("Cottage", 9.5f, -12f),
+            };
+            foreach (var h in homes)
+            {
+                var p = new Vector2(h.x, h.z);
+                Place(root, mats, h.prop, h.x, h.z, HomesteadLayout.FaceCentreYaw(p), 1f);
+                buildings.Add(p); taken.Add(p);
+            }
 
-            // Barrels & crates by the working buildings (Merchant/Storage/Forge).
-            foreach (var idx in new[] { 0, 4, 7 })
+            // A well on the green, a signpost at the south gateway, lamps around
+            // the plaza + entrance.
+            var wellP = new Vector2(-3.5f, 3f);
+            Place(root, mats, "Well", wellP.x, wellP.y, HomesteadLayout.FaceCentreYaw(wellP), 1f); taken.Add(wellP);
+            Place(root, mats, "Signpost", 2.2f, -8.5f, 40f, 1f); taken.Add(new Vector2(2.2f, -8.5f));
+            foreach (var lp in new[] { new Vector2(3.5f, 2.5f), new Vector2(-3f, -3.5f), new Vector2(4f, -8f),
+                                       new Vector2(-4.5f, -8f), new Vector2(6.5f, 4.5f) })
+            { Place(root, mats, "Lamppost", lp.x, lp.y, 0f, 1f); taken.Add(lp); }
+
+            // Barrels & crates beside the working buildings (Merchant/Storage/Forge = 0,1,2).
+            foreach (var idx in new[] { 0, 1, 2 })
             {
                 Vector2 bp = ring[idx];
                 Vector2 outward = bp.normalized;
@@ -233,18 +265,22 @@ namespace VoidBound.Editor
                 Place(root, mats, "Crate", cpos.x, cpos.y, 30f, 1f); taken.Add(cpos);
             }
 
-            // Fences flanking the south entrance (toward the player spawn).
-            foreach (var f in new (float x, float z, float r)[] { (-4, -14, 80), (-2, -15, 80), (2, -15, 100), (4, -14, 100) })
+            // Fences: a garden plot fence (W) + a stretch along the homes (SE).
+            foreach (var f in new (float x, float z, float r)[] {
+                (-11f, 1.6f, 0f), (-8.8f, 4f, 90f), (-13.2f, 4f, 90f),
+                (7.5f, -6.4f, 20f), (12f, -10.2f, 70f) })
             { Place(root, mats, "Fence", f.x, f.z, f.r, 1f); taken.Add(new Vector2(f.x, f.z)); }
 
-            // Trees: sparse around the fire, a denser forest ring on the outskirts.
-            var treeKeep = new List<Vector2>(buildings) { Vector2.zero }.ToArray();
-            Scatter(root, mats, "Tree", 6, 0.85f, 1.25f, rng, treeKeep, 4.5f, taken, 5f, 7.5f, 13.5f);
-            Scatter(root, mats, "Tree", 34, 0.9f, 1.5f, rng, treeKeep, 3.0f, taken, 3f, 16f, 26f);
-            Scatter(root, mats, "Bush", 16, 0.8f, 1.2f, rng, buildings.ToArray(), 3.0f, taken, 2.2f, 5f, 24f);
-            Scatter(root, mats, "Rock", 9, 0.7f, 1.3f, rng, buildings.ToArray(), 3.0f, taken, 3f, 6f, 24f);
-            Scatter(root, mats, "Flowers", 12, 0.9f, 1.3f, rng, buildings.ToArray(), 2.6f, taken, 1.8f, 4f, 20f);
-            Scatter(root, mats, "GrassTuft", 30, 0.8f, 1.4f, rng, buildings.ToArray(), 2.4f, taken, 1.3f, 4f, 25f);
+            // Trees: a light scatter through town, a forest ring on the outskirts
+            // (the lake corner kept clear).
+            var treeKeepInner = new List<Vector2>(buildings) { Vector2.zero }.ToArray();
+            var treeKeepOuter = WithLake(buildings, lakeCentre);
+            Scatter(root, mats, "Tree", 7, 0.85f, 1.3f, rng, treeKeepInner, 4.5f, taken, 5f, 8f, 14f);
+            Scatter(root, mats, "Tree", 42, 0.9f, 1.5f, rng, treeKeepOuter, 3.2f, taken, 3f, 17f, 27f);
+            Scatter(root, mats, "Bush", 18, 0.8f, 1.2f, rng, treeKeepOuter, 3.0f, taken, 2.2f, 5f, 25f);
+            Scatter(root, mats, "Rock", 8, 0.7f, 1.3f, rng, treeKeepOuter, 3.0f, taken, 3f, 6f, 25f);
+            Scatter(root, mats, "Flowers", 14, 0.9f, 1.3f, rng, buildings.ToArray(), 2.4f, taken, 1.7f, 3.5f, 20f);
+            Scatter(root, mats, "GrassTuft", 32, 0.8f, 1.4f, rng, buildings.ToArray(), 2.2f, taken, 1.3f, 3.5f, 26f);
 
             TuneLighting(warm: true);
             SetGround("Homestead", new Color(0.40f, 0.52f, 0.30f), new Color(0.33f, 0.45f, 0.25f),
