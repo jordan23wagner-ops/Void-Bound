@@ -19,6 +19,9 @@ namespace VoidBound.Editor
         private const string RecDir = "Assets/ScriptableObjects/Recipes/Crafting";
         private const string AmmoDir = "Assets/ScriptableObjects/Materials/Ammo";
 
+        private static readonly string[] Runes = { "fire", "water", "air", "earth" };
+        private static string Cap(string s) => char.ToUpper(s[0]) + s.Substring(1);
+
         private struct Line { public SkillType skill; public string[] names; }
 
         private static readonly Line[] Lines =
@@ -54,7 +57,9 @@ namespace VoidBound.Editor
                 }
             }
             CreateAmmoRecipe("craft_arrows", "Fletch Arrows", CreateAmmo("arrows", "Arrows"), 10);
-            CreateAmmoRecipe("craft_runes", "Inscribe Runes", CreateAmmo("runes", "Runes"), 10);
+            foreach (var e in Runes)
+                CreateAmmoRecipe("craft_rune_" + e, "Inscribe " + Cap(e) + " Runes",
+                    CreateAmmo("rune_" + e, Cap(e) + " Rune"), 10);
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -147,7 +152,7 @@ namespace VoidBound.Editor
                 for (int t = 0; t < line.names.Length; t++) ids.Add($"craft_{sk}_{t}");
             }
             ids.Add("craft_arrows");
-            ids.Add("craft_runes");
+            foreach (var e in Runes) ids.Add("craft_rune_" + e);
 
             var so = new SerializedObject(cs);
             var arr = so.FindProperty("availableRecipes");

@@ -18,7 +18,11 @@ namespace VoidBound.Combat
         private PlayerInventory inventory;
         private PlayerSkills skills;
         private CharacterAnimation anim;
+        private MaterialInventory matInv;
         private float lastAttackTime = -999f;
+
+        // Ranged fires cost 1 Arrow; casts cost 1 rune (first available element).
+        private static readonly string[] RuneIds = { "rune_fire", "rune_water", "rune_air", "rune_earth" };
 
         private void Awake()
         {
@@ -26,6 +30,7 @@ namespace VoidBound.Combat
             inventory = GetComponent<PlayerInventory>();
             skills = GetComponent<PlayerSkills>();
             anim = GetComponent<CharacterAnimation>();
+            matInv = GetComponent<MaterialInventory>();
         }
 
         private void Update()
@@ -79,6 +84,16 @@ namespace VoidBound.Combat
             }
             else
             {
+                // Ranged/magic costs ammo: 1 Arrow per shot, 1 rune per cast. No
+                // ammo → can't attack at range (stock up before a run, §5.7).
+                if (!ConsumeAmmo(style))
+                {
+                    FloatingDamageNumber.SpawnText(transform.position + Vector3.up * 1.6f,
+                        style == WeaponStyle.Ranged ? "Out of arrows" : "Out of runes",
+                        new Color(0.9f, 0.6f, 0.3f));
+                    return;
+                }
+
                 // Ranged/magic: loose a homing projectile that resolves damage +
                 // XP on impact, so the fight plays out at a distance.
                 var kind = style == WeaponStyle.Ranged ? ProjectileKind.Arrow : ProjectileKind.Magic;
@@ -96,6 +111,18 @@ namespace VoidBound.Combat
             if (inventory == null) return WeaponType.Sword;
             var weapon = inventory.GetEquipped(EquipmentSlot.Weapon);
             return weapon != null ? weapon.weaponType : WeaponType.Sword;
+        }
+
+        // Spends ammo for a ranged/magic fire. Ranged → 1 Arrow; Mage → 1 rune of
+        // the first available element. Returns false if none in stock.
+        private bool ConsumeAmmo(WeaponStyle style)
+        {
+            if (matInv == null) return true; // e.g. no material inventory
+            if (style == WeaponStyle.Ranged)
+                return matInv.ConsumeMaterial("arrows", 1);
+            foreach (var id in RuneIds)
+                if (matInv.GetCount(id) > 0) return matInv.ConsumeMaterial(id, 1);
+            return false;
         }
 
         private void OnDrawGizmosSelected()

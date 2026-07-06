@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ccf3d09145cb58043af35bce30af400a, type: 3}
-  m_Name: arrows
+  m_Name: rune_air
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Data.MaterialItemSO
-  itemId: arrows
-  displayName: Arrows
+  itemId: rune_air
+  displayName: Air Rune
   description: 
   icon: {fileID: 0}
   tier: 0
