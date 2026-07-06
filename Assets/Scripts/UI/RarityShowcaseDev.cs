@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using TMPro;
 using VoidBound.Data;
 using VoidBound.Inventory;
@@ -69,8 +70,10 @@ namespace VoidBound.UI
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.RightBracket)) { idx = (idx + 1) % 9; Apply(idx); }
-            else if (Input.GetKeyDown(KeyCode.LeftBracket)) { idx = (idx + 8) % 9; Apply(idx); }
+            var kb = Keyboard.current;
+            if (kb == null) return;
+            if (kb.rightBracketKey.wasPressedThisFrame) { idx = (idx + 1) % 9; Apply(idx); }
+            else if (kb.leftBracketKey.wasPressedThisFrame) { idx = (idx + 8) % 9; Apply(idx); }
         }
 
         private void Apply(int i)
