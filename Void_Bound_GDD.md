@@ -19,7 +19,8 @@
 ## 2. Gear & Equipment System
 
 **Equipment Slots (11 — full RunePortal depth):**
-Weapon, Shield, Head, Cape, Neck, Body, Legs, Hands, Feet, Ring, Ammo
+Weapon, **Offhand**, Head, Cape, Neck, Body, Legs, Hands, Feet, Ring, Ammo
+*(Offhand by class: **Shield** (melee) · **Quiver** (ranger) · **Mage's Book** (mage) — the ranger/mage offhands are untradables that reduce ammo use, §5.6.)*
 
 **Weapon Types (8, carried from RunePortal):**
 Sword, Axe, Spear, Mace, Bow, Crossbow, Staff, Wand *(confirm/adjust during Phase 3)*
@@ -37,7 +38,7 @@ Common grey · Uncommon white · Magic blue · Rare yellow · Epic purple · Leg
 
 **Set system:** Carried from RunePortal — multi-piece bonuses for themed gear sets.
 
-**Ammo slot:** **Arrows** for bow/crossbow, **Runes** for staff/wand — both crafted (§5.2), consumed in combat, and stocked as prep (§5.7).
+**Ammo slot:** **Arrows** (bow/crossbow) and **Runes** (staff/wand) are consumed **per shot / cast**, crafted (§5.2), and stocked as prep (§5.7). The offhand **Quiver** / **Mage's Book** reduce that consumption (§5.6).
 
 ---
 
@@ -97,6 +98,8 @@ Each of the 4 core stats — **VIG, STR, DEX, INT** — is an individually **lev
 | Mini Boss | Zone gatekeeper, moderate difficulty spike |
 | Named Boss | Major zone boss, full mechanic set |
 | World Boss | End-game/event-tier, highest loot ceiling |
+
+**Status effects:** for now the only status is **Poison** — a damage-over-time effect some enemies inflict, cured by **Antidote** potions (§5.3). *(Bleed / curse / others may join later.)* Which enemies apply Poison is TBD.
 
 Loot quality scales with tier. Drop tables remain zone-tiered (per RunePortal architecture) — deeper zones shift rarity odds upward.
 
@@ -163,12 +166,27 @@ This makes depth a deliberate wager: the more you carry, the longer and deadlier
 
 ### 5.3 Gathering → Alchemy
 - **Gathering** — the Sickle ladder gates which of 9 flora (flowers, roots, plants) you can harvest. Field nodes + the **Garden**.
-- **Secondaries** — 20 secondary reagents, obtained **both** from gathering **and** as monster drops.
-- **Alchemy** — combine flora + secondaries (+ refined materials) into potions.
+- **Secondaries** — 20 reagents from gathering **and** monster drops, in two bands: **~8 staples** drop broadly (gathering + common monsters) and feed base / low-tier potions; **~12 premium** secondaries are **zone-tiered** — dropped by tougher enemies in deeper zones — and gate the top-tier potions. Early potions are easy to keep stocked; the best ones demand pushing deeper. *(Full 20-name list + per-zone mapping TBD — resolves as zones are built.)*
+- **Alchemy** — brew potions at the **Garden** from flora + secondaries (+ refined materials). Potions are **portable, stackable** field consumables (unlike the home-only Shrine / Pool buffs, §6). Each family scales **9 tiers** on the flora/rarity spine with **flat temporary boosts**.
+
+**Potion families:**
+
+| Family | Effect |
+|---|---|
+| **Health** | Burst / emergency heal (vs food's slow HoT) |
+| **Warrior** | Temporary **STR** (melee damage) boost |
+| **Ranger** | Temporary **DEX** (ranged damage) boost |
+| **Mage** | Temporary **INT** (magic damage) boost |
+| **Warding** | Temporary defense / damage resistance |
+| **Swiftness** | Temporary movement speed (kiting + death-runs) |
+| **Antidote** | Cures **Poison** (§4) |
+| **Prospector's** | Temporarily boosts drop rate / Void Shard find |
+
+*(No Recall / teleport potion — dying in the field keeps its full weight, §4A. Magnitudes and durations are tuning TBD; Antidote may not need the full 9-tier scaling.)*
 
 ### 5.4 Mining → Smithing
 - **Mining** — the Pickaxe ladder gates which of 9 ore nodes you can mine. Field nodes.
-- **Smithing** — smelt ore into bars at the **Furnace / Forge**, then smith **gear upgrades** and **untradable** equipment.
+- **Smithing** — smelt ore into bars at the **Furnace / Forge**, then forge **untradable** equipment (the base items that later climb the ladder, §5.6) and upgrade components.
 
 ### 5.5 Tool ladders (the 9 grades)
 
@@ -184,10 +202,37 @@ This makes depth a deliberate wager: the more you carry, the longer and deadlier
 | Radiant | Radiant Woodcutting Axe | Radiant Rod | Radiant Pickaxe | Radiant Sickle |
 | Void | Void Axe | Void Pole | Void Pickaxe | Void Sickle |
 
+**Resource ranks** *(placeholder names — the 9 harvestables each tool ladder unlocks):*
+
+| Rank | Log (Woodcutting) | Ore (Mining) | Flora (Gathering) |
+|---|---|---|---|
+| Common | Kindling | Copper | Clover |
+| Uncommon | Pinewood | Tin | Sage |
+| Magic | Oak | Iron | Bramble |
+| Rare | Birch | Silver | Foxglove |
+| Epic | Ashwood | Gold | Nightshade |
+| Legendary | Yew | Mithril | Moonpetal |
+| Obsidian | Blackwood | Obsidian Ore | Obsidian Bloom |
+| Radiant | Radiantwood | Radiant Ore | Radiant Lotus |
+| Void | Voidwood | Void Ore | Voidflower |
+
+*(Fish ranks are in §5.1; the 20 Alchemy secondaries are a separate pool, §5.3.)*
+
 ### 5.6 Untradables, upgrades & ammo
-- **Untradables** are crafted (Crafting) or smithed (Smithing) and cannot be traded.
-- **Enchanted Chest** (Homestead station, §6): consumes **refined materials** to **upgrade an untradable** to higher tiers — the untradable progression sink.
-- **Ammo** (equipment slot): **Arrows** for rangers, **Runes** for mages — both crafted, both consumed in combat, both stocked as prep (§5.7).
+
+**Two gear tracks.** *Tradable* gear is found loot — it drops at whatever rarity it rolls, is tradable, and is fully at risk on death (the **gamble** track). *Untradable* gear is player-made, upgradeable, and reclaimable-for-a-fee on death (§4A) — your reliable **investment** backbone. Upgrading lives entirely on the untradable track; found gear is fixed at its rolled rarity.
+
+**Untradables** are forged by **Smithing** (base item + bars) with **refined materials** from **Crafting**, and cannot be traded.
+
+**Upgrading — ladder climb, time-vs-risk.** At the **Enchanted Chest** (§6) an untradable climbs the **9-tier rarity ladder** one tier per upgrade (Common → Void), visibly transforming via the rarity material treatment and gaining power. Each upgrade consumes **tier-appropriate refined materials** (higher target tier → higher-tier mats), gating progression behind your skilling:
+- Starting an upgrade begins a **timer** (longer for higher tiers), running in **real time** (offline / idle-friendly).
+- **Complete now** for an instant result, at a **success chance that rises the longer the timer has run** — early = riskier. On **failure you lose the materials** — never the item; it stays at its current tier, retry freely.
+- **Wait for the timer to finish** for a guaranteed **100% success**, no material risk.
+- The item is **never lost or downgraded** — only materials are ever at stake (no soft-locks).
+
+*(Open knobs: concurrent-upgrade limit, whether gold / Void Shards can skip the timer, exact timer lengths + odds curve — tuning TBD.)*
+
+**Ammo & offhands.** **Arrows** (bow/crossbow) and **Runes** (staff/wand) are **consumed per shot / cast** — crafted (§5.2), stocked as prep. Each class's **offhand** softens the drain: an untradable **Quiver** (ranger) or **Mage's Book** (mage) reduces ammo consumption and — being untradables — climbs the same upgrade ladder (higher tier = saves more). Melee uses the offhand for a **Shield**.
 
 ### 5.7 The prep-for-adventuring loop *(core tension)*
 The heart of the game. Before a run the player chooses **how much to risk**:
@@ -201,18 +246,20 @@ Fishing, Woodcutting, Gathering, and Mining are field-based resource nodes, not 
 
 ## 6. Homestead Hub
 
-Full 12-building hub carried from RunePortal `HS_BUILDINGS` (list resolved Phase 0, count corrected Phase 6 — this section previously said 9), re-skinned in low-poly Unity style. The **Enchanted Chest** is a new station added with the untradable-upgrade system (§5.6); a home for the **Crafting** skill's bench is still TBD:
+Full 12-building hub carried from RunePortal `HS_BUILDINGS` (list resolved Phase 0, count corrected Phase 6 — this section previously said 9), re-skinned in low-poly Unity style. Three stations are being added for the new systems and **spread across the town** rather than clustered — the **Crafting Bench** (industry corner by the Forge), the **Enchanted Chest** (mystic quarter near the Shrine / Pool), and the **death-reclaim NPC** (by the Fast Travel Portal / respawn):
 
 - **Forge** → Smithing (functional Phase 5)
+- **Crafting Bench** → Crafting: tools, refined materials, bows, arrows, Runes, untradables (§5.2); industry corner by the Forge — *new, to build*
 - **Campfire** → Cooking (functional Phase 5)
 - **Garden** → Gathering + Alchemy (functional Phase 5)
 - **Merchant** → buy/sell shop, data-driven stock (functional Phase 6). Also stocks low-tier **raw fish** and **healing potions** — expensive, a gold-for-time shortcut to self-prepping (§5.5)
 - **Storage Chest** → bank: 48-slot gear storage with deposit/withdraw (functional Phase 6)
-- **Enchanted Chest** → upgrades untradables using refined materials from Crafting (§5.6)
+- **Enchanted Chest** → upgrades untradables via the time-vs-risk timer using refined materials (§5.6); mystic quarter near the Shrine / Pool — *new, to build*
 - **Pool of Refreshment** → full heal + timed all-stat buff, cooldown; 4 upgrade tiers as data, tier 1 live (functional Phase 6)
 - **Shrine** → gold offering for a timed STR/INT blessing, cooldown (functional Phase 6; +% damage from RunePortal adapted to flat stats)
 - **Warriors' / Rangers' / Mages' Guilds** → combat stat training (STR / DEX / INT + 50% VIG side-XP), gold cost scaling with level (functional Phase 6)
 - **Fast Travel Portal** → destination UI in place; actual travel lands with the zone phases
+- **Reclaimer** (death-reclaim NPC) → buy back lost tools / untradables for a gold fee (§4A); by the Portal / respawn point — *new, to build*
 - **Watchtower** → flavor stub; real function TBD in a future phase (RunePortal source unavailable)
 
 Fishing, Woodcutting, Gathering, and Mining are field-based resource nodes (Phase 5 resolution), not Homestead buildings.
