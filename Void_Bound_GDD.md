@@ -85,6 +85,31 @@ Loot quality scales with tier. Drop tables remain zone-tiered (per RunePortal ar
 
 ---
 
+## 4A. Death & Recovery
+
+Death is the teeth behind the prep loop (§5.5): punishing enough that a run's haul genuinely matters, but structured so you can never brick your own progression.
+
+**On death:**
+- **Respawn at the Homestead.**
+- A **gravestone** appears where you fell, **instanced to you** — this is PvE, so no other player can loot it. The only barrier to recovery is the monsters you must fight back through.
+- You **auto-keep your 3 most valuable items** (tunable). A "kept on death" preview shows exactly what you'd keep, so you can weigh a risky push *before* committing.
+- **Everything else you carry drops to the grave** — including equipped gear, loot, materials, consumables, and unbanked gold / Void Shards.
+
+**Recovery — the death-run:**
+- Fast-travel back to the zone and fight your way to the grave to reclaim everything.
+- **No real-time timer** — the grave persists, take as long as you need.
+- **The catch:** only **one grave** exists at a time. **Die again before recovering it, and the previous grave's contents are lost for good.** Greed on the recovery run is how you actually lose things — the further/deeper the grave, the deadlier the trek back.
+
+**Safety net — no soft-locks:**
+- **Tools and untradables** lost this way are **reclaimable at a Homestead NPC for a gold fee** (scales with item value / zone depth). You can never permanently lose the ability to skill or fight — you just pay for the mistake. Doubles as a **gold sink** (§8).
+- **Tradable** gear, loot, materials, and currency lost this way are **genuinely gone.**
+
+**Always safe, regardless:** everything **banked** at the Homestead (stored gear, bank gold / Void Shards) and your **3 auto-kept items**.
+
+This makes depth a deliberate wager: the more you carry, the longer and deadlier the recovery — so *bank often vs. press your luck* becomes a moment-to-moment decision (§5.5).
+
+---
+
 ## 5. Skilling System — tool-gated, no levels
 
 **Skills are not leveled.** There is no skilling XP, level cap, or 99 grind. What you can catch, gather, mine, or make is gated entirely by your **tool / equipment tier** — upgrade the tool and the next rank of resource opens up. *(The four **combat** stats — VIG/STR/DEX/INT — still level via combat XP per §3. That is a separate axis; "no levels" applies only to the gathering/crafting skills below.)*
@@ -157,7 +182,7 @@ Homestead = safe zone, no combat, full crafting/progression hub. This is the pla
 ## 8. Currency & Economy
 
 *(Recommend, confirm during Phase 0):*
-- **Gold** — primary currency, dropped by enemies, used for vendor trades/repairs
+- **Gold** — primary currency, dropped by enemies. Sinks: vendor trades/repairs, prep restocks (§6), and death-reclaim fees for lost tools/untradables (§4A)
 - **Void Shards** — secondary currency, earned from Elite+ tier kills and bosses, used for premium crafting/upgrades (thematically ties to "Void Bound"/"Void Throne")
 
 ---
