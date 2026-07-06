@@ -24,12 +24,15 @@ Weapon, Shield, Head, Cape, Neck, Body, Legs, Hands, Feet, Ring, Ammo
 **Weapon Types (8, carried from RunePortal):**
 Sword, Axe, Spear, Mace, Bow, Crossbow, Staff, Wand *(confirm/adjust during Phase 3)*
 
-**Rarity Tiers (9, full depth):**
-Common → Uncommon → Rare → Epic → Legendary → Mythic → Ascended → Eternal → *(top tier name TBD — pull from RunePortal GEAR_DB)*
+**Rarity Tiers (9, canonical — CONFIRMED):**
+Common → Uncommon → Magic → Rare → Epic → Legendary → Obsidian → Radiant → Void
+
+**Rarity colours (canonical, source of truth):**
+Common grey · Uncommon white · Magic blue · Rare yellow · Epic purple · Legendary orange · Obsidian blackish-white (cool silver) · Radiant reddish-white (rose) · Void purple/black. Implemented in `RarityVisualEffects.GetRarityColor`.
 
 **Visual rarity language (Unity translation of Three.js glow system):**
 - Common/Uncommon: flat color, no emission
-- Rare+: emissive material trim (URP Emission channel), color-coded per tier
+- Magic+: emissive material trim (URP Emission channel), color-coded per tier
 - Legendary+: particle accent (simple URP particle system — sparkle/aura), subtle idle animation on equipped item
 
 **Set system:** Carried from RunePortal — multi-piece bonuses for themed gear sets.

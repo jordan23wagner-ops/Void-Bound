@@ -5,15 +5,16 @@ namespace VoidBound.Inventory
 {
     public static class RarityVisualEffects
     {
-        private static readonly Color CommonColor = new(0.7f, 0.7f, 0.7f);
-        private static readonly Color UncommonColor = new(0.3f, 0.8f, 0.3f);
-        private static readonly Color RareColor = new(0.2f, 0.6f, 1f);
-        private static readonly Color EpicColor = new(0.7f, 0.3f, 0.9f);
-        private static readonly Color LegendaryColor = new(1f, 0.75f, 0.1f);
-        private static readonly Color MythicColor = new(1f, 0.4f, 0.2f);
-        private static readonly Color AscendedColor = new(0.4f, 1f, 0.9f);
-        private static readonly Color EternalColor = new(0.9f, 0.9f, 1f);
-        private static readonly Color VoidforgedColor = new(0.6f, 0.1f, 1f);
+        // Canonical rarity colours.
+        private static readonly Color CommonColor    = new(0.72f, 0.72f, 0.72f); // grey
+        private static readonly Color UncommonColor  = new(0.93f, 0.93f, 0.93f); // white
+        private static readonly Color MagicColor     = new(0.24f, 0.55f, 1.00f); // blue
+        private static readonly Color RareColor      = new(1.00f, 0.84f, 0.14f); // yellow
+        private static readonly Color EpicColor      = new(0.66f, 0.30f, 0.90f); // purple
+        private static readonly Color LegendaryColor = new(1.00f, 0.55f, 0.10f); // orange
+        private static readonly Color ObsidianColor  = new(0.78f, 0.80f, 0.86f); // blackish-white (cool silver)
+        private static readonly Color RadiantColor   = new(0.98f, 0.82f, 0.82f); // reddish-white (rose)
+        private static readonly Color VoidColor      = new(0.40f, 0.10f, 0.50f); // purple/black
 
         public static Color GetRarityColor(RarityTier rarity)
         {
@@ -21,13 +22,13 @@ namespace VoidBound.Inventory
             {
                 RarityTier.Common => CommonColor,
                 RarityTier.Uncommon => UncommonColor,
+                RarityTier.Magic => MagicColor,
                 RarityTier.Rare => RareColor,
                 RarityTier.Epic => EpicColor,
                 RarityTier.Legendary => LegendaryColor,
-                RarityTier.Mythic => MythicColor,
-                RarityTier.Ascended => AscendedColor,
-                RarityTier.Eternal => EternalColor,
-                RarityTier.Voidforged => VoidforgedColor,
+                RarityTier.Obsidian => ObsidianColor,
+                RarityTier.Radiant => RadiantColor,
+                RarityTier.Void => VoidColor,
                 _ => Color.white
             };
         }
@@ -38,8 +39,8 @@ namespace VoidBound.Inventory
 
             var renderers = target.GetComponentsInChildren<Renderer>();
             Color rarityColor = GetRarityColor(rarity);
-            bool hasEmission = rarity >= RarityTier.Rare;
-            bool hasParticles = rarity >= RarityTier.Legendary;
+            bool hasEmission = rarity >= RarityTier.Magic;      // Magic+ glow
+            bool hasParticles = rarity >= RarityTier.Legendary; // Legendary+ aura
 
             foreach (var r in renderers)
             {

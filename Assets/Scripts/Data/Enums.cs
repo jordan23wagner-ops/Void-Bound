@@ -28,17 +28,21 @@ namespace VoidBound.Data
         Wand
     }
 
+    // Canonical rarity ladder (ascending). Colours in RarityVisualEffects:
+    // Common grey · Uncommon white · Magic blue · Rare yellow · Epic purple ·
+    // Legendary orange · Obsidian silver(blackish-white) · Radiant rose(reddish-
+    // white) · Void purple/black.
     public enum RarityTier
     {
         Common,
         Uncommon,
+        Magic,
         Rare,
         Epic,
         Legendary,
-        Mythic,
-        Ascended,
-        Eternal,
-        Voidforged
+        Obsidian,
+        Radiant,
+        Void
     }
 
     public enum EnemyTier

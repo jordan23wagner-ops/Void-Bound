@@ -286,7 +286,7 @@ namespace VoidBound.Editor
                     new RarityWeight { rarity = RarityTier.Rare, weight = 35f },
                     new RarityWeight { rarity = RarityTier.Epic, weight = 25f },
                     new RarityWeight { rarity = RarityTier.Legendary, weight = 15f },
-                    new RarityWeight { rarity = RarityTier.Mythic, weight = 5f }
+                    new RarityWeight { rarity = RarityTier.Obsidian, weight = 5f }
                 });
 
             var weakLT = AssetDatabase.LoadAssetAtPath<LootTableSO>($"{ltDir}/WeakLoot.asset");
@@ -763,7 +763,7 @@ namespace VoidBound.Editor
             var legendary = CreateGearAsset(soDir, "Flamecleaver", EquipmentSlot.Weapon, WeaponType.Sword2H,
                 RarityTier.Legendary, new CharacterStats(12, 5, 3, 0), 22);
             var voidforged = CreateGearAsset(soDir, "Voidreaver", EquipmentSlot.Weapon, WeaponType.Sword2H,
-                RarityTier.Voidforged, new CharacterStats(20, 10, 8, 5), 35);
+                RarityTier.Void, new CharacterStats(20, 10, 8, 5), 35);
 
             var inv = player.GetComponent<PlayerInventory>();
             if (inv == null) return;

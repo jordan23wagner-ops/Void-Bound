@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Cape of Kings
   slot: 10
   weaponType: 0
-  rarity: 4
+  rarity: 5
   statModifiers:
     str: 0
     dex: 6

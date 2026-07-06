@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Dread Sabatons
   slot: 5
   weaponType: 0
-  rarity: 3
+  rarity: 4
   statModifiers:
     str: 2
     dex: 0

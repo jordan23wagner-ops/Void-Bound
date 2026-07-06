@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Shadow Grips
   slot: 6
   weaponType: 0
-  rarity: 3
+  rarity: 4
   statModifiers:
     str: 0
     dex: 3

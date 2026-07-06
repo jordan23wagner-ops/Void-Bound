@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Shadow Garb
   slot: 3
   weaponType: 0
-  rarity: 3
+  rarity: 4
   statModifiers:
     str: 0
     dex: 6

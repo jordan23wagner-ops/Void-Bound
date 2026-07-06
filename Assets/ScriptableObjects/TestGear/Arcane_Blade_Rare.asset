@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Arcane Blade
   slot: 0
   weaponType: 1
-  rarity: 2
+  rarity: 3
   statModifiers:
     str: 5
     dex: 3

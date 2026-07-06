@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Runic Chestplate
   slot: 3
   weaponType: 0
-  rarity: 2
+  rarity: 3
   statModifiers:
     str: 0
     dex: 0

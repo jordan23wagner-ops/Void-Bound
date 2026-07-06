@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Flamecleaver
   slot: 0
   weaponType: 2
-  rarity: 4
+  rarity: 5
   statModifiers:
     str: 12
     dex: 5

@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Dread Gauntlets
   slot: 6
   weaponType: 0
-  rarity: 3
+  rarity: 4
   statModifiers:
     str: 3
     dex: 0
