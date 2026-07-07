@@ -310,6 +310,8 @@ namespace VoidBound.UI
             if (portal != null && (object)portal != except) portal.Close();
             var crafting = host.GetComponent<Skilling.CraftingUI>();
             if (crafting != null && (object)crafting != except) crafting.Close();
+            var reclaim = host.GetComponent<ReclaimUI>();
+            if (reclaim != null && (object)reclaim != except) reclaim.Close();
         }
     }
 }

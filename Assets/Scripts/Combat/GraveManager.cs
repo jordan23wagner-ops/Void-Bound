@@ -27,6 +27,9 @@ namespace VoidBound.Combat
         private static GraveManager instance;
         private Grave pending;
         private Gravestone visual;
+        // Untradable gear from graves abandoned by a second death (§4A) — the
+        // Reclaimer buys these back for a gold fee. Tradables are gone for good.
+        private readonly List<GearItemSO> reclaimable = new();
 
         private static GraveManager Instance
         {
@@ -47,6 +50,13 @@ namespace VoidBound.Combat
             List<MaterialInventory.Stack> materials, int gold, int shards)
         {
             var m = Instance;
+            // Dying again abandons the previous un-recovered grave (§4A): its
+            // untradable gear moves to the Reclaimer's registry (buyable back for
+            // a fee); its tradables, materials and currency are lost for good.
+            if (m.pending != null && m.pending.items != null)
+                foreach (var item in m.pending.items)
+                    if (item != null && item.untradable) m.reclaimable.Add(item);
+
             m.ClearVisual();
             m.pending = new Grave { scene = scene, position = position, items = items, materials = materials, gold = gold, shards = shards };
             // The visual is NOT spawned here: at the moment of death the corpse is
@@ -92,6 +102,15 @@ namespace VoidBound.Combat
             instance.ClearVisual();
             instance.pending = null;
         }
+
+        // Untradable gear waiting to be bought back at the Reclaimer (§4A).
+        public static IReadOnlyList<GearItemSO> Reclaimable =>
+            instance != null ? (IReadOnlyList<GearItemSO>)instance.reclaimable : System.Array.Empty<GearItemSO>();
+
+        // The Reclaimer bought one back: remove it from the registry. Returns
+        // false if it was no longer there (already reclaimed).
+        public static bool ReclaimItem(GearItemSO item) =>
+            item != null && instance != null && instance.reclaimable.Remove(item);
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {

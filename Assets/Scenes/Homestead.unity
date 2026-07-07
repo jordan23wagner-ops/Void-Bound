@@ -14318,6 +14318,7 @@ GameObject:
   - component: {fileID: 925212601}
   - component: {fileID: 925212602}
   - component: {fileID: 925212603}
+  - component: {fileID: 925212604}
   m_Layer: 0
   m_Name: HUDCanvas
   m_TagString: Untagged
@@ -14567,6 +14568,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a7e29ab4b261954abb27e4e328f5748, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.UI.EnchantedChestUI
+--- !u!114 &925212604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 925212588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7c70cde0218c25478c1290be630e5db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.UI.ReclaimUI
 --- !u!1001 &930745624
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -22768,7 +22781,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1410675423}
   - component: {fileID: 1410675425}
-  - component: {fileID: 1410675424}
+  - component: {fileID: 1410675426}
   m_Layer: 0
   m_Name: Reclaimer
   m_TagString: Untagged
@@ -22792,23 +22805,6 @@ Transform:
   - {fileID: 1342658532}
   m_Father: {fileID: 1044894395}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1410675424
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1410675422}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d7bfe7c6ed50174eb3f9749e16d3c14, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Homestead.PlaceholderStation
-  interactPrompt: Reclaim
-  interactRange: 3
-  tooltipDescription: Recover tools/untradables lost on death, for a gold fee. (coming
-    soon)
-  comingSoonNote: Death reclaim coming soon.
 --- !u!65 &1410675425
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -22830,6 +22826,24 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1.8, z: 1}
   m_Center: {x: 0, y: 0.9, z: 0}
+--- !u!114 &1410675426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1410675422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75f00d35760932b479f86eee825787fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Homestead.ReclaimerStation
+  interactPrompt: Reclaim
+  interactRange: 3
+  tooltipDescription: Buy back tools/untradables lost to an abandoned grave, for
+    a gold fee.
+  baseFee: 25
+  valueFeeRatio: 0.5
 --- !u!1 &1412159882 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 20dbac99036cd1942a7d61c0cded4959, type: 3}
