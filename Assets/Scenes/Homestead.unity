@@ -14319,7 +14319,6 @@ GameObject:
   - component: {fileID: 925212602}
   - component: {fileID: 925212603}
   - component: {fileID: 925212604}
-  - component: {fileID: 925212605}
   m_Layer: 0
   m_Name: HUDCanvas
   m_TagString: Untagged
@@ -14581,18 +14580,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7c70cde0218c25478c1290be630e5db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.UI.ReclaimUI
---- !u!114 &925212605
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 925212588}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3dd23e1b7c17435498e3d3b1ae6d4931, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.UI.DeathPreviewUI
 --- !u!1001 &930745624
 PrefabInstance:
   m_ObjectHideFlags: 0
