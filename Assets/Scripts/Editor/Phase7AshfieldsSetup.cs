@@ -144,7 +144,8 @@ namespace VoidBound.Editor
             EnsureLight();
             EnsureSpawnPointAt(new Vector3(0f, 0.08f, -5f));
             EnsurePortalBuilding();
-            EnsureEnemies();
+            // Enemies are driven by respawning EnemySpawners now, not placed
+            // statically here — run "VoidBound/Setup Ashfields Encounters".
 
             if (!File.Exists(AshfieldsScenePath))
                 EditorSceneManager.SaveScene(scene, AshfieldsScenePath);
@@ -220,20 +221,6 @@ namespace VoidBound.Editor
             so.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        private static void EnsureEnemies()
-        {
-            var scout = AssetDatabase.LoadAssetAtPath<EnemyDefinitionSO>("Assets/ScriptableObjects/Enemies/Goblin_Scout.asset");
-            var warrior = AssetDatabase.LoadAssetAtPath<EnemyDefinitionSO>("Assets/ScriptableObjects/Enemies/Goblin_Warrior.asset");
-            var weakLoot = AssetDatabase.LoadAssetAtPath<LootTableSO>("Assets/ScriptableObjects/LootTables/WeakLoot.asset");
-            var standardLoot = AssetDatabase.LoadAssetAtPath<LootTableSO>("Assets/ScriptableObjects/LootTables/StandardLoot.asset");
-
-            // Fallback placement — no RunePortal source for exact Ashfields density; tunable.
-            SpawnEnemyIfMissing("Ashfields Goblin Scout 1", scout, EnemyTier.Weak, weakLoot, new Vector3(4f, 0.1f, 3f));
-            SpawnEnemyIfMissing("Ashfields Goblin Scout 2", scout, EnemyTier.Weak, weakLoot, new Vector3(-6f, 0.1f, 5f));
-            SpawnEnemyIfMissing("Ashfields Goblin Warrior 1", warrior, EnemyTier.Standard, standardLoot, new Vector3(8f, 0.1f, -3f));
-            SpawnEnemyIfMissing("Ashfields Goblin Warrior 2", warrior, EnemyTier.Standard, standardLoot, new Vector3(-8f, 0.1f, -7f));
-        }
-
         // SceneManager.LoadScene(string) silently fails if the scene isn't in
         // Build Settings — required for PortalUI's real travel to work at all.
         private static void EnsureBuildScenes()
@@ -247,45 +234,6 @@ namespace VoidBound.Editor
             if (!HasScene(AshfieldsScenePath))
                 scenes.Add(new EditorBuildSettingsScene(AshfieldsScenePath, true));
             EditorBuildSettings.scenes = scenes.ToArray();
-        }
-
-        private static void SpawnEnemyIfMissing(string name, EnemyDefinitionSO definition, EnemyTier tier,
-                                                 LootTableSO lootTable, Vector3 position)
-        {
-            if (GameObject.Find(name) != null) return;
-            if (definition == null || lootTable == null)
-            {
-                Debug.LogWarning($"[Phase7] Missing definition/loot table for '{name}' — skipped.");
-                return;
-            }
-
-            var fbx = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Art/Models/EnemyPlaceholder.fbx");
-            GameObject go = fbx != null
-                ? (GameObject)PrefabUtility.InstantiatePrefab(fbx)
-                : GameObject.CreatePrimitive(PrimitiveType.Cube);
-            go.name = name;
-            go.transform.position = position;
-
-            var cc = go.AddComponent<CharacterController>();
-            cc.radius = 0.35f;
-            cc.height = 1.4f;
-            cc.center = new Vector3(0f, 0.7f, 0f);
-
-            go.AddComponent<StatsComponent>();
-            go.AddComponent<Health>();
-
-            var ai = go.AddComponent<EnemyAI>();
-            var aiSO = new SerializedObject(ai);
-            aiSO.FindProperty("definition").objectReferenceValue = definition;
-            aiSO.ApplyModifiedPropertiesWithoutUndo();
-
-            var dropper = go.AddComponent<LootDropper>();
-            dropper.SetLootTable(lootTable, tier);
-
-            // World-space health bar (child, finds Health via GetComponentInParent)
-            var hb = new GameObject("HealthBar");
-            hb.transform.SetParent(go.transform, false);
-            hb.AddComponent<VoidBound.Combat.HealthBar>();
         }
     }
 }

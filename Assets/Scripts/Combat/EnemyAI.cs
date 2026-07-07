@@ -44,6 +44,12 @@ namespace VoidBound.Combat
             health.OnDeath += HandleDeath;
         }
 
+        // Runtime entry point for spawners (EnemySpawner): assign the definition
+        // after AddComponent but before Start runs, so Start() applies its stats/
+        // ranges/damage/poison. The editor placement scripts set the private
+        // [SerializeField] via SerializedObject instead; this is the runtime path.
+        public void SetDefinition(EnemyDefinitionSO def) => definition = def;
+
         private void Start()
         {
             if (definition != null)
