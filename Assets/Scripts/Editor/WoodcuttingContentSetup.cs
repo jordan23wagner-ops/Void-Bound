@@ -21,9 +21,11 @@ namespace VoidBound.Editor
             "Yew", "Blackwood", "Radiantwood", "Voidwood",
         };
 
+        // A small choppable grove in the open north-central woodland — clear of the
+        // (spread-out) buildings, blending with the decorative tree scatter.
         private static readonly Vector3[] TreeSpots =
         {
-            new Vector3(-16f, 0f, 10f), new Vector3(-16f, 0f, -8f), new Vector3(15f, 0f, -12f),
+            new Vector3(-8f, 0f, 11f), new Vector3(-11f, 0f, 8f), new Vector3(-5f, 0f, 14f),
         };
 
         [MenuItem("VoidBound/Setup Woodcutting Content")]
@@ -64,6 +66,7 @@ namespace VoidBound.Editor
                 else { go = GameObject.CreatePrimitive(PrimitiveType.Capsule); go.name = name; }
             }
             go.transform.position = pos;
+            RestyleTree(go); // give it the foliage materials (raw Tree.fbx renders white)
 
             if (go.GetComponent<Collider>() == null)
             {
@@ -85,6 +88,26 @@ namespace VoidBound.Editor
             so.FindProperty("interactRange").floatValue = 2.5f;
             so.FindProperty("interactPrompt").stringValue = "Chop";
             so.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        // The raw Tree.fbx ships with unassigned (white) materials; the decorative
+        // trees get remapped in EnvironmentDressing. Do the same here by slot name
+        // so a choppable tree matches the scenery (Leaf/Wood from Art/Materials/Env).
+        private static void RestyleTree(GameObject go)
+        {
+            const string envDir = "Assets/Art/Materials/Env";
+            var fallback = AssetDatabase.LoadAssetAtPath<Material>($"{envDir}/Leaf.mat");
+            foreach (var r in go.GetComponentsInChildren<MeshRenderer>())
+            {
+                var slots = r.sharedMaterials;
+                var swapped = new Material[slots.Length];
+                for (int i = 0; i < slots.Length; i++)
+                {
+                    string n = slots[i] != null ? slots[i].name : "Leaf";
+                    swapped[i] = AssetDatabase.LoadAssetAtPath<Material>($"{envDir}/{n}.mat") ?? fallback;
+                }
+                r.sharedMaterials = swapped;
+            }
         }
 
         private static void EnsureFolder(string path)

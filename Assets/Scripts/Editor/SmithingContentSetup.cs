@@ -54,12 +54,12 @@ namespace VoidBound.Editor
             AssetDatabase.Refresh();
 
             var scene = EditorSceneManager.OpenScene("Assets/Scenes/Homestead.unity");
-            WireOrCreateOreNode("Ore Deposit", new Vector3(-14f, 0f, 2f));
-            WireOrCreateOreNode("Ore Deposit 2", new Vector3(-13f, 0f, -1f));
+            // Ore is mined in the zones now (AshfieldsResourcesSetup), not in town.
+            // Only the Forge (smelt/forge recipes) stays at the Homestead.
             WireForge();
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
-            Debug.Log("[Smithing] 9 ore + 9 bars + smelt/forge recipes wired to the Forge; ore node tiered.");
+            Debug.Log("[Smithing] 9 ore + 9 bars + smelt/forge recipes wired to the Forge.");
         }
 
         public static void RunFromBatch() => Run();

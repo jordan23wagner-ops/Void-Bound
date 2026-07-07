@@ -211,22 +211,11 @@ namespace VoidBound.Editor
             ApplyTint(go, tint);
         }
 
-        private static void SpawnResourceNodes()
-        {
-            string matDir = "Assets/ScriptableObjects/Materials";
-            var herb = AssetDatabase.LoadAssetAtPath<MaterialItemSO>($"{matDir}/herb.asset");
-            var rawFish = AssetDatabase.LoadAssetAtPath<MaterialItemSO>($"{matDir}/raw_fish.asset");
-            var ironOre = AssetDatabase.LoadAssetAtPath<MaterialItemSO>($"{matDir}/iron_ore.asset");
-
-            SpawnResourceNode("Herb Patch 1", null, new Vector3(9f, 0, 10f), herb, SkillType.Gathering, 15,
-                new Color(0.3f, 0.65f, 0.2f));
-            SpawnResourceNode("Herb Patch 2", null, new Vector3(11f, 0, 9f), herb, SkillType.Gathering, 15,
-                new Color(0.25f, 0.6f, 0.2f));
-            SpawnResourceNode("Fishing Spot", "ResourceNode_FishSpot", new Vector3(14f, 0, 0f), rawFish,
-                SkillType.Fishing, 20, new Color(0.3f, 0.45f, 0.6f));
-            SpawnResourceNode("Iron Deposit", "ResourceNode_Rock", new Vector3(-14f, 0, 2f), ironOre,
-                SkillType.Mining, 20, new Color(0.5f, 0.42f, 0.35f));
-        }
+        // Materials no longer spawn in town. Fishing + woodcutting live at the
+        // Homestead via their own content setups (pond spots, tree grove); ore and
+        // herbs are gathered in the zones (AshfieldsResourcesSetup). Kept as a
+        // no-op so the Phase 5 caller is unchanged and idempotent.
+        private static void SpawnResourceNodes() { }
 
         private static void SpawnResourceNode(string name, string modelName, Vector3 pos,
             MaterialItemSO mat, SkillType skill, int xp, Color tint)
