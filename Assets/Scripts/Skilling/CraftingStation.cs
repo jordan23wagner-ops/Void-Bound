@@ -14,6 +14,11 @@ namespace VoidBound.Skilling
         public SkillType StationType => skillType;
         public RecipeDefinitionSO[] AvailableRecipes => availableRecipes;
 
+        // Open the panel once per approach — without this the base default (true)
+        // re-fires OnInteract every proximity tick, re-Open()ing the panel and
+        // making it flicker/rebuild. Matches every other station.
+        public override bool RepeatOnProximity => false;
+
         public override void OnInteract(GameObject instigator)
         {
             var ui = Object.FindAnyObjectByType<CraftingUI>();
