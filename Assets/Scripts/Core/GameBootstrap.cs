@@ -56,7 +56,7 @@ namespace VoidBound.Core
         // destroyed in Awake.
         private void Start()
         {
-            if (instance == this && SaveSystem.HasSave)
+            if (instance == this && SaveSystem.AutoEnabled && SaveSystem.HasSave)
                 StartCoroutine(LoadAfterStartup());
         }
 
@@ -68,7 +68,7 @@ namespace VoidBound.Core
 
         private void OnApplicationQuit()
         {
-            if (instance == this)
+            if (instance == this && SaveSystem.AutoEnabled)
                 SaveSystem.Save(player);
         }
 

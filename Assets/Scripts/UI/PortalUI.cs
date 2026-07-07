@@ -146,7 +146,8 @@ namespace VoidBound.UI
                     row.onClick.AddListener(() =>
                     {
                         Close();
-                        VoidBound.Save.SaveSystem.Save(GameObject.FindGameObjectWithTag("Player"));
+                        if (VoidBound.Save.SaveSystem.AutoEnabled)
+                            VoidBound.Save.SaveSystem.Save(GameObject.FindGameObjectWithTag("Player"));
                         SceneManager.LoadScene(targetScene);
                     });
                 }

@@ -18,6 +18,12 @@ namespace VoidBound.Save
         private static string FilePath => Path.Combine(Application.persistentDataPath, "voidbound_save.json");
         public static bool HasSave => File.Exists(FilePath);
 
+        // Automatic save/load (boot-load, quit-save, zone-travel save) is OFF in
+        // the editor by default so dev play sessions don't clobber each other's
+        // state; standalone builds always autosave. Manual Save/Load and the
+        // New Game dev button ignore this flag.
+        public static bool AutoEnabled = !Application.isEditor;
+
         public static void Save(GameObject player)
         {
             if (player == null) return;
@@ -50,11 +56,8 @@ namespace VoidBound.Save
 
             var tools = player.GetComponent<PlayerTools>();
             if (tools != null)
-                foreach (SkillType s in System.Enum.GetValues(typeof(SkillType)))
-                {
-                    var t = tools.GetToolTier(s);
-                    if (t != RarityTier.Common) d.tools.Add(new ToolSave { skill = (int)s, tier = (int)t });
-                }
+                foreach (var kv in tools.Owned) // persist every owned tool, incl. tier-0
+                    d.tools.Add(new ToolSave { skill = (int)kv.Key, tier = (int)kv.Value });
 
             var pool = Object.FindAnyObjectByType<PoolStation>();
             if (pool != null) { d.hasPool = true; d.poolTier = pool.CurrentTier; }

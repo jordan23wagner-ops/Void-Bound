@@ -20,6 +20,7 @@ namespace VoidBound.Skilling
         private bool depleted;
         private float depletedTimer;
         private Renderer nodeRenderer;
+        private float lastWarn;
 
         private void Awake()
         {
@@ -43,6 +44,20 @@ namespace VoidBound.Skilling
         {
             if (depleted) return;
 
+            // Gathering is tool-gated (§5): you must own the skill's tool (its
+            // free tier-0 is crafted at the Crafting Bench). No tool → no harvest.
+            var tools = instigator.GetComponent<PlayerTools>();
+            if (tools == null || !tools.HasTool(gatherSkill))
+            {
+                if (Time.time - lastWarn > 2f) // don't spam while standing at the node
+                {
+                    lastWarn = Time.time;
+                    FloatingDamageNumber.SpawnText(transform.position,
+                        $"Need a {ToolName(gatherSkill)}", new Color(0.9f, 0.5f, 0.35f));
+                }
+                return;
+            }
+
             var matInv = instigator.GetComponent<MaterialInventory>();
             if (matInv == null) return;
 
@@ -58,6 +73,15 @@ namespace VoidBound.Skilling
             if (nodeRenderer != null)
                 nodeRenderer.enabled = false;
         }
+
+        private static string ToolName(SkillType s) => s switch
+        {
+            SkillType.Woodcutting => "axe",
+            SkillType.Fishing => "fishing rod",
+            SkillType.Mining => "pickaxe",
+            SkillType.Gathering => "sickle",
+            _ => "tool"
+        };
 
         // Tool-gated ranks if configured, else the single gatherMaterial.
         private MaterialItemSO PickMaterial(GameObject instigator)

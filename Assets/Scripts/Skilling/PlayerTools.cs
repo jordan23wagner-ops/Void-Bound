@@ -14,6 +14,13 @@ namespace VoidBound.Skilling
     {
         private readonly System.Collections.Generic.Dictionary<SkillType, RarityTier> tiers = new();
 
+        // A skill's tool is "owned" once its (free) tier-0 tool has been crafted.
+        // Gathering requires this; until then the player has no tool for it.
+        public bool HasTool(SkillType skill) => tiers.ContainsKey(skill);
+
+        // Owned tools (skill → tier), for save/load.
+        public System.Collections.Generic.IReadOnlyDictionary<SkillType, RarityTier> Owned => tiers;
+
         public RarityTier GetToolTier(SkillType skill) =>
             tiers.TryGetValue(skill, out var t) ? t : RarityTier.Common;
 
