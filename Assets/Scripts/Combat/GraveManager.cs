@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using VoidBound.Data;
 using VoidBound.Inventory;
+using VoidBound.Skilling;
 
 namespace VoidBound.Combat
 {
@@ -18,6 +19,7 @@ namespace VoidBound.Combat
             public string scene;
             public Vector3 position;
             public List<GearItemSO> items;
+            public List<MaterialInventory.Stack> materials;
             public int gold;
             public int shards;
         }
@@ -41,11 +43,12 @@ namespace VoidBound.Combat
             }
         }
 
-        public static void SetGrave(string scene, Vector3 position, List<GearItemSO> items, int gold, int shards)
+        public static void SetGrave(string scene, Vector3 position, List<GearItemSO> items,
+            List<MaterialInventory.Stack> materials, int gold, int shards)
         {
             var m = Instance;
             m.ClearVisual();
-            m.pending = new Grave { scene = scene, position = position, items = items, gold = gold, shards = shards };
+            m.pending = new Grave { scene = scene, position = position, items = items, materials = materials, gold = gold, shards = shards };
             // The visual is NOT spawned here: at the moment of death the corpse is
             // lying on the death spot, so a stone would appear under/over the body.
             // It's revealed at respawn (RevealGrave) or when the origin zone is
@@ -70,6 +73,11 @@ namespace VoidBound.Combat
             if (inv != null && g.items != null)
                 foreach (var item in g.items)
                     if (item != null) inv.AddItem(item);
+
+            var matInv = player.GetComponent<MaterialInventory>();
+            if (matInv != null && g.materials != null)
+                foreach (var stack in g.materials)
+                    if (stack.material != null) matInv.AddMaterial(stack.material, stack.quantity);
 
             var currency = player.GetComponent<PlayerCurrency>();
             if (currency != null)

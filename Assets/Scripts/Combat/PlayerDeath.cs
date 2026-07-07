@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using VoidBound.Data;
 using VoidBound.Inventory;
+using VoidBound.Skilling;
 
 namespace VoidBound.Combat
 {
@@ -20,6 +21,7 @@ namespace VoidBound.Combat
 
         private Health health;
         private PlayerInventory inventory;
+        private MaterialInventory materialInv;
         private PlayerCurrency currency;
         private CharacterAnimation anim;
         private Core.PlayerController controller;
@@ -31,6 +33,7 @@ namespace VoidBound.Combat
         {
             health = GetComponent<Health>();
             inventory = GetComponent<PlayerInventory>();
+            materialInv = GetComponent<MaterialInventory>();
             currency = GetComponent<PlayerCurrency>();
             anim = GetComponent<CharacterAnimation>();
             controller = GetComponent<Core.PlayerController>();
@@ -47,6 +50,9 @@ namespace VoidBound.Combat
             dying = true;
 
             var dropped = DropLoot();
+            var droppedMaterials = materialInv != null
+                ? materialInv.TakeAll()
+                : new List<MaterialInventory.Stack>();
             int gold = 0, shards = 0;
             if (currency != null)
             {
@@ -54,7 +60,7 @@ namespace VoidBound.Combat
                 gold = taken.gold;
                 shards = taken.shards;
             }
-            GraveManager.SetGrave(SceneManager.GetActiveScene().name, transform.position, dropped, gold, shards);
+            GraveManager.SetGrave(SceneManager.GetActiveScene().name, transform.position, dropped, droppedMaterials, gold, shards);
 
             if (controller != null) controller.enabled = false;
             if (combat != null) combat.enabled = false;
