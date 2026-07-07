@@ -15,13 +15,19 @@ namespace VoidBound.Skilling
         private RectTransform panel;
         private TextMeshProUGUI title;
         private TextMeshProUGUI skillInfo;
+        private RectTransform recipeArea;   // list column; shrinks to make room for tabs
         private RectTransform recipeList;
+        private RectTransform tabBar;
         private TextMeshProUGUI detailText;
         private UnityEngine.UI.Button craftButton;
 
         private CraftingStation currentStation;
         private GameObject currentInstigator;
         private RecipeDefinitionSO selectedRecipe;
+        private RecipeOutputType currentCategory = RecipeOutputType.Tool;
+
+        private struct TabEntry { public UnityEngine.UI.Button btn; public TextMeshProUGUI label; public RecipeOutputType cat; }
+        private readonly System.Collections.Generic.List<TabEntry> tabs = new System.Collections.Generic.List<TabEntry>();
 
         public void Open(CraftingStation station, GameObject instigator)
         {
@@ -58,12 +64,27 @@ namespace VoidBound.Skilling
             skillInfo.rectTransform.pivot = new Vector2(0.5f, 1f);
             skillInfo.rectTransform.sizeDelta = new Vector2(-8, 18);
 
-            var listArea = Panel5cFactory.MakeRect("RecipeArea", content);
-            Panel5cFactory.SetAnchor(listArea, new Vector2(0, 0), new Vector2(0.46f, 1));
-            listArea.offsetMin = new Vector2(0, 0);
-            listArea.offsetMax = new Vector2(-4, -24);
-            recipeList = Panel5cFactory.CreateScrollList(listArea, "RecipeList");
+            recipeArea = Panel5cFactory.MakeRect("RecipeArea", content);
+            Panel5cFactory.SetAnchor(recipeArea, new Vector2(0, 0), new Vector2(0.46f, 1));
+            recipeArea.offsetMin = new Vector2(0, 0);
+            recipeArea.offsetMax = new Vector2(-4, -24);
+            recipeList = Panel5cFactory.CreateScrollList(recipeArea, "RecipeList");
             Panel5cFactory.SetAnchor((RectTransform)recipeList.parent, Vector2.zero, Vector2.one);
+
+            // Category tab strip (Tools / Gear / Ammo…) above the recipe list.
+            // Populated per-station in BuildTabs; hidden for single-category stations.
+            tabBar = Panel5cFactory.MakeRect("TabBar", content);
+            tabBar.anchorMin = new Vector2(0, 1);
+            tabBar.anchorMax = new Vector2(0.46f, 1);
+            tabBar.pivot = new Vector2(0.5f, 1f);
+            tabBar.sizeDelta = new Vector2(-4, 20);
+            tabBar.anchoredPosition = new Vector2(-2, -24);
+            var tabLayout = tabBar.gameObject.AddComponent<UnityEngine.UI.HorizontalLayoutGroup>();
+            tabLayout.spacing = 4f;
+            tabLayout.childForceExpandWidth = true;
+            tabLayout.childForceExpandHeight = true;
+            tabLayout.childControlWidth = true;
+            tabLayout.childControlHeight = true;
 
             var detailArea = Panel5cFactory.MakeRect("DetailArea", content);
             Panel5cFactory.SetAnchor(detailArea, new Vector2(0.46f, 0), new Vector2(1, 1));
@@ -94,9 +115,99 @@ namespace VoidBound.Skilling
         private void Refresh()
         {
             if (currentStation == null || currentInstigator == null) return;
-
-            var tools = currentInstigator.GetComponent<PlayerTools>();
             skillInfo.text = currentStation.StationType.ToString();
+            BuildTabs();
+            RefreshList();
+        }
+
+        // Rebuild the category tabs for whatever this station offers. Tabs show
+        // only when a station has more than one output category (e.g. the Crafting
+        // Bench's Tools / Gear / Ammo); single-category stations skip the strip.
+        private void BuildTabs()
+        {
+            foreach (var t in tabs) if (t.btn != null) Destroy(t.btn.gameObject);
+            tabs.Clear();
+
+            var present = new System.Collections.Generic.List<RecipeOutputType>();
+            AddCategoryIfPresent(present, RecipeOutputType.Tool);
+            AddCategoryIfPresent(present, RecipeOutputType.Gear);
+            AddCategoryIfPresent(present, RecipeOutputType.Material);
+
+            bool showTabs = present.Count > 1;
+            tabBar.gameObject.SetActive(showTabs);
+            recipeArea.offsetMax = new Vector2(-4, showTabs ? -48 : -24);
+
+            if (!present.Contains(currentCategory))
+                currentCategory = present.Count > 0 ? present[0] : RecipeOutputType.Tool;
+
+            if (!showTabs) return;
+
+            foreach (var cat in present)
+            {
+                var capturedCat = cat;
+                var entry = MakeTab(CategoryLabel(cat), capturedCat);
+                entry.btn.onClick.AddListener(() =>
+                {
+                    currentCategory = capturedCat;
+                    UpdateTabVisuals();
+                    RefreshList();
+                });
+                tabs.Add(entry);
+            }
+            UpdateTabVisuals();
+        }
+
+        private void AddCategoryIfPresent(System.Collections.Generic.List<RecipeOutputType> list, RecipeOutputType cat)
+        {
+            if (list.Contains(cat) || currentStation.AvailableRecipes == null) return;
+            foreach (var r in currentStation.AvailableRecipes)
+                if (r != null && r.outputType == cat) { list.Add(cat); return; }
+        }
+
+        private TabEntry MakeTab(string text, RecipeOutputType cat)
+        {
+            var rt = Panel5cFactory.MakeRect("Tab", tabBar);
+            var img = Panel5cFactory.AddButtonBg(rt.gameObject, Color.white, true);
+            rt.gameObject.AddComponent<UnityEngine.UI.LayoutElement>().flexibleWidth = 1f;
+            var lbl = Panel5cFactory.MakeTMP("Label", rt);
+            Panel5cFactory.SetAnchor(lbl.rectTransform, Vector2.zero, Vector2.one);
+            lbl.text = text;
+            lbl.fontSize = 10f;
+            lbl.fontStyle = FontStyles.Bold;
+            lbl.alignment = TextAlignmentOptions.Center;
+            lbl.color = Panel5cFactory.TextMuted;
+            var btn = rt.gameObject.AddComponent<UnityEngine.UI.Button>();
+            btn.targetGraphic = img;
+            btn.colors = Panel5cFactory.MakeColors(Panel5cFactory.RowBg, Panel5cFactory.RowHover, Panel5cFactory.RowPressed);
+            return new TabEntry { btn = btn, label = lbl, cat = cat };
+        }
+
+        private void UpdateTabVisuals()
+        {
+            foreach (var t in tabs)
+                if (t.label != null)
+                    t.label.color = t.cat == currentCategory ? (Color)Panel5cFactory.Gold : (Color)Panel5cFactory.TextMuted;
+        }
+
+        // The station-appropriate name for a Material tab (bench = Ammo, campfire
+        // = Food, garden = Potions, forge = Bars); Tools/Gear are universal.
+        private string CategoryLabel(RecipeOutputType type)
+        {
+            if (type == RecipeOutputType.Tool) return "Tools";
+            if (type == RecipeOutputType.Gear) return "Gear";
+            switch (currentStation.StationType)
+            {
+                case SkillType.Crafting: return "Ammo";
+                case SkillType.Cooking:  return "Food";
+                case SkillType.Alchemy:  return "Potions";
+                case SkillType.Smithing: return "Bars";
+                default:                 return "Items";
+            }
+        }
+
+        private void RefreshList()
+        {
+            var tools = currentInstigator.GetComponent<PlayerTools>();
 
             for (int i = recipeList.childCount - 1; i >= 0; i--)
                 Destroy(recipeList.GetChild(i).gameObject);
@@ -105,16 +216,16 @@ namespace VoidBound.Skilling
             {
                 foreach (var recipe in currentStation.AvailableRecipes)
                 {
-                    if (recipe == null) continue;
+                    if (recipe == null || recipe.outputType != currentCategory) continue;
                     var captured = recipe;
                     RarityTier toolTier = tools != null ? tools.GetToolTier(recipe.requiredSkill) : RarityTier.Common;
                     bool locked = (int)toolTier < (int)recipe.requiredToolTier;
 
                     var row = Panel5cFactory.CreateListRow(recipeList,
                         recipe.displayName,
-                        locked ? $"{recipe.requiredToolTier} tool" : "",
+                        OutputTierLabel(recipe),
                         locked ? (Color)Panel5cFactory.TextMuted : (Color)Panel5cFactory.TextPrimary,
-                        Panel5cFactory.TextMuted,
+                        locked ? (Color)Panel5cFactory.TextMuted : OutputTierColor(recipe),
                         interactable: !locked);
                     row.onClick.AddListener(() => SelectRecipe(captured));
                 }
@@ -123,6 +234,23 @@ namespace VoidBound.Skilling
             selectedRecipe = null;
             detailText.text = "Select a recipe";
             craftButton.gameObject.SetActive(false);
+        }
+
+        // The crafted item's OWN tier/rarity (accurate), not the tool tier
+        // required to make it. Ammo/materials show their stack size instead.
+        private string OutputTierLabel(RecipeDefinitionSO r)
+        {
+            if (r.outputType == RecipeOutputType.Tool && r.outputTool != null) return r.outputTool.tier.ToString();
+            if (r.outputType == RecipeOutputType.Gear && r.outputGear != null) return r.outputGear.rarity.ToString();
+            if (r.outputType == RecipeOutputType.Material && r.outputQuantity > 1) return "x" + r.outputQuantity;
+            return "";
+        }
+
+        private Color OutputTierColor(RecipeDefinitionSO r)
+        {
+            if (r.outputType == RecipeOutputType.Tool && r.outputTool != null) return RarityVisualEffects.GetRarityColor(r.outputTool.tier);
+            if (r.outputType == RecipeOutputType.Gear && r.outputGear != null) return RarityVisualEffects.GetRarityColor(r.outputGear.rarity);
+            return Panel5cFactory.TextPrimary;
         }
 
         private void SelectRecipe(RecipeDefinitionSO recipe)
