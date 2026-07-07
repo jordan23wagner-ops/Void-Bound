@@ -115,6 +115,39 @@ namespace VoidBound.Save
 
         public static void Delete() { if (HasSave) File.Delete(FilePath); }
 
+        // Reset the live session's core progression to a blank slate (dev "New
+        // Game"). Pair with Delete() so the next boot is fresh too.
+        public static void Wipe(GameObject player)
+        {
+            if (player == null) return;
+
+            var cur = player.GetComponent<PlayerCurrency>();
+            if (cur != null) cur.TakeAll();
+
+            var mat = player.GetComponent<MaterialInventory>();
+            if (mat != null) mat.TakeAll();
+
+            var empty = new List<GearItemSO>();
+            var inv = player.GetComponent<PlayerInventory>();
+            if (inv != null) inv.LoadState(empty, empty);
+
+            var store = player.GetComponent<PlayerStorage>();
+            if (store != null) store.LoadState(empty);
+
+            var skills = player.GetComponent<PlayerSkills>();
+            if (skills != null)
+                foreach (SkillType s in System.Enum.GetValues(typeof(SkillType)))
+                    skills.LoadProgress(s, 1, 0);
+
+            var tools = player.GetComponent<PlayerTools>();
+            if (tools != null)
+                foreach (SkillType s in System.Enum.GetValues(typeof(SkillType)))
+                    tools.LoadTier(s, RarityTier.Common);
+
+            var pool = Object.FindAnyObjectByType<PoolStation>();
+            if (pool != null) pool.SetTier(0);
+        }
+
         // Resolve saved gear entries to their SO assets, applying their upgrade tier.
         private static List<GearItemSO> Resolve(List<GearSave> entries, PlayerUpgrades upg)
         {

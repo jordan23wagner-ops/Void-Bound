@@ -15,6 +15,7 @@ namespace VoidBound.UI
         [SerializeField] private Button killAllButton;
         [SerializeField] private Button godModeButton;
         [SerializeField] private Button giveGoldButton;
+        [SerializeField] private Button newGameButton;
 
         private bool godMode;
 
@@ -24,6 +25,7 @@ namespace VoidBound.UI
             if (killAllButton != null) killAllButton.onClick.AddListener(KillAllEnemies);
             if (godModeButton != null) godModeButton.onClick.AddListener(ToggleGodMode);
             if (giveGoldButton != null) giveGoldButton.onClick.AddListener(GiveGold);
+            if (newGameButton != null) newGameButton.onClick.AddListener(NewGame);
         }
 
         // Equip the full test-gear kit straight into its slots (the pool is one
@@ -71,6 +73,16 @@ namespace VoidBound.UI
                 }
             }
             Debug.Log($"[DevTools] Killed {count} enemies.");
+        }
+
+        // Wipe the current run to a blank slate and delete the save file, so this
+        // session and the next boot both start fresh.
+        public void NewGame()
+        {
+            var player = inventory != null ? inventory.gameObject : GameObject.FindGameObjectWithTag("Player");
+            VoidBound.Save.SaveSystem.Wipe(player);
+            VoidBound.Save.SaveSystem.Delete();
+            Debug.Log("[DevTools] New game: progress wiped and save deleted.");
         }
 
         public void ToggleGodMode()
