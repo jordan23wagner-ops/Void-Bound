@@ -7,16 +7,16 @@ using VoidBound.Inventory;
 
 namespace VoidBound.Combat
 {
-    // Player death: keep the equipped weapon + 2 random other equipped items;
-    // everything else (all other worn armor, the whole backpack, and all
-    // currency) drops into a gravestone at the death spot. Respawn back at
-    // Homestead at full HP after the death animation. Auto-attached to the
-    // persisted player by GameBootstrap.
+    // Player death: keep your 3 most valuable items (by goldValue) across
+    // everything carried — equipped and backpack; everything else (the rest of
+    // your gear, the whole backpack, and all currency) drops into a gravestone
+    // at the death spot. Respawn back at Homestead at full HP after the death
+    // animation. Auto-attached to the persisted player by GameBootstrap.
     public class PlayerDeath : MonoBehaviour
     {
         [SerializeField] private float respawnDelay = 2.2f;
         private const string HomeScene = "Homestead";
-        private const int KeepExtraEquipped = 2;
+        private const int KeepCount = 3;
 
         private Health health;
         private PlayerInventory inventory;
@@ -61,37 +61,31 @@ namespace VoidBound.Combat
             StartCoroutine(Respawn());
         }
 
-        // Keep weapon + 2 random other equipped slots; drop the rest of the
-        // equipment plus the entire backpack. Returns the dropped gear.
+        // Rank everything carried (equipped + backpack) by goldValue and keep the
+        // KeepCount most valuable; drop the rest. Equipped items that aren't kept
+        // are unequipped first so their stat bonuses come off before they drop.
+        // Returns the dropped gear.
         private List<GearItemSO> DropLoot()
         {
             var dropped = new List<GearItemSO>();
             if (inventory == null) return dropped;
 
-            var equippedSlots = new List<EquipmentSlot>(inventory.Equipped.Keys);
-            var keep = new HashSet<EquipmentSlot>();
-            if (inventory.Equipped.ContainsKey(EquipmentSlot.Weapon))
-                keep.Add(EquipmentSlot.Weapon);
+            var entries = new List<(GearItemSO item, EquipmentSlot slot, bool equipped)>();
+            foreach (var kv in inventory.Equipped)
+                if (kv.Value != null) entries.Add((kv.Value, kv.Key, true));
+            foreach (var item in inventory.Backpack)
+                if (item != null) entries.Add((item, default, false));
 
-            var others = equippedSlots.FindAll(s => s != EquipmentSlot.Weapon);
-            for (int i = 0; i < others.Count; i++) // Fisher–Yates
+            // Most valuable first; ties are arbitrary (equal value, so equivalent).
+            entries.Sort((a, b) => b.item.goldValue.CompareTo(a.item.goldValue));
+
+            int keep = Mathf.Min(KeepCount, entries.Count);
+            for (int i = keep; i < entries.Count; i++)
             {
-                int j = Random.Range(i, others.Count);
-                (others[i], others[j]) = (others[j], others[i]);
+                var e = entries[i];
+                if (e.equipped) inventory.UnequipItem(e.slot); // moves it to the backpack
+                if (inventory.RemoveItem(e.item)) dropped.Add(e.item);
             }
-            int extra = Mathf.Min(KeepExtraEquipped, others.Count);
-            for (int i = 0; i < extra; i++)
-                keep.Add(others[i]);
-
-            // Unequip everything not kept (moves it to the backpack)...
-            foreach (var slot in equippedSlots)
-                if (!keep.Contains(slot))
-                    inventory.UnequipItem(slot);
-
-            // ...then the whole backpack (originals + just-unequipped) drops.
-            dropped.AddRange(inventory.Backpack);
-            foreach (var item in dropped)
-                inventory.RemoveItem(item);
 
             return dropped;
         }
