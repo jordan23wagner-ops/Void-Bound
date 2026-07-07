@@ -68,6 +68,10 @@ namespace VoidBound.Skilling
             FloatingDamageNumber.SpawnText(transform.position,
                 $"+{gatherQuantity} {mat.displayName}", new Color(0.4f, 0.9f, 0.3f));
 
+            // Show the tool in hand + play the gather swing/cast for this skill.
+            var gatherAnim = instigator.GetComponent<GatherAnimator>();
+            if (gatherAnim != null) gatherAnim.PlayGather(gatherSkill);
+
             depleted = true;
             depletedTimer = respawnTime;
             if (nodeRenderer != null)

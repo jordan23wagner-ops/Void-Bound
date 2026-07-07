@@ -46,6 +46,8 @@ namespace VoidBound.Core
                 player.AddComponent<Combat.PlayerDeath>();
             if (player != null && player.GetComponent<Combat.PoisonStatus>() == null)
                 player.AddComponent<Combat.PoisonStatus>();
+            if (player != null && player.GetComponent<Combat.GatherAnimator>() == null)
+                player.AddComponent<Combat.GatherAnimator>();
 
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
