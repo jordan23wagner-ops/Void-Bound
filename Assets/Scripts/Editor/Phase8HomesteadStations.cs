@@ -68,7 +68,10 @@ namespace VoidBound.Editor
             // the sub-setups needed. Both open/save the scene and are idempotent.
             EnchantedChestSetup.Run();
             ReclaimerSetup.Run();
-            Debug.Log("[Phase8] Enchanted Chest + Reclaimer promoted to their real stations.");
+            // Rebuilding the bench above gives it a bare CraftingStation; re-wire
+            // its recipe list (CraftingContentSetup) so it's never left empty.
+            CraftingContentSetup.Run();
+            Debug.Log("[Phase8] Enchanted Chest + Reclaimer promoted; Crafting Bench recipes re-wired.");
         }
 
         public static void RunFromBatch() => Run();
