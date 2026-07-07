@@ -312,6 +312,8 @@ namespace VoidBound.UI
             if (crafting != null && (object)crafting != except) crafting.Close();
             var reclaim = host.GetComponent<ReclaimUI>();
             if (reclaim != null && (object)reclaim != except) reclaim.Close();
+            var pool = host.GetComponent<PoolUI>();
+            if (pool != null && (object)pool != except) pool.Close();
         }
     }
 }
