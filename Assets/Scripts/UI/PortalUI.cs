@@ -138,8 +138,14 @@ namespace VoidBound.UI
                     var targetScene = zone.sceneName;
                     // Close the panel before travelling — PortalUI lives on the
                     // persisted HUDCanvas, so it would otherwise stay open after
-                    // the destination scene loads.
-                    row.onClick.AddListener(() => { Close(); SceneManager.LoadScene(targetScene); });
+                    // the destination scene loads. Autosave first so progress
+                    // sticks across the trip.
+                    row.onClick.AddListener(() =>
+                    {
+                        Close();
+                        VoidBound.Save.SaveSystem.Save(GameObject.FindGameObjectWithTag("Player"));
+                        SceneManager.LoadScene(targetScene);
+                    });
                 }
             }
         }

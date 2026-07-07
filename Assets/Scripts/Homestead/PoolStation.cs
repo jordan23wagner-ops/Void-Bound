@@ -54,6 +54,9 @@ namespace VoidBound.Homestead
             if (ui != null) ui.Open(this, instigator);
         }
 
+        // Restore the purchased tier from a save.
+        public void SetTier(int tier) => currentTier = Mathf.Clamp(tier, 0, Mathf.Max(0, TierCount - 1));
+
         // Apply this tier's heal + timed all-stat buff and start the cooldown.
         // Returns false if still on cooldown (nothing happens).
         public bool TryRefresh(GameObject instigator)

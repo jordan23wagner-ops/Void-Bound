@@ -22,5 +22,8 @@ namespace VoidBound.Skilling
             if (!tiers.TryGetValue(skill, out var cur) || tier > cur)
                 tiers[skill] = tier;
         }
+
+        // Set the tier unconditionally (save load), bypassing the raise-only rule.
+        public void LoadTier(SkillType skill, RarityTier tier) => tiers[skill] = tier;
     }
 }

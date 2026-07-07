@@ -83,6 +83,23 @@ namespace VoidBound.Inventory
             return item;
         }
 
+        // Replace the whole inventory (save load). Clears current gear (removing
+        // worn stat bonuses) then repopulates. Any upgrade tiers must already be
+        // set on PlayerUpgrades so equip scales stats correctly.
+        public void LoadState(IEnumerable<GearItemSO> newBackpack, IEnumerable<GearItemSO> newEquipped)
+        {
+            foreach (var slot in new List<EquipmentSlot>(equipped.Keys))
+                UnequipItem(slot); // removes bonuses + appliedMods, moves to backpack
+            backpack.Clear();
+
+            if (newBackpack != null)
+                foreach (var it in newBackpack) if (it != null) backpack.Add(it);
+            if (newEquipped != null)
+                foreach (var it in newEquipped) if (it != null) EquipItem(it);
+
+            OnInventoryChanged?.Invoke();
+        }
+
         // Re-scales an equipped item's stat bonus to its current effective tier
         // (called after an Enchanted-Chest upgrade). Removes the exact bonus that
         // was applied, then adds the new one.

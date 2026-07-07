@@ -53,6 +53,15 @@ namespace VoidBound.Skilling
             }
         }
 
+        // Restore a skill's progress from a save (bypasses XP curve / events).
+        public void LoadProgress(SkillType type, int level, int xp)
+        {
+            if (!skills.TryGetValue(type, out var p)) { p = new SkillProgress { type = type }; skills[type] = p; }
+            p.level = Mathf.Max(1, level);
+            p.currentXP = Mathf.Max(0, xp);
+            OnSkillXPChanged?.Invoke(type, p.currentXP, GetXPToNext(type));
+        }
+
         public int GetLevel(SkillType type) => skills.TryGetValue(type, out var p) ? p.level : 1;
         public int GetXP(SkillType type) => skills.TryGetValue(type, out var p) ? p.currentXP : 0;
 

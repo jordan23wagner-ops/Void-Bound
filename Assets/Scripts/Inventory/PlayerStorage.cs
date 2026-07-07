@@ -34,6 +34,15 @@ namespace VoidBound.Inventory
             return true;
         }
 
+        // Replace the whole bank (save load).
+        public void LoadState(IEnumerable<GearItemSO> items)
+        {
+            stored.Clear();
+            if (items != null)
+                foreach (var it in items) if (it != null) stored.Add(it);
+            OnStorageChanged?.Invoke();
+        }
+
         public bool Withdraw(GearItemSO item)
         {
             if (item == null || inventory == null) return false;

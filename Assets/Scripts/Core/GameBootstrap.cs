@@ -1,5 +1,7 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using VoidBound.Save;
 
 namespace VoidBound.Core
 {
@@ -46,6 +48,28 @@ namespace VoidBound.Core
                 player.AddComponent<Combat.PoisonStatus>();
 
             SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+
+        // Load the save once at boot. Deferred one frame so it runs AFTER other
+        // Start() setup (starter gear grants, auto-equip) and authoritatively
+        // overrides it. Only the original instance reaches Start — duplicates are
+        // destroyed in Awake.
+        private void Start()
+        {
+            if (instance == this && SaveSystem.HasSave)
+                StartCoroutine(LoadAfterStartup());
+        }
+
+        private IEnumerator LoadAfterStartup()
+        {
+            yield return null; // let every other component's Start() run first
+            SaveSystem.Load(player);
+        }
+
+        private void OnApplicationQuit()
+        {
+            if (instance == this)
+                SaveSystem.Save(player);
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)

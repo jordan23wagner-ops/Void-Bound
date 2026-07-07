@@ -31,6 +31,12 @@ namespace VoidBound.Inventory
         public RarityTier GetTier(GearItemSO g) =>
             g == null ? RarityTier.Common : (tiers.TryGetValue(g.itemId, out var t) ? t : g.rarity);
 
+        // Restore an item's upgraded tier from a save.
+        public void SetTier(string itemId, RarityTier tier)
+        {
+            if (!string.IsNullOrEmpty(itemId)) tiers[itemId] = tier;
+        }
+
         // Gear stat/damage scaling by tier: +20% per rarity step (Common ×1 → Void ×2.6).
         public static float StatMultiplier(RarityTier t) => 1f + (int)t * 0.2f;
 
