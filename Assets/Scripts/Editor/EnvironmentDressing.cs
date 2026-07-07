@@ -206,7 +206,7 @@ namespace VoidBound.Editor
             var ring = HomesteadLayout.WorldPositions();
             // Ring order: 0 Merchant, 1 Storage, 2 Forge, 3 Campfire, 4 Garden,
             // 5 Warriors, 6 Rangers, 7 Mages, 8 Shrine, 9 Pool, 10 Portal, 11 Watchtower.
-            var lakeCentre = new Vector2(18f, 15f);
+            var lakeCentre = HomesteadLayout.Lake;
             var buildings = new List<Vector2>(ring) { new Vector2(0f, -5f) }; // + player spawn
             var taken = new List<Vector2>();
             var rng = new System.Random(4242);
@@ -233,9 +233,9 @@ namespace VoidBound.Editor
                 taken.Add(rp);
             }
 
-            // Residential neighbourhood (SE), homes facing the green.
+            // Residential neighbourhood (SE pocket), homes facing the green.
             var homes = new (string prop, float x, float z)[] {
-                ("House", 7f, -9f), ("Cottage", 10.5f, -8f), ("Cottage", 5f, -12f), ("Cottage", 9.5f, -12f),
+                ("House", 9f, -12f), ("Cottage", 14f, -13f), ("Cottage", 8f, -16f), ("Cottage", 13f, -16f),
             };
             foreach (var h in homes)
             {
@@ -248,7 +248,7 @@ namespace VoidBound.Editor
             // the plaza + entrance.
             var wellP = new Vector2(-3.5f, 3f);
             Place(root, mats, "Well", wellP.x, wellP.y, HomesteadLayout.FaceCentreYaw(wellP), 1f); taken.Add(wellP);
-            Place(root, mats, "Signpost", 2.2f, -8.5f, 40f, 1f); taken.Add(new Vector2(2.2f, -8.5f));
+            Place(root, mats, "Signpost", 1f, -14f, 30f, 1f); taken.Add(new Vector2(1f, -14f));
             foreach (var lp in new[] { new Vector2(3.5f, 2.5f), new Vector2(-3f, -3.5f), new Vector2(4f, -8f),
                                        new Vector2(-4.5f, -8f), new Vector2(6.5f, 4.5f) })
             { Place(root, mats, "Lamppost", lp.x, lp.y, 0f, 1f); taken.Add(lp); }
@@ -265,22 +265,23 @@ namespace VoidBound.Editor
                 Place(root, mats, "Crate", cpos.x, cpos.y, 30f, 1f); taken.Add(cpos);
             }
 
-            // Fences: a garden plot fence (W) + a stretch along the homes (SE).
+            // Fences: a garden plot fence (W, by the Garden) + a stretch along the
+            // homes (SE).
             foreach (var f in new (float x, float z, float r)[] {
-                (-11f, 1.6f, 0f), (-8.8f, 4f, 90f), (-13.2f, 4f, 90f),
-                (7.5f, -6.4f, 20f), (12f, -10.2f, 70f) })
+                (-21f, 3.6f, 0f), (-18.8f, 6f, 90f), (-23.2f, 6f, 90f),
+                (9f, -9.5f, 20f), (15f, -14.5f, 70f) })
             { Place(root, mats, "Fence", f.x, f.z, f.r, 1f); taken.Add(new Vector2(f.x, f.z)); }
 
             // Trees: a light scatter through town, a forest ring on the outskirts
-            // (the lake corner kept clear).
+            // (the lake corner kept clear). Rings widened to match the spread town.
             var treeKeepInner = new List<Vector2>(buildings) { Vector2.zero }.ToArray();
             var treeKeepOuter = WithLake(buildings, lakeCentre);
-            Scatter(root, mats, "Tree", 7, 0.85f, 1.3f, rng, treeKeepInner, 4.5f, taken, 5f, 8f, 14f);
-            Scatter(root, mats, "Tree", 42, 0.9f, 1.5f, rng, treeKeepOuter, 3.2f, taken, 3f, 17f, 27f);
-            Scatter(root, mats, "Bush", 18, 0.8f, 1.2f, rng, treeKeepOuter, 3.0f, taken, 2.2f, 5f, 25f);
-            Scatter(root, mats, "Rock", 8, 0.7f, 1.3f, rng, treeKeepOuter, 3.0f, taken, 3f, 6f, 25f);
-            Scatter(root, mats, "Flowers", 14, 0.9f, 1.3f, rng, buildings.ToArray(), 2.4f, taken, 1.7f, 3.5f, 20f);
-            Scatter(root, mats, "GrassTuft", 32, 0.8f, 1.4f, rng, buildings.ToArray(), 2.2f, taken, 1.3f, 3.5f, 26f);
+            Scatter(root, mats, "Tree", 10, 0.85f, 1.3f, rng, treeKeepInner, 4.5f, taken, 5f, 9f, 17f);
+            Scatter(root, mats, "Tree", 52, 0.9f, 1.5f, rng, treeKeepOuter, 3.2f, taken, 3f, 15f, 27f);
+            Scatter(root, mats, "Bush", 24, 0.8f, 1.2f, rng, treeKeepOuter, 3.0f, taken, 2.2f, 6f, 26.5f);
+            Scatter(root, mats, "Rock", 12, 0.7f, 1.3f, rng, treeKeepOuter, 3.0f, taken, 3f, 7f, 26.5f);
+            Scatter(root, mats, "Flowers", 18, 0.9f, 1.3f, rng, buildings.ToArray(), 2.4f, taken, 1.7f, 3.5f, 24f);
+            Scatter(root, mats, "GrassTuft", 42, 0.8f, 1.4f, rng, buildings.ToArray(), 2.2f, taken, 1.3f, 3.5f, 27f);
 
             TuneLighting(warm: true);
             SetGround("Homestead", new Color(0.40f, 0.52f, 0.30f), new Color(0.33f, 0.45f, 0.25f),

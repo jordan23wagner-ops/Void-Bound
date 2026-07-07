@@ -18,21 +18,27 @@ namespace VoidBound.Editor
     {
         public static readonly Vector2 Bonfire = Vector2.zero;
 
-        // (GameObject name, x, z) — hand-placed by district.
+        // Fishing lake centre — shared by EnvironmentDressing (the water/dock) and
+        // FishingContentSetup (the fishing spots) so they can never drift apart.
+        public static readonly Vector2 Lake = new Vector2(21f, 16f);
+
+        // (GameObject name, x, z) — hand-placed by district. Spread wide across the
+        // 56×56 map (buildings sit ~11–26 from the green) so the town breathes and
+        // the central bonfire green stays open.
         public static readonly (string name, float x, float z)[] Buildings =
         {
-            ("Merchant",              4f,  -4f),   // market by the green
-            ("Storage Chest",         7f,  -1f),   // bank beside the market
-            ("Forge",                -8f,  -3f),   // crafting quarter (W)
-            ("Campfire",            -11f,  -6f),
-            ("Garden",              -11f,   4f),   // herb garden on the west edge
-            ("Warriors Guild",       -7f,   9f),   // guild row (N)
-            ("Rangers Guild",        -1f,  12f),
-            ("Mages Guild",           5f,  10f),
-            ("Shrine",               10f,   4f),   // spiritual corner (E)
-            ("Pool of Refreshment",  11f,  -5f),
-            ("Fast Travel Portal",    0f, -11f),   // south gateway
-            ("Watchtower",          -10f, -11f),   // SW lookout
+            ("Merchant",             10f,  -6f),   // market, E of the green
+            ("Storage Chest",        16f,  -3f),   // bank beside the market
+            ("Forge",               -15f,  -5f),   // crafting quarter (W)
+            ("Campfire",            -21f,  -9f),
+            ("Garden",              -21f,   6f),   // herb garden on the west edge
+            ("Warriors Guild",      -15f,  15f),   // guild row (NW → N)
+            ("Rangers Guild",        -5f,  21f),
+            ("Mages Guild",           6f,  20f),
+            ("Shrine",               17f,  11f),   // spiritual / mystic quarter (NE)
+            ("Pool of Refreshment",  21f,   2f),   // E
+            ("Fast Travel Portal",    0f, -21f),   // south gateway
+            ("Watchtower",          -19f, -18f),   // SW lookout
         };
 
         public static float FaceCentreYaw(Vector2 p) => Mathf.Atan2(-p.x, -p.y) * Mathf.Rad2Deg + 180f;
