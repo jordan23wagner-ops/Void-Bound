@@ -49,6 +49,7 @@ namespace VoidBound.Combat
             if (dying) return;
             dying = true;
 
+            var kept = PreviewKept(inventory); // what survives — for the death screen
             var dropped = DropLoot();
             var droppedMaterials = materialInv != null
                 ? materialInv.TakeAll()
@@ -61,6 +62,9 @@ namespace VoidBound.Combat
                 shards = taken.shards;
             }
             GraveManager.SetGrave(SceneManager.GetActiveScene().name, transform.position, dropped, droppedMaterials, gold, shards);
+
+            var deathScreen = FindAnyObjectByType<VoidBound.UI.DeathScreenUI>();
+            if (deathScreen != null) deathScreen.Show(kept);
 
             if (controller != null) controller.enabled = false;
             if (combat != null) combat.enabled = false;
@@ -142,6 +146,8 @@ namespace VoidBound.Combat
             // the gravestone (same-scene deaths; cross-scene ones appear when the
             // origin zone is next loaded).
             GraveManager.RevealGrave();
+            var deathScreen = FindAnyObjectByType<VoidBound.UI.DeathScreenUI>();
+            if (deathScreen != null) deathScreen.Hide();
             dying = false;
         }
 
