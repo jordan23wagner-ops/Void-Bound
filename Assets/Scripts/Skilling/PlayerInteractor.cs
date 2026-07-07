@@ -11,7 +11,12 @@ namespace VoidBound.Skilling
 
         private float lastCheckTime;
         private Interactable engaged; // non-repeat interactable already fired this approach
-        private bool justLoaded;      // just arrived in a scene — suppress stations we spawned inside
+        // Suppress auto-firing a station the player is already standing inside on
+        // arrival. Defaults true so the FIRST scene (which enters Play already
+        // loaded and so never raises sceneLoaded) is treated as an arrival too —
+        // otherwise a player who starts within a station's range would have its
+        // panel auto-open and re-open, trapping them.
+        private bool justLoaded = true;
 
         private void OnEnable() { SceneManager.sceneLoaded += OnSceneLoaded; }
         private void OnDisable() { SceneManager.sceneLoaded -= OnSceneLoaded; }
