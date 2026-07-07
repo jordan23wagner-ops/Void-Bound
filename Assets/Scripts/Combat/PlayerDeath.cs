@@ -17,7 +17,7 @@ namespace VoidBound.Combat
     {
         [SerializeField] private float respawnDelay = 2.2f;
         private const string HomeScene = "Homestead";
-        private const int KeepCount = 3;
+        public const int KeepCount = 3;
 
         private Health health;
         private PlayerInventory inventory;
@@ -67,28 +67,48 @@ namespace VoidBound.Combat
             StartCoroutine(Respawn());
         }
 
-        // Rank everything carried (equipped + backpack) by goldValue and keep the
-        // KeepCount most valuable; drop the rest. Equipped items that aren't kept
-        // are unequipped first so their stat bonuses come off before they drop.
-        // Returns the dropped gear.
-        private List<GearItemSO> DropLoot()
+        // Everything carried (equipped + backpack) ranked most-valuable-first by
+        // goldValue. The first KeepCount survive death; the rest drop (§4A). Single
+        // source of truth shared by DropLoot and the death preview so the two can
+        // never disagree. Ties are arbitrary (equal value, so equivalent).
+        private static List<(GearItemSO item, EquipmentSlot slot, bool equipped)> RankCarried(PlayerInventory inventory)
         {
-            var dropped = new List<GearItemSO>();
-            if (inventory == null) return dropped;
-
             var entries = new List<(GearItemSO item, EquipmentSlot slot, bool equipped)>();
+            if (inventory == null) return entries;
+
             foreach (var kv in inventory.Equipped)
                 if (kv.Value != null) entries.Add((kv.Value, kv.Key, true));
             foreach (var item in inventory.Backpack)
                 if (item != null) entries.Add((item, default, false));
 
-            // Most valuable first; ties are arbitrary (equal value, so equivalent).
             entries.Sort((a, b) => b.item.goldValue.CompareTo(a.item.goldValue));
+            return entries;
+        }
 
-            int keep = Mathf.Min(KeepCount, entries.Count);
-            for (int i = keep; i < entries.Count; i++)
+        // The items you'd keep if you died right now — the KeepCount most valuable
+        // across equipped + backpack (§4A). Drives the "kept on death" preview.
+        public static List<GearItemSO> PreviewKept(PlayerInventory inventory)
+        {
+            var ranked = RankCarried(inventory);
+            int keep = Mathf.Min(KeepCount, ranked.Count);
+            var kept = new List<GearItemSO>(keep);
+            for (int i = 0; i < keep; i++) kept.Add(ranked[i].item);
+            return kept;
+        }
+
+        // Keep the KeepCount most valuable; drop the rest. Equipped items that
+        // aren't kept are unequipped first so their stat bonuses come off before
+        // they drop. Returns the dropped gear.
+        private List<GearItemSO> DropLoot()
+        {
+            var dropped = new List<GearItemSO>();
+            if (inventory == null) return dropped;
+
+            var ranked = RankCarried(inventory);
+            int keep = Mathf.Min(KeepCount, ranked.Count);
+            for (int i = keep; i < ranked.Count; i++)
             {
-                var e = entries[i];
+                var e = ranked[i];
                 if (e.equipped) inventory.UnequipItem(e.slot); // moves it to the backpack
                 if (inventory.RemoveItem(e.item)) dropped.Add(e.item);
             }
