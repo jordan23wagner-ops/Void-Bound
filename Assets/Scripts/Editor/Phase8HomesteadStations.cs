@@ -14,7 +14,9 @@ namespace VoidBound.Editor
     // skilling rework — Crafting Bench, Enchanted Chest, Reclaimer — spread
     // across the Homestead. Reuses existing Blender meshes + the Buildings
     // material palette; the Reclaimer reuses the Hero model like a villager.
-    // Idempotent: rebuilds them all under a "NewStations" root each run.
+    // Idempotent: rebuilds them all under a "NewStations" root each run, then
+    // promotes the Enchanted Chest + Reclaimer to their real stations via their
+    // own setup passes — so a re-run never leaves either reverted to a placeholder.
     public static class Phase8HomesteadStations
     {
         private const string ModelDir = "Assets/Art/Models/Buildings";
@@ -44,7 +46,9 @@ namespace VoidBound.Editor
 
             // ── Enchanted Chest — mystic quarter near the Shrine/Pool ───
             // Reuse the StorageChest mesh, recoloured to a glowing Void palette
-            // (gold trim kept) to distinguish it from the plain bank chest.
+            // (gold trim kept) to distinguish it from the plain bank chest. Given
+            // a PlaceholderStation here only as the base state; EnchantedChestSetup
+            // (run below) swaps it for the real EnchantedChestStation + UI.
             var chest = BuildStation(root, "Enchanted Chest", "StorageChest", new Vector2(11f, 0.5f),
                 slot => slot.Contains("Gold") ? "Gold" : "Void");
             var ec = chest.AddComponent<PlaceholderStation>();
@@ -58,6 +62,13 @@ namespace VoidBound.Editor
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
             Debug.Log("[Phase8] Placed Crafting Bench, Enchanted Chest, and Reclaimer under 'NewStations'.");
+
+            // Promote the two placeholder stations to their real components + UI
+            // wiring so this pass always ends fully wired — no manual re-runs of
+            // the sub-setups needed. Both open/save the scene and are idempotent.
+            EnchantedChestSetup.Run();
+            ReclaimerSetup.Run();
+            Debug.Log("[Phase8] Enchanted Chest + Reclaimer promoted to their real stations.");
         }
 
         public static void RunFromBatch() => Run();
