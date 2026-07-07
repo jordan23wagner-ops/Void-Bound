@@ -16,6 +16,7 @@ namespace VoidBound.Inventory
         private HealOverTime hot;
         private Health health;
         private TimedBuff buffs;
+        private PoisonStatus poison;
 
         public event System.Action<MaterialItemSO> OnAte;
 
@@ -25,6 +26,7 @@ namespace VoidBound.Inventory
             hot = GetComponent<HealOverTime>();
             health = GetComponent<Health>();
             buffs = GetComponent<TimedBuff>();
+            poison = GetComponent<PoisonStatus>();
         }
 
         // Uses one of a specific consumable, applying its effect. Returns false if
@@ -50,8 +52,11 @@ namespace VoidBound.Inventory
                 case ConsumableEffect.BuffDEX: Buff(item, new CharacterStats(0, item.effectMagnitude, 0, 0)); break;
                 case ConsumableEffect.BuffVIG: Buff(item, new CharacterStats(0, 0, item.effectMagnitude, 0)); break;
                 case ConsumableEffect.BuffINT: Buff(item, new CharacterStats(0, 0, 0, item.effectMagnitude)); break;
-                // Swiftness / CurePoison / Luck: defined but inert until their
-                // systems (movement, status effects, loot) are wired.
+                case ConsumableEffect.CurePoison:
+                    if (poison != null) poison.Cure();
+                    break;
+                // Swiftness / Luck: defined but inert until their systems
+                // (movement, loot) are wired.
                 default:
                     if (item.healOverTime > 0 && hot != null) hot.AddHot(item.healOverTime, item.hotDuration);
                     break;

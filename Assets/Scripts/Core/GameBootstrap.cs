@@ -38,9 +38,12 @@ namespace VoidBound.Core
             if (hudCanvas != null) DontDestroyOnLoad(hudCanvas);
             if (eventSystem != null) DontDestroyOnLoad(eventSystem);
 
-            // Ensure the persisted player has the death/gravestone handler.
+            // Ensure the persisted player has the death/gravestone handler and the
+            // poison-status DoT holder (§4).
             if (player != null && player.GetComponent<Combat.PlayerDeath>() == null)
                 player.AddComponent<Combat.PlayerDeath>();
+            if (player != null && player.GetComponent<Combat.PoisonStatus>() == null)
+                player.AddComponent<Combat.PoisonStatus>();
 
             SceneManager.sceneLoaded += OnSceneLoaded;
         }

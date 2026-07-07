@@ -16,6 +16,12 @@ namespace VoidBound.Data
         public float attackRange = 2f;
         public LootTableSO lootTable;
 
+        [Header("Poison (§4) — DoT applied to the player on hit; off by default")]
+        public bool appliesPoison;
+        [Range(0f, 1f)] public float poisonChance = 1f;
+        public int poisonDamage = 8;      // total HP dealt over the duration
+        public float poisonDuration = 6f; // seconds
+
         [Header("Visible Gear (rendered on the body by EquipmentVisuals)")]
         public GearItemSO weapon;
         public GearItemSO[] armor;

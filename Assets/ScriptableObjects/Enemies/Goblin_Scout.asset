@@ -26,5 +26,9 @@ MonoBehaviour:
   aggroRange: 7
   attackRange: 1.8
   lootTable: {fileID: 11400000, guid: 8aee60f036cdb884f8b1c4761002fc8f, type: 2}
+  appliesPoison: 1
+  poisonChance: 0.5
+  poisonDamage: 8
+  poisonDuration: 6
   weapon: {fileID: 0}
   armor: []

@@ -17,12 +17,19 @@ namespace VoidBound.Combat
         [SerializeField] private int baseDamage = 5;
         [SerializeField] private float gravity = -20f;
 
+        [Header("Poison (§4) — mirrors the definition; off by default")]
+        [SerializeField] private bool appliesPoison;
+        [SerializeField, Range(0f, 1f)] private float poisonChance = 1f;
+        [SerializeField] private int poisonDamage = 8;
+        [SerializeField] private float poisonDuration = 6f;
+
         private EnemyState state = EnemyState.Idle;
         private Transform playerTransform;
         private Health health;
         private StatsComponent stats;
         private StatsComponent playerStats;
         private Health playerHealth;
+        private PoisonStatus playerPoison;
         private CharacterController controller;
         private CharacterAnimation anim;
         private float lastAttackTime;
@@ -46,6 +53,10 @@ namespace VoidBound.Combat
                 attackRange = definition.attackRange;
                 moveSpeed = definition.moveSpeed;
                 baseDamage = definition.baseDamage;
+                appliesPoison = definition.appliesPoison;
+                poisonChance = definition.poisonChance;
+                poisonDamage = definition.poisonDamage;
+                poisonDuration = definition.poisonDuration;
             }
 
             var player = GameObject.FindGameObjectWithTag("Player");
@@ -54,6 +65,7 @@ namespace VoidBound.Combat
                 playerTransform = player.transform;
                 playerStats = player.GetComponent<StatsComponent>();
                 playerHealth = player.GetComponent<Health>();
+                playerPoison = player.GetComponent<PoisonStatus>();
             }
         }
 
@@ -125,6 +137,15 @@ namespace VoidBound.Combat
             lastAttackTime = Time.time;
             int damage = DamageCalculator.CalculateDamage(stats, playerStats, baseDamage);
             playerHealth.TakeDamage(damage);
+
+            // Poison-coated attackers apply a DoT on a landed, non-killing hit (§4).
+            if (appliesPoison && !playerHealth.IsDead && Random.value <= poisonChance)
+            {
+                if (playerPoison == null && playerTransform != null)
+                    playerPoison = playerTransform.GetComponent<PoisonStatus>();
+                playerPoison?.Apply(poisonDamage, poisonDuration);
+            }
+
             anim?.TriggerAttack();
             Debug.Log($"{gameObject.name} attacks Player for {damage} damage.");
         }
