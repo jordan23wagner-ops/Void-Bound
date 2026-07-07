@@ -16,3 +16,6 @@ MonoBehaviour:
   displayName: Ashfields
   sceneName: Ashfields
   isUnlocked: 1
+  recommendedLevel: 5
+  dangerRating: 2
+  scoutReport: Scorched goblin territory. Warbands roam the ash; mind their champions.

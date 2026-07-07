@@ -17,6 +17,9 @@ namespace VoidBound.UI
     {
         [SerializeField] private ZoneDefinitionSO[] destinations;
 
+        // Shared with the Watchtower's scouting board so both read one zone list.
+        public ZoneDefinitionSO[] Destinations => destinations;
+
         private RectTransform panel;
         private RectTransform list;
         private RectTransform keptList;

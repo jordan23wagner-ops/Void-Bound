@@ -314,6 +314,8 @@ namespace VoidBound.UI
             if (reclaim != null && (object)reclaim != except) reclaim.Close();
             var pool = host.GetComponent<PoolUI>();
             if (pool != null && (object)pool != except) pool.Close();
+            var watchtower = host.GetComponent<WatchtowerUI>();
+            if (watchtower != null && (object)watchtower != except) watchtower.Close();
         }
     }
 }

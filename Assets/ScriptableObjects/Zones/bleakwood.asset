@@ -16,3 +16,7 @@ MonoBehaviour:
   displayName: Bleakwood
   sceneName: 
   isUnlocked: 0
+  recommendedLevel: 15
+  dangerRating: 3
+  scoutReport: A dead forest, deeper and darker. Stronger foes, richer spoils - come
+    prepared.

@@ -16,3 +16,6 @@ MonoBehaviour:
   displayName: Homestead
   sceneName: Homestead
   isUnlocked: 1
+  recommendedLevel: 1
+  dangerRating: 0
+  scoutReport: Your homestead. Safe ground - no threats within the walls.
