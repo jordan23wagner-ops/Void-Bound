@@ -148,7 +148,7 @@ namespace VoidBound.Editor
             bc.isTrigger = true;
 
             var ps = go.AddComponent<PlaceholderStation>();
-            ConfigureInteract(ps, "Reclaim", "Recover tools/untradables lost on death, for a gold fee. (coming soon)");
+            ConfigureInteract(ps, "Reclaim", "Buy back untradable gear from a grave you abandoned, for a gold fee. (coming soon)");
             SetString(ps, "comingSoonNote", "Death reclaim coming soon.");
         }
 

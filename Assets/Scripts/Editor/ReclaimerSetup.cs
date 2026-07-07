@@ -32,7 +32,7 @@ namespace VoidBound.Editor
             so.FindProperty("interactPrompt").stringValue = "Reclaim";
             so.FindProperty("interactRange").floatValue = 3f;
             so.FindProperty("tooltipDescription").stringValue =
-                "Buy back tools/untradables lost to an abandoned grave, for a gold fee.";
+                "Buy back untradable gear from a grave you abandoned, for a gold fee.";
             so.ApplyModifiedPropertiesWithoutUndo();
 
             if (reclaimer.GetComponent<Collider>() == null)

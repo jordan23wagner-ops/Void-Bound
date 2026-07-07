@@ -12242,8 +12242,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Homestead.ReclaimerStation
   interactPrompt: Reclaim
   interactRange: 3
-  tooltipDescription: Buy back tools/untradables lost to an abandoned grave, for
-    a gold fee.
+  tooltipDescription: Buy back untradable gear from a grave you abandoned, for a
+    gold fee.
   baseFee: 25
   valueFeeRatio: 0.5
 --- !u!1 &739032274
