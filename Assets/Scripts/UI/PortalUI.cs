@@ -21,6 +21,7 @@ namespace VoidBound.UI
         private RectTransform list;
         private RectTransform keptList;
         private PlayerInventory inventory;
+        private bool subscribed;
 
         public void Open(VoidBound.Core.Interactable station)
         {
@@ -30,14 +31,35 @@ namespace VoidBound.UI
             panel.gameObject.SetActive(true);
             if (station != null)
                 StationProximityCloser.Track(gameObject, this, station, Close);
+            Subscribe(); // keep the preview live while the panel is open
             Refresh();
         }
 
         public void Close()
         {
+            Unsubscribe();
             if (panel != null) panel.gameObject.SetActive(false);
             StationProximityCloser.Untrack(gameObject, this);
         }
+
+        // The "kept on death" column reflects the player's current gear, so keep
+        // it in sync while the panel is open (e.g. equipping/dropping at a nearby
+        // station). Only the kept column depends on inventory; destinations don't.
+        private void Subscribe()
+        {
+            if (subscribed || inventory == null) return;
+            inventory.OnInventoryChanged += RefreshKept;
+            subscribed = true;
+        }
+
+        private void Unsubscribe()
+        {
+            if (!subscribed || inventory == null) return;
+            inventory.OnInventoryChanged -= RefreshKept;
+            subscribed = false;
+        }
+
+        private void OnDisable() => Unsubscribe();
 
         private void ResolveInventory()
         {
