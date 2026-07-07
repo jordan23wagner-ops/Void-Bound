@@ -8,11 +8,17 @@ A dark-fantasy, low-poly action RPG built in **Unity 6.5 (URP)** — mobile-firs
 
 ## Current state
 
-- **Phase 7 complete** (cross-zone travel + persistence). Phases 0–7 built and play-verified.
-- **Zones:** Homestead (hub), Ashfields (Zone 2). Bleakwood (Zone 3 / Phase 8) not started.
-- **Combat:** automatic, proximity-based. **Melee** strikes in reach; **ranged** (bow/crossbow) and **mage** (staff/wand) engage at a distance with **homing projectiles** (arrows / bolts of magic) and dedicated **Shoot / Cast** animations.
+Phases 0–7 built and play-verified (cross-zone travel + persistence). Since then, the full Homestead station set, the death & recovery loop, a save system, and supporting systems have been added — all committed and play-verified.
+
+- **Zones:** Homestead (hub), Ashfields (Zone 2). Bleakwood (Zone 3) stubbed as a Portal destination.
+- **Combat:** automatic, proximity-based. **Melee** strikes in reach; **ranged** (bow/crossbow) and **mage** (staff/wand) engage at a distance with **homing projectiles** and dedicated **Shoot / Cast** animations. **Poison** — some enemies inflict a damage-over-time; the **Antidote** cures it; shown as a red HUD status pill.
+- **Death & recovery (§4A):** on death you keep your **3 most valuable items** (by `goldValue`); everything else — gear, materials, unbanked gold/Void Shards — drops to a single **gravestone** you fight back to. Die again before recovering it and the grave is abandoned: its **untradables** become buyable-back at the **Reclaimer** for a gold fee, its tradables are gone. A live **"kept on death" preview** (in the Fast Travel panel) and a **"YOU DIED" screen** surface the stakes.
+- **Homestead stations:** Merchant, Storage/Bank, Forge, Garden, the three Guilds, Shrine, **Pool of Refreshment** (heal + timed all-stat buff, with **buyable tier upgrades**), Fast Travel Portal, **Watchtower** (zone-scouting board: danger, recommended level vs. yours, intel), **Crafting Bench**, **Enchanted Chest** (untradable upgrades), and the **Reclaimer**. Spread wide across the map so the town breathes.
+- **Save system:** single-slot JSON persistence of core progression — currency, materials, inventory/equipped (with untradable upgrade tiers), bank, combat XP/levels, tool tiers, and Pool tier. Autosaves on quit + zone travel, loads on boot; item ids resolve through a baked **ItemRegistry** (`VoidBound → Bake Item Registry`). A **New Game** dev button wipes progress + deletes the save.
 - **Gear:** class loadouts — **Melee** (plate + sword/shield), **Ranger** (leather hood/vest + bow), **Mage** (the Archmage set below). Rigged, per-bone equipment that moves with the animated skeleton.
 - **Characters:** rigged Hero + Goblin (shared 11-bone skeleton), 7 baked clips each (Idle, Walk, Attack, Shoot, Cast, Hit, Death).
+
+**In progress — gathering overhaul:** converting resource nodes from walk-over auto-harvest to deliberate, **tool-required** actions (fishing + woodcutting at the Homestead, mining in zones), with tool-hold and gather animations. Materials/ore move out of town into zones.
 
 ## Visual style & polish — the bar
 
