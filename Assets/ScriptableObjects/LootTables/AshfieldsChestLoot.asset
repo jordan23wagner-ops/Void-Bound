@@ -10,36 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e54ecacde23653840af761dca9e7925c, type: 3}
-  m_Name: StandardLoot
+  m_Name: AshfieldsChestLoot
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Data.LootTableSO
-  tableId: standardloot
-  displayName: StandardLoot
-  gearPool:
-  - {fileID: 11400000, guid: a929355f9f972f24ea0ddced663411a2, type: 2}
-  - {fileID: 11400000, guid: ec94fc0ecbc82184b882ba7284200c30, type: 2}
-  - {fileID: 11400000, guid: 3a85fc9a22400ff47aa7e8ee93823448, type: 2}
-  - {fileID: 11400000, guid: 3952da1cff65b6240a6cf711eefd708d, type: 2}
-  rarityWeights:
-  - rarity: 0
-    weight: 40
-  - rarity: 1
-    weight: 35
-  - rarity: 2
-    weight: 20
-  - rarity: 3
-    weight: 5
-  gearDropChance: 0.5
+  tableId: AshfieldsChestLoot
+  displayName: Ashfields Chest
+  gearPool: []
+  rarityWeights: []
+  gearDropChance: 0
   materialDrops:
   - material: {fileID: 11400000, guid: dd8f875643e55d84aa2eaa5e4a30afa7, type: 2}
-    chance: 0.12
+    chance: 0.5
     minQuantity: 1
     maxQuantity: 1
   - material: {fileID: 11400000, guid: 4e7ca60f0f9a23f4cb7114f0b7542a73, type: 2}
-    chance: 0.12
+    chance: 0.5
     minQuantity: 1
     maxQuantity: 1
-  goldMin: 5
-  goldMax: 15
+  goldMin: 20
+  goldMax: 60
   voidShardMin: 0
-  voidShardMax: 1
+  voidShardMax: 0
   zoneModifier: 1

@@ -1,6 +1,7 @@
 using UnityEngine;
 using VoidBound.Data;
 using VoidBound.Inventory;
+using VoidBound.Skilling;
 
 namespace VoidBound.Combat
 {
@@ -47,6 +48,25 @@ namespace VoidBound.Combat
             if (gearDrop != null)
             {
                 WorldPickup.Spawn(position, gearDrop);
+            }
+
+            // Material drops (e.g. tool-head parts) go straight to the pouch, like
+            // currency, with a floating tag rather than a walk-over pickup.
+            var mats = lootTable.RollMaterials();
+            if (mats.Count > 0 && player != null)
+            {
+                var matInv = player.GetComponent<MaterialInventory>();
+                if (matInv != null)
+                {
+                    float up = 0.9f;
+                    foreach (var d in mats)
+                    {
+                        matInv.AddMaterial(d.material, d.quantity);
+                        FloatingDamageNumber.SpawnText(position + Vector3.up * up,
+                            $"+{d.quantity} {d.material.displayName}", new Color(0.75f, 0.9f, 1f));
+                        up += 0.35f;
+                    }
+                }
             }
         }
     }
