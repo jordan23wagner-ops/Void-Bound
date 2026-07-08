@@ -62,6 +62,20 @@ namespace VoidBound.Save
             var pool = Object.FindAnyObjectByType<PoolStation>();
             if (pool != null) { d.hasPool = true; d.poolTier = pool.CurrentTier; }
 
+            d.grave.hasGrave = GraveManager.HasPendingGrave;
+            if (d.grave.hasGrave)
+            {
+                d.grave.scene = GraveManager.PendingScene;
+                var pos = GraveManager.PendingPosition;
+                d.grave.x = pos.x; d.grave.y = pos.y; d.grave.z = pos.z;
+                foreach (var it in GraveManager.PendingItems) if (it != null) d.grave.itemIds.Add(it.itemId);
+                foreach (var stack in GraveManager.PendingMaterials)
+                    if (stack.material != null) d.grave.materials.Add(new MatSave { id = stack.material.itemId, count = stack.quantity });
+                d.grave.gold = GraveManager.PendingGold;
+                d.grave.shards = GraveManager.PendingShards;
+            }
+            foreach (var it in GraveManager.Reclaimable) if (it != null) d.reclaimable.Add(it.itemId);
+
             File.WriteAllText(FilePath, JsonUtility.ToJson(d, true));
             Debug.Log($"[Save] Wrote {FilePath}");
         }
@@ -112,6 +126,25 @@ namespace VoidBound.Save
                 var pool = Object.FindAnyObjectByType<PoolStation>();
                 if (pool != null) pool.SetTier(d.poolTier);
             }
+
+            var graveItems = new List<GearItemSO>();
+            if (d.grave != null)
+                foreach (var id in d.grave.itemIds) { var so = ItemRegistry.Gear(id); if (so != null) graveItems.Add(so); }
+            var graveMats = new List<MaterialInventory.Stack>();
+            if (d.grave != null)
+                foreach (var m in d.grave.materials)
+                {
+                    var so = ItemRegistry.Material(m.id);
+                    if (so != null) graveMats.Add(new MaterialInventory.Stack(so, m.count));
+                }
+            var reclaimItems = new List<GearItemSO>();
+            if (d.reclaimable != null)
+                foreach (var id in d.reclaimable) { var so = ItemRegistry.Gear(id); if (so != null) reclaimItems.Add(so); }
+
+            GraveManager.RestoreGrave(
+                d.grave != null && d.grave.hasGrave,
+                d.grave?.scene, new Vector3(d.grave?.x ?? 0f, d.grave?.y ?? 0f, d.grave?.z ?? 0f),
+                graveItems, graveMats, d.grave?.gold ?? 0, d.grave?.shards ?? 0, reclaimItems);
 
             Debug.Log($"[Save] Loaded {FilePath}");
         }

@@ -26,6 +26,11 @@ namespace VoidBound.Editor
             var fish = new MaterialItemSO[Ids.Length];
             for (int i = 0; i < Ids.Length; i++)
                 fish[i] = AssetDatabase.LoadAssetAtPath<MaterialItemSO>($"{MatDir}/{Ids[i]}.asset");
+            if (System.Array.Exists(fish, f => f == null))
+            {
+                Debug.LogWarning("[Fishing] Raw fish materials not found — run Setup Cooking Content first.");
+                return;
+            }
 
             var scene = EditorSceneManager.OpenScene("Assets/Scenes/Homestead.unity");
 

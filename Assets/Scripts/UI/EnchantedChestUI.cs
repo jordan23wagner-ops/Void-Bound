@@ -171,7 +171,7 @@ namespace VoidBound.UI
 
         private void DoAction()
         {
-            if (selected == null) return;
+            if (selected == null || upg == null || matInv == null) return;
             if (upg.IsActive && upg.ActiveItemId == selected.itemId)
             {
                 bool ok = upg.CompleteNow();

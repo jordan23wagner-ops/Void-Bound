@@ -10,6 +10,19 @@ namespace VoidBound.Save
     [Serializable] public class SkillSave { public int type; public int level; public int xp; }
     [Serializable] public class ToolSave { public int skill; public int tier; }
 
+    // The single unrecovered death-drop (GraveManager.pending), if any.
+    [Serializable]
+    public class GraveSave
+    {
+        public bool hasGrave;
+        public string scene;
+        public float x, y, z;
+        public List<string> itemIds = new();
+        public List<MatSave> materials = new();
+        public int gold;
+        public int shards;
+    }
+
     [Serializable]
     public class SaveData
     {
@@ -24,5 +37,11 @@ namespace VoidBound.Save
         public List<ToolSave> tools = new();
         public bool hasPool;
         public int poolTier;
+
+        // The unrecovered grave (if any) and untradable gear owed back by the
+        // Reclaimer from a previously-abandoned grave. Both are pure runtime
+        // state on GraveManager otherwise — without this they're lost on quit.
+        public GraveSave grave = new();
+        public List<string> reclaimable = new();
     }
 }

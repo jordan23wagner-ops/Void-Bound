@@ -42,6 +42,11 @@ namespace VoidBound.Editor
             var ores = new MaterialItemSO[OreIds.Length];
             for (int i = 0; i < OreIds.Length; i++)
                 ores[i] = AssetDatabase.LoadAssetAtPath<MaterialItemSO>($"{OreDir}/{OreIds[i]}.asset");
+            if (System.Array.Exists(ores, o => o == null))
+            {
+                Debug.LogWarning("[AshfieldsResources] Ore materials not found — run Setup Smithing Content first.");
+                return;
+            }
 
             var scene = EditorSceneManager.OpenScene(ScenePath);
             for (int i = 0; i < OrePositions.Length; i++)

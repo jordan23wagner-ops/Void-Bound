@@ -43,8 +43,13 @@ namespace VoidBound.Combat
             var p = GameObject.FindGameObjectWithTag("Player");
             if (p != null) player = p.transform;
 
-            for (int i = 0; i < maxAlive; i++)
-                SpawnOne();
+            // Don't pop the initial pack in on top of a player who's already
+            // standing here on scene load — Update() fills the deferred slots
+            // once they leave playerHoldRadius, same as any later respawn.
+            bool held = player != null && playerHoldRadius > 0f &&
+                Vector3.Distance(transform.position, player.position) < playerHoldRadius;
+            if (!held)
+                for (int i = 0; i < maxAlive; i++) SpawnOne();
         }
 
         private void Update()

@@ -112,6 +112,37 @@ namespace VoidBound.Combat
         public static bool ReclaimItem(GearItemSO item) =>
             item != null && instance != null && instance.reclaimable.Remove(item);
 
+        // ── Save/Load support ───────────────────────────────────────────
+        // pending + reclaimable are otherwise pure runtime state, so without
+        // this a player who quits before recovering a grave (or before buying
+        // back a reclaimable item) silently loses it on the next load.
+        public static bool HasPendingGrave => instance != null && instance.pending != null;
+        public static string PendingScene => instance?.pending?.scene;
+        public static Vector3 PendingPosition => instance?.pending?.position ?? Vector3.zero;
+        public static IReadOnlyList<GearItemSO> PendingItems =>
+            (IReadOnlyList<GearItemSO>)instance?.pending?.items ?? System.Array.Empty<GearItemSO>();
+        public static IReadOnlyList<MaterialInventory.Stack> PendingMaterials =>
+            (IReadOnlyList<MaterialInventory.Stack>)instance?.pending?.materials ?? System.Array.Empty<MaterialInventory.Stack>();
+        public static int PendingGold => instance?.pending?.gold ?? 0;
+        public static int PendingShards => instance?.pending?.shards ?? 0;
+
+        // Restores a saved grave + reclaimable list at load time. Spawns the
+        // visual immediately if the current scene matches (covers the boot-load
+        // case, since OnSceneLoaded already fired before this runs).
+        public static void RestoreGrave(bool hasGrave, string scene, Vector3 position,
+            List<GearItemSO> items, List<MaterialInventory.Stack> materials, int gold, int shards,
+            List<GearItemSO> reclaimableItems)
+        {
+            var m = Instance;
+            m.ClearVisual();
+            m.pending = hasGrave
+                ? new Grave { scene = scene, position = position, items = items, materials = materials, gold = gold, shards = shards }
+                : null;
+            m.reclaimable.Clear();
+            if (reclaimableItems != null) m.reclaimable.AddRange(reclaimableItems);
+            if (m.pending != null) m.TrySpawnVisual(SceneManager.GetActiveScene().name);
+        }
+
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             ClearVisual();
