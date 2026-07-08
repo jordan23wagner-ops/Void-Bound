@@ -51,7 +51,7 @@ namespace VoidBound.Homestead
             var scol = surf.GetComponent<Collider>(); if (scol != null) Destroy(scol);
             surf.name = "VoidSurface";
             surf.transform.SetParent(transform, false);
-            surf.transform.localPosition = new Vector3(0f, 0.62f, 0f);
+            surf.transform.localPosition = new Vector3(0f, 0.75f, 0f); // ABOVE the water/rim faces (~0.65/0.66) so it occludes their z-fight
             surf.transform.localScale = new Vector3(2.7f, 0.02f, 2.7f); // covers the water opening inside the rim
             surf.GetComponent<MeshRenderer>().sharedMaterial = surfMat;
         }

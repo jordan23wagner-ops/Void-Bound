@@ -12780,7 +12780,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: f946bf4e2e4f801409725ee474c7ac77, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 842f78409d70fee40a254ea180376a82, type: 2}
+      objectReference: {fileID: 2100000, guid: 07704179948524e4e8020d183843b6c2, type: 2}
     - target: {fileID: -7511558181221131132, guid: f946bf4e2e4f801409725ee474c7ac77, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
       value: 
@@ -12788,19 +12788,19 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: f946bf4e2e4f801409725ee474c7ac77, type: 3}
       propertyPath: 'm_Materials.Array.data[2]'
       value: 
-      objectReference: {fileID: 2100000, guid: 842f78409d70fee40a254ea180376a82, type: 2}
+      objectReference: {fileID: 2100000, guid: 2380ab0ef4f157144a5d94f40eedaa7d, type: 2}
     - target: {fileID: -7511558181221131132, guid: f946bf4e2e4f801409725ee474c7ac77, type: 3}
       propertyPath: 'm_Materials.Array.data[3]'
       value: 
-      objectReference: {fileID: 2100000, guid: 842f78409d70fee40a254ea180376a82, type: 2}
+      objectReference: {fileID: 2100000, guid: af8833e77da0ab3459914b735b8c9d19, type: 2}
     - target: {fileID: -7511558181221131132, guid: f946bf4e2e4f801409725ee474c7ac77, type: 3}
       propertyPath: 'm_Materials.Array.data[4]'
       value: 
-      objectReference: {fileID: 2100000, guid: 842f78409d70fee40a254ea180376a82, type: 2}
+      objectReference: {fileID: 2100000, guid: f7d7ea4e971753c45ab825cbea6d7805, type: 2}
     - target: {fileID: -7511558181221131132, guid: f946bf4e2e4f801409725ee474c7ac77, type: 3}
       propertyPath: 'm_Materials.Array.data[5]'
       value: 
-      objectReference: {fileID: 2100000, guid: 842f78409d70fee40a254ea180376a82, type: 2}
+      objectReference: {fileID: 2100000, guid: e013915db95c2dd42abaffd5d280966f, type: 2}
     - target: {fileID: 919132149155446097, guid: f946bf4e2e4f801409725ee474c7ac77, type: 3}
       propertyPath: m_Name
       value: Enchanted Chest
