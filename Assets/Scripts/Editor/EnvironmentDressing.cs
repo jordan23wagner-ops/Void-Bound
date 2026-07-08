@@ -46,12 +46,12 @@ namespace VoidBound.Editor
                 ("Gold",      new Color(0.82f, 0.63f, 0.20f), null),
                 ("Thatch",    new Color(0.72f, 0.60f, 0.30f), null),
                 ("Path",      new Color(0.42f, 0.35f, 0.26f), null),
-                ("Water",     new Color(0.28f, 0.58f, 0.82f), null),
-                ("WaterDeep", new Color(0.14f, 0.34f, 0.52f), null),
+                ("Water",     new Color(0.10f, 0.20f, 0.30f), null),
+                ("WaterDeep", new Color(0.05f, 0.11f, 0.18f), null),
                 ("ClothRed",  new Color(0.70f, 0.20f, 0.18f), null),
-                ("Leaf",      new Color(0.28f, 0.55f, 0.24f), null),
+                ("Leaf",      new Color(0.15f, 0.24f, 0.16f), null),
                 ("Soil",      new Color(0.30f, 0.22f, 0.15f), null),
-                ("Grass",     new Color(0.42f, 0.62f, 0.30f), null),
+                ("Grass",     new Color(0.20f, 0.30f, 0.18f), null),
                 ("GrassDry",  new Color(0.55f, 0.50f, 0.30f), null),
                 ("DeadWood",  new Color(0.26f, 0.24f, 0.22f), null),
                 ("Bone",      new Color(0.86f, 0.83f, 0.72f), null),
@@ -283,8 +283,8 @@ namespace VoidBound.Editor
             Scatter(root, mats, "GrassTuft", 50, 0.8f, 1.4f, rng, treeKeepOuter, 2.2f, taken, 1.3f, 30f, 46f);
 
             TuneLighting(warm: true);
-            SetGround("Homestead", new Color(0.40f, 0.52f, 0.30f), new Color(0.33f, 0.45f, 0.25f),
-                new Color(0.42f, 0.34f, 0.22f), new Color(0.30f, 0.32f, 0.26f), new Color(0.54f, 0.60f, 0.42f), 20, 10f, 96f);
+            SetGround("Homestead", new Color(0.16f, 0.20f, 0.15f), new Color(0.10f, 0.13f, 0.11f),
+                new Color(0.13f, 0.11f, 0.09f), new Color(0.09f, 0.10f, 0.11f), new Color(0.22f, 0.24f, 0.22f), 20, 10f, 96f);
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
         }
@@ -424,9 +424,11 @@ namespace VoidBound.Editor
                 if (l.type != LightType.Directional) continue;
                 if (warm)
                 {
-                    l.color = new Color(1.00f, 0.95f, 0.84f);
-                    l.intensity = 1.9f;
-                    l.transform.rotation = Quaternion.Euler(48f, 325f, 0f);
+                    // Homestead: cool, dim moonlight for a dark, mysterious mood
+                    // (long low-angle shadows); the bonfire's glow carries warmth.
+                    l.color = new Color(0.55f, 0.62f, 0.80f);
+                    l.intensity = 0.9f;
+                    l.transform.rotation = Quaternion.Euler(24f, 315f, 0f);
                 }
                 else
                 {
@@ -440,10 +442,12 @@ namespace VoidBound.Editor
             RenderSettings.fogMode = FogMode.Linear;
             if (warm)
             {
-                RenderSettings.fogColor = new Color(0.74f, 0.80f, 0.72f);
-                RenderSettings.fogStartDistance = 34f;
-                RenderSettings.fogEndDistance = 92f;
-                RenderSettings.ambientLight = new Color(0.52f, 0.54f, 0.50f);
+                // Dark, misty homestead — deep blue-grey haze swallowing the
+                // forest ring, low cool ambient.
+                RenderSettings.fogColor = new Color(0.09f, 0.11f, 0.15f);
+                RenderSettings.fogStartDistance = 16f;
+                RenderSettings.fogEndDistance = 62f;
+                RenderSettings.ambientLight = new Color(0.22f, 0.24f, 0.30f);
             }
             else
             {
