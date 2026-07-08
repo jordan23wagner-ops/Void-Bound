@@ -61,6 +61,12 @@ namespace VoidBound.Skilling
                         continue;
                     }
 
+                    // Already engaged with a station? Don't ping-pong to another
+                    // station whose range overlaps — hold the first until we leave
+                    // its range (repeat interactables like resource nodes still fire).
+                    if (engaged != null && !interactable.RepeatOnProximity)
+                        continue;
+
                     interactable.OnInteract(gameObject);
                     if (!interactable.RepeatOnProximity)
                         engaged = interactable;

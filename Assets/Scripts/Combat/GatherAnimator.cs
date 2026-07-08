@@ -88,7 +88,50 @@ namespace VoidBound.Combat
             prop.localScale = Vector3.one * (BodyScale / bs);
         }
 
+        // Prefer the real low-poly FBX (Resources/GatherTools, built by
+        // Tools/build_gather_tools.py); fall back to primitives if it's missing.
         private static GameObject BuildTool(SkillType skill)
+        {
+            string fbx = FbxName(skill);
+            var prefab = fbx != null ? Resources.Load<GameObject>("GatherTools/" + fbx) : null;
+            if (prefab != null)
+            {
+                var inst = Instantiate(prefab);
+                inst.name = "GatherTool_" + skill;
+                RestyleTool(inst);
+                return inst;
+            }
+            return BuildToolPrimitive(skill);
+        }
+
+        private static string FbxName(SkillType skill) => skill switch
+        {
+            SkillType.Woodcutting => "axe",
+            SkillType.Mining => "pickaxe",
+            SkillType.Fishing => "rod",
+            SkillType.Gathering => "sickle",
+            _ => null
+        };
+
+        // Recolour the FBX's "Wood"/"Metal" slots to URP materials at runtime.
+        private static void RestyleTool(GameObject go)
+        {
+            var wood = Mat(new Color(0.40f, 0.28f, 0.16f));
+            var metal = Mat(new Color(0.62f, 0.64f, 0.68f));
+            foreach (var mr in go.GetComponentsInChildren<MeshRenderer>())
+            {
+                var slots = mr.sharedMaterials;
+                var outMats = new Material[slots.Length];
+                for (int i = 0; i < slots.Length; i++)
+                {
+                    string n = slots[i] != null ? slots[i].name : "";
+                    outMats[i] = n.Contains("Metal") ? metal : wood;
+                }
+                mr.sharedMaterials = outMats;
+            }
+        }
+
+        private static GameObject BuildToolPrimitive(SkillType skill)
         {
             var root = new GameObject("GatherTool_" + skill);
             var wood = Mat(new Color(0.40f, 0.28f, 0.16f));
