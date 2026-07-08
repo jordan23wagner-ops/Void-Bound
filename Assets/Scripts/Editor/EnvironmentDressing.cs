@@ -219,6 +219,7 @@ namespace VoidBound.Editor
                 var col = bonfire.AddComponent<CapsuleCollider>();
                 col.radius = 1.15f; col.height = 2.4f; col.center = new Vector3(0f, 1.0f, 0f);
                 bonfire.AddComponent<VoidBound.Homestead.BonfireEffect>();
+                AddPointLight(bonfire, new Vector3(0f, 1.3f, 0f), new Color(1f, 0.55f, 0.2f), 14f, 4f);
             }
 
             // Fishing lake + dock in the NE corner, ringed with shore rocks.
@@ -251,7 +252,14 @@ namespace VoidBound.Editor
             Place(root, mats, "Signpost", 1f, -14f, 30f, 1f); taken.Add(new Vector2(1f, -14f));
             foreach (var lp in new[] { new Vector2(3.5f, 2.5f), new Vector2(-3f, -3.5f), new Vector2(4f, -8f),
                                        new Vector2(-4.5f, -8f), new Vector2(6.5f, 4.5f) })
-            { Place(root, mats, "Lamppost", lp.x, lp.y, 0f, 1f); taken.Add(lp); }
+            {
+                var post = Place(root, mats, "Lamppost", lp.x, lp.y, 0f, 1f);
+                taken.Add(lp);
+                // Warm pooled glow at the lamp head (y tuned to the model; adjust
+                // if the light floats above/below the fixture).
+                if (post != null)
+                    AddPointLight(post, new Vector3(0f, 2.6f, 0f), new Color(1f, 0.78f, 0.45f), 8f, 2.5f);
+            }
 
             // Barrels & crates beside the working buildings (Merchant/Storage/Forge = 0,1,2).
             foreach (var idx in new[] { 0, 1, 2 })
@@ -448,6 +456,8 @@ namespace VoidBound.Editor
                 RenderSettings.fogStartDistance = 16f;
                 RenderSettings.fogEndDistance = 62f;
                 RenderSettings.ambientLight = new Color(0.22f, 0.24f, 0.30f);
+                RenderSettings.skybox = GetOrCreateNightSky();
+                DynamicGI.UpdateEnvironment();
             }
             else
             {
@@ -457,6 +467,42 @@ namespace VoidBound.Editor
                 RenderSettings.ambientLight = new Color(0.42f, 0.40f, 0.40f);
             }
             RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
+        }
+
+        // A warm point-light child for lampposts / the bonfire, so they pool light
+        // in the dark town. Shadows off (several small lights — perf).
+        private static void AddPointLight(GameObject parent, Vector3 localPos, Color color, float range, float intensity)
+        {
+            var go = new GameObject("Light");
+            go.transform.SetParent(parent.transform, false);
+            go.transform.localPosition = localPos;
+            var l = go.AddComponent<Light>();
+            l.type = LightType.Point;
+            l.color = color;
+            l.range = range;
+            l.intensity = intensity;
+            l.shadows = LightShadows.None;
+        }
+
+        // Dark procedural night sky (twilight gradient, low exposure) for the
+        // Homestead backdrop so the sky doesn't read bright behind the fog.
+        private static Material GetOrCreateNightSky()
+        {
+            const string path = "Assets/Art/Materials/Env/NightSky.mat";
+            var m = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (m == null)
+            {
+                m = new Material(Shader.Find("Skybox/Procedural"));
+                AssetDatabase.CreateAsset(m, path);
+            }
+            m.SetFloat("_SunSize", 0.03f);
+            m.SetFloat("_SunSizeConvergence", 5f);
+            m.SetFloat("_AtmosphereThickness", 0.5f);
+            m.SetColor("_SkyTint", new Color(0.10f, 0.12f, 0.20f));
+            m.SetColor("_GroundColor", new Color(0.05f, 0.05f, 0.06f));
+            m.SetFloat("_Exposure", 0.35f);
+            EditorUtility.SetDirty(m);
+            return m;
         }
     }
 }
