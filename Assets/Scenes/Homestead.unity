@@ -12819,6 +12819,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f946bf4e2e4f801409725ee474c7ac77, type: 3}
       insertIndex: -1
       addedObject: {fileID: 571004348}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f946bf4e2e4f801409725ee474c7ac77, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 571004349}
   m_SourcePrefab: {fileID: 100100000, guid: f946bf4e2e4f801409725ee474c7ac77, type: 3}
 --- !u!4 &571004345 stripped
 Transform:
@@ -12877,6 +12880,18 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6f6278aef8866ed42ae231b4961ed5b9, type: 2}
   - {fileID: 11400000, guid: 9e891a4fa3c0bbe48828669ee91dee8c, type: 2}
   costPerUpgrade: 2
+--- !u!114 &571004349
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 571004346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed45063fcc788b440821b62429324a32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Homestead.VoidChestEffect
 --- !u!1001 &579823117
 PrefabInstance:
   m_ObjectHideFlags: 0

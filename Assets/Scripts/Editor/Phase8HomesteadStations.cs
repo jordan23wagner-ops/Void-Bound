@@ -55,6 +55,7 @@ namespace VoidBound.Editor
             ConfigureInteract(ec, "Upgrade", "Upgrade untradables with refined materials. (coming soon)");
             SetString(ec, "comingSoonNote", "Untradable upgrades coming soon.");
             EnsureTrigger(chest);
+            chest.AddComponent<VoidBound.Homestead.VoidChestEffect>();
 
             // ── Reclaimer — a static NPC by the Fast Travel Portal / respawn ─
             BuildReclaimer(root, new Vector2(13f, -16f));

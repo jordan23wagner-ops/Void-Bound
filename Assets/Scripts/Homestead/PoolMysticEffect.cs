@@ -14,6 +14,7 @@ namespace VoidBound.Homestead
         private Transform orb;
         private Transform ring;
         private Material glow;
+        private Material surfMat;
         private static readonly Color Violet = new(0.62f, 0.28f, 0.95f);
 
         private void Start()
@@ -38,6 +39,21 @@ namespace VoidBound.Homestead
                 s.localPosition = new Vector3(Mathf.Cos(a) * 0.62f, 0f, Mathf.Sin(a) * 0.62f);
                 s.localRotation = Quaternion.Euler(18f, -a * Mathf.Rad2Deg, 0f);
             }
+
+            // A clean, dark "scrying surface" disc just above the basin water line.
+            // The Pool model has coplanar surface faces that z-fight as the camera
+            // moves; this opaque disc sits above them so the player sees it instead.
+            surfMat = new Material(Shader.Find("Universal Render Pipeline/Lit")) { color = new Color(0.05f, 0.02f, 0.09f) };
+            surfMat.EnableKeyword("_EMISSION");
+            surfMat.globalIlluminationFlags = MaterialGlobalIlluminationFlags.RealtimeEmissive;
+            surfMat.SetColor("_EmissionColor", Violet * 0.35f);
+            var surf = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            var scol = surf.GetComponent<Collider>(); if (scol != null) Destroy(scol);
+            surf.name = "VoidSurface";
+            surf.transform.SetParent(transform, false);
+            surf.transform.localPosition = new Vector3(0f, 0.62f, 0f);
+            surf.transform.localScale = new Vector3(2.7f, 0.02f, 2.7f); // covers the water opening inside the rim
+            surf.GetComponent<MeshRenderer>().sharedMaterial = surfMat;
         }
 
         private void Update()
@@ -56,6 +72,7 @@ namespace VoidBound.Homestead
         private void OnDestroy()
         {
             if (glow != null) Destroy(glow);
+            if (surfMat != null) Destroy(surfMat);
         }
 
         private Transform MakePrimitive(PrimitiveType type, string name, Vector3 scale)
