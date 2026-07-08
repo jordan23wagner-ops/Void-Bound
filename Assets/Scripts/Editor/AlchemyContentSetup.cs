@@ -8,8 +8,9 @@ using VoidBound.Skilling;
 
 namespace VoidBound.Editor
 {
-    // Alchemy slice (GDD §5.3): Gathering → Alchemy. 9 sickle-gated flora → the
-    // 8 potion families × 9 tiers, brewed at the Garden. Health + the four stat
+    // Alchemy slice (GDD §5.3): Gathering → Alchemy. Each of the 8 potion families
+    // has its OWN 9-tier flora line (72 flora), gathered from that family's herb
+    // patch in the home herb garden, brewed at the Garden. Health + the four stat
     // buffs (Warrior/Ranger/Mage/Warding) are functional now; Swiftness/Antidote/
     // Prospector's are defined but inert until their systems land. Idempotent.
     public static class AlchemyContentSetup
@@ -18,10 +19,19 @@ namespace VoidBound.Editor
         private const string PotDir = "Assets/ScriptableObjects/Materials/Potions";
         private const string RecDir = "Assets/ScriptableObjects/Recipes/Alchemy";
 
-        private static readonly string[] Flora =
+        // One 9-tier flora line per potion family (ids flora_{famId}_{tier}), each
+        // gathered from its own dedicated herb patch. Replaces the old shared
+        // per-tier flora so a family's potions require that family's herb.
+        private static readonly Dictionary<string, string[]> FamilyFlora = new()
         {
-            "Clover", "Sage", "Bramble", "Foxglove", "Nightshade",
-            "Moonpetal", "Obsidian Bloom", "Radiant Lotus", "Voidflower",
+            { "health",     new[] { "Bloodroot", "Redclover", "Mendleaf", "Sanguine Rose", "Heartbloom", "Lifevine", "Grave Lily", "Seraph's Tear", "Undying Lotus" } },
+            { "warrior",    new[] { "Ironweed", "Thornwhistle", "Bloodthorn", "Rageblossom", "Warbrand", "Titan's Root", "Obsidian Bramble", "Radiant Warthorn", "Voidfury Bloom" } },
+            { "ranger",     new[] { "Fleetleaf", "Hawkweed", "Windwort", "Keeneye Blossom", "Falconbloom", "Whisperfern", "Shadowfrond", "Radiant Quill", "Voidsight Bloom" } },
+            { "mage",       new[] { "Wispcap", "Manaroot", "Starflax", "Runeblossom", "Arcanthus", "Seer's Sage", "Obsidian Wisp", "Astral Bloom", "Voidmind Flower" } },
+            { "warding",    new[] { "Stoneleaf", "Bulwark Moss", "Wardbloom", "Ironbark Fern", "Aegis Blossom", "Bastion Root", "Obsidian Ward", "Radiant Wardlily", "Voidshield Bloom" } },
+            { "swiftness",  new[] { "Gustweed", "Swiftroot", "Zephyr Blossom", "Galewort", "Stormpetal", "Tempest Lily", "Obsidian Gale", "Radiant Windflower", "Voidstep Bloom" } },
+            { "antidote",   new[] { "Bitterroot", "Cleanleaf", "Purgemint", "Venombane", "Clearbloom", "Panacea Lily", "Obsidian Purgewort", "Radiant Cleansebloom", "Voidpurge Flower" } },
+            { "prospector", new[] { "Goldweed", "Fortune Clover", "Gleambloom", "Luckthistle", "Gilded Blossom", "Fortune's Lily", "Obsidian Glimmer", "Radiant Goldbloom", "Voidfortune Flower" } },
         };
         private static readonly string[] TierName =
         {
@@ -41,34 +51,34 @@ namespace VoidBound.Editor
             new Fam { id="prospector", name="Prospector's",effect=ConsumableEffect.Luck,       baseMag=10, perTier=3, dur=60 },
         };
 
-        private static string Slug(string s) => s.ToLower().Replace(" ", "_").Replace("'", "");
-
         [MenuItem("VoidBound/Setup Alchemy Content")]
         public static void Run()
         {
             EnsureFolder(FloraDir); EnsureFolder(PotDir); EnsureFolder(RecDir);
 
-            for (int t = 0; t < Flora.Length; t++)
-                CreateFlora("flora_" + Slug(Flora[t]), Flora[t], (RarityTier)t);
-
+            // 8 families × 9 tiers: each family gets its own flora line, its
+            // potions, and brew recipes that require that family's flora.
             foreach (var fam in Fams)
+            {
+                var names = FamilyFlora[fam.id];
                 for (int t = 0; t < 9; t++)
                 {
+                    CreateFlora($"flora_{fam.id}_{t}", names[t], (RarityTier)t);
                     var potion = CreatePotion(fam, t);
                     CreateBrewRecipe($"brew_{fam.id}_{t}", $"Brew {TierName[t]} {fam.name}",
-                        "flora_" + Slug(Flora[t]), potion);
+                        $"flora_{fam.id}_{t}", potion);
                 }
+            }
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
             var scene = EditorSceneManager.OpenScene("Assets/Scenes/Homestead.unity");
-            WireOrCreateHerbNode("Herb Patch", new Vector3(-12f, 0f, 6f));
-            WireOrCreateHerbNode("Herb Patch 2", new Vector3(-9.5f, 0f, 6.5f));
+            BuildHerbGarden();
             WireGarden();
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
-            Debug.Log("[Alchemy] 9 flora + 72 potions + recipes wired to the Garden; herb patches created.");
+            Debug.Log("[Alchemy] 72 flora (8 families × 9) + 72 potions + recipes wired to the Garden; 8-patch herb garden built.");
         }
 
         public static void RunFromBatch() => Run();
@@ -125,36 +135,52 @@ namespace VoidBound.Editor
 
         // ── scene wiring ───────────────────────────────────────────────
 
-        private static void WireOrCreateHerbNode(string name, Vector3 pos)
+        // Rebuilds the home herb garden: one patch per family in a 2×4 grid in the
+        // open west-central pocket. Patches sit ~4 apart with a tight 1.8 interact
+        // range so each is gathered individually (no cross-family cycling).
+        // Idempotent under a "Herb Garden" root; retires the old shared patches.
+        private static void BuildHerbGarden()
         {
-            var go = GameObject.Find(name);
-            if (go == null)
+            foreach (var legacy in new[] { "Herb Patch", "Herb Patch 2" })
             {
-                go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                go.name = name;
-                go.transform.localScale = Vector3.one * 0.6f;
-                var mr = go.GetComponent<MeshRenderer>();
-                if (mr != null)
-                {
-                    var mat = new Material(Shader.Find("Universal Render Pipeline/Lit")) { color = new Color(0.3f, 0.6f, 0.25f) };
-                    mr.sharedMaterial = mat;
-                }
+                var old = GameObject.Find(legacy);
+                if (old != null) Object.DestroyImmediate(old);
             }
-            go.transform.position = pos;
-            if (go.GetComponent<Collider>() == null) { var sc = go.AddComponent<SphereCollider>(); sc.radius = 1.2f; sc.isTrigger = true; }
+            var oldRoot = GameObject.Find("Herb Garden");
+            if (oldRoot != null) Object.DestroyImmediate(oldRoot);
+            var root = new GameObject("Herb Garden").transform;
 
-            var node = go.GetComponent<ResourceNode>() ?? go.AddComponent<ResourceNode>();
+            float[] xs = { -9f, -13f };
+            float[] zs = { -1f, 3f, 7f, 11f };
+            for (int i = 0; i < Fams.Length; i++)
+                CreateHerbPatch(root, Fams[i], new Vector3(xs[i % 2], 0f, zs[i / 2]));
+        }
+
+        private static void CreateHerbPatch(Transform root, Fam fam, Vector3 pos)
+        {
+            var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            go.name = fam.name + " Herbs";
+            go.transform.SetParent(root, false);
+            go.transform.position = pos;
+            go.transform.localScale = Vector3.one * 0.6f;
+            var mr = go.GetComponent<MeshRenderer>();
+            if (mr != null)
+                mr.sharedMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit")) { color = new Color(0.3f, 0.6f, 0.25f) };
+            var col = go.GetComponent<SphereCollider>();
+            if (col != null) { col.radius = 0.9f; col.isTrigger = true; }
+
+            var node = go.AddComponent<ResourceNode>();
             var so = new SerializedObject(node);
             var arr = so.FindProperty("tieredMaterials");
-            arr.arraySize = Flora.Length;
-            for (int i = 0; i < Flora.Length; i++)
-                arr.GetArrayElementAtIndex(i).objectReferenceValue =
-                    AssetDatabase.LoadAssetAtPath<MaterialItemSO>($"{FloraDir}/flora_{Slug(Flora[i])}.asset");
+            arr.arraySize = 9;
+            for (int t = 0; t < 9; t++)
+                arr.GetArrayElementAtIndex(t).objectReferenceValue =
+                    AssetDatabase.LoadAssetAtPath<MaterialItemSO>($"{FloraDir}/flora_{fam.id}_{t}.asset");
             so.FindProperty("gatherSkill").enumValueIndex = (int)SkillType.Gathering;
             so.FindProperty("gatherQuantity").intValue = 1;
             so.FindProperty("respawnTime").floatValue = 4f;
-            so.FindProperty("interactRange").floatValue = 2.5f;
-            so.FindProperty("interactPrompt").stringValue = "Gather";
+            so.FindProperty("interactRange").floatValue = 1.8f;
+            so.FindProperty("interactPrompt").stringValue = "Gather " + fam.name + " Herbs";
             so.ApplyModifiedPropertiesWithoutUndo();
         }
 

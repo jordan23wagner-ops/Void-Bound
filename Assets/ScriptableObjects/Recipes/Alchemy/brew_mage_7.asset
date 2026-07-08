@@ -19,7 +19,7 @@ MonoBehaviour:
   requiredSkillLevel: 0
   requiredStation: Garden
   ingredients:
-  - material: {fileID: 11400000, guid: aa825037cf589b7428192b3160e918c8, type: 2}
+  - material: {fileID: 11400000, guid: 326946a3e69fd4a4c80ef42b9c728b7f, type: 2}
     quantity: 2
   outputType: 0
   outputMaterial: {fileID: 11400000, guid: 98d39e058aa60bb47a7aacdd49a89e22, type: 2}
