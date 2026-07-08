@@ -272,20 +272,19 @@ namespace VoidBound.Editor
                 (9f, -9.5f, 20f), (15f, -14.5f, 70f) })
             { Place(root, mats, "Fence", f.x, f.z, f.r, 1f); taken.Add(new Vector2(f.x, f.z)); }
 
-            // Trees: a light scatter through town, a forest ring on the outskirts
-            // (the lake corner kept clear). Rings widened to match the spread town.
-            var treeKeepInner = new List<Vector2>(buildings) { Vector2.zero }.ToArray();
+            // Forest ring: all scatter pushed out past the buildings (~30..46) so
+            // the building core stays clear. The lake corner is kept clear via the
+            // lake keep-outs. Ring math: outer 46 sits inside the new ~48 half-extent.
             var treeKeepOuter = WithLake(buildings, lakeCentre);
-            Scatter(root, mats, "Tree", 10, 0.85f, 1.3f, rng, treeKeepInner, 4.5f, taken, 5f, 9f, 17f);
-            Scatter(root, mats, "Tree", 52, 0.9f, 1.5f, rng, treeKeepOuter, 3.2f, taken, 3f, 15f, 27f);
-            Scatter(root, mats, "Bush", 24, 0.8f, 1.2f, rng, treeKeepOuter, 3.0f, taken, 2.2f, 6f, 26.5f);
-            Scatter(root, mats, "Rock", 12, 0.7f, 1.3f, rng, treeKeepOuter, 3.0f, taken, 3f, 7f, 26.5f);
-            Scatter(root, mats, "Flowers", 18, 0.9f, 1.3f, rng, buildings.ToArray(), 2.4f, taken, 1.7f, 3.5f, 24f);
-            Scatter(root, mats, "GrassTuft", 42, 0.8f, 1.4f, rng, buildings.ToArray(), 2.2f, taken, 1.3f, 3.5f, 27f);
+            Scatter(root, mats, "Tree", 110, 0.9f, 1.5f, rng, treeKeepOuter, 3.2f, taken, 3f, 30f, 46f);
+            Scatter(root, mats, "Bush", 30, 0.8f, 1.2f, rng, treeKeepOuter, 3.0f, taken, 2.2f, 30f, 46f);
+            Scatter(root, mats, "Rock", 16, 0.7f, 1.3f, rng, treeKeepOuter, 3.0f, taken, 3f, 30f, 46f);
+            Scatter(root, mats, "Flowers", 22, 0.9f, 1.3f, rng, treeKeepOuter, 2.4f, taken, 1.7f, 30f, 46f);
+            Scatter(root, mats, "GrassTuft", 50, 0.8f, 1.4f, rng, treeKeepOuter, 2.2f, taken, 1.3f, 30f, 46f);
 
             TuneLighting(warm: true);
             SetGround("Homestead", new Color(0.40f, 0.52f, 0.30f), new Color(0.33f, 0.45f, 0.25f),
-                new Color(0.42f, 0.34f, 0.22f), new Color(0.30f, 0.32f, 0.26f), new Color(0.54f, 0.60f, 0.42f), 20, 10f);
+                new Color(0.42f, 0.34f, 0.22f), new Color(0.30f, 0.32f, 0.26f), new Color(0.54f, 0.60f, 0.42f), 20, 10f, 96f);
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
         }
@@ -321,7 +320,7 @@ namespace VoidBound.Editor
 
             TuneLighting(warm: false);
             SetGround("Ashfields", new Color(0.46f, 0.41f, 0.35f), new Color(0.37f, 0.33f, 0.30f),
-                new Color(0.31f, 0.29f, 0.29f), new Color(0.25f, 0.24f, 0.25f), new Color(0.58f, 0.54f, 0.48f), 51, 8f);
+                new Color(0.31f, 0.29f, 0.29f), new Color(0.25f, 0.24f, 0.25f), new Color(0.58f, 0.54f, 0.48f), 51, 8f, 56f);
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
         }
@@ -330,7 +329,7 @@ namespace VoidBound.Editor
         // Bakes a mottled ground texture (base variation + dirt patches + gravel
         // specks) so the terrain isn't a flat colour, then tiles it on the ground.
         private static void SetGround(string zone, Color baseA, Color baseB, Color dirt,
-            Color gravelD, Color gravelL, int seed, float tiling)
+            Color gravelD, Color gravelL, int seed, float tiling, float groundSize = 56f)
         {
             var ground = GameObject.Find("Ground");
             if (ground == null) return;
@@ -355,7 +354,7 @@ namespace VoidBound.Editor
                 EditorUtility.SetDirty(m);
             }
             // Widen the ground so its edge sits out past the fog.
-            ground.transform.localScale = new Vector3(56f, ground.transform.localScale.y, 56f);
+            ground.transform.localScale = new Vector3(groundSize, ground.transform.localScale.y, groundSize);
         }
 
         private static Texture2D GenerateGroundTexture(Color a, Color b, Color dirt,
@@ -442,8 +441,8 @@ namespace VoidBound.Editor
             if (warm)
             {
                 RenderSettings.fogColor = new Color(0.74f, 0.80f, 0.72f);
-                RenderSettings.fogStartDistance = 22f;
-                RenderSettings.fogEndDistance = 60f;
+                RenderSettings.fogStartDistance = 34f;
+                RenderSettings.fogEndDistance = 92f;
                 RenderSettings.ambientLight = new Color(0.52f, 0.54f, 0.50f);
             }
             else

@@ -61,6 +61,9 @@ namespace VoidBound.Editor
                 sc.isTrigger = true;
             }
 
+            if (go.GetComponent<VoidBound.Homestead.FishingSpotEffect>() == null)
+                go.AddComponent<VoidBound.Homestead.FishingSpotEffect>();
+
             var node = go.GetComponent<ResourceNode>() ?? go.AddComponent<ResourceNode>();
             var so = new SerializedObject(node);
             var arr = so.FindProperty("tieredMaterials");
