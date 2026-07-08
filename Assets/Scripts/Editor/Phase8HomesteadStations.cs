@@ -36,7 +36,7 @@ namespace VoidBound.Editor
             // ── Crafting Bench — industry corner by the Forge ───────────
             // Reuse the Merchant stall mesh as a work-table; cloth → wood so it
             // reads as a bench, not a market. Real, functional CraftingStation.
-            var bench = BuildStation(root, "Crafting Bench", "Merchant", new Vector2(-11f, -10f),
+            var bench = BuildStation(root, "Crafting Bench", "Merchant", new Vector2(-27f, -4f),
                 slot => slot.StartsWith("Cloth") ? "WoodLight" : slot);
             var cs = bench.AddComponent<CraftingStation>();
             ConfigureInteract(cs, "Craft", "Craft tools, ammo, refined materials and untradables.");
@@ -49,7 +49,7 @@ namespace VoidBound.Editor
             // (gold trim kept) to distinguish it from the plain bank chest. Given
             // a PlaceholderStation here only as the base state; EnchantedChestSetup
             // (run below) swaps it for the real EnchantedChestStation + UI.
-            var chest = BuildStation(root, "Enchanted Chest", "StorageChest", new Vector2(23f, 9f),
+            var chest = BuildStation(root, "Enchanted Chest", "StorageChest", new Vector2(15f, 10f),
                 slot => slot.Contains("Gold") ? "Gold" : "Void");
             var ec = chest.AddComponent<PlaceholderStation>();
             ConfigureInteract(ec, "Upgrade", "Upgrade untradables with refined materials. (coming soon)");
@@ -57,7 +57,7 @@ namespace VoidBound.Editor
             EnsureTrigger(chest);
 
             // ── Reclaimer — a static NPC by the Fast Travel Portal / respawn ─
-            BuildReclaimer(root, new Vector2(3f, -19f));
+            BuildReclaimer(root, new Vector2(13f, -16f));
 
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);

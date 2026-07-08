@@ -42,6 +42,7 @@ namespace VoidBound.Editor
                 ("WoodLight", new Color(0.55f, 0.40f, 0.25f), null),
                 ("Stone",     new Color(0.58f, 0.57f, 0.53f), null),
                 ("StoneDark", new Color(0.36f, 0.36f, 0.35f), null),
+                ("Cobble",    new Color(0.28f, 0.29f, 0.32f), null),
                 ("Metal",     new Color(0.45f, 0.47f, 0.50f), null),
                 ("Gold",      new Color(0.82f, 0.63f, 0.20f), null),
                 ("Thatch",    new Color(0.72f, 0.60f, 0.30f), null),
@@ -137,6 +138,47 @@ namespace VoidBound.Editor
             buildings.Add(pos); taken.Add(pos);
         }
 
+        // Cobblestone plaza + lanes radiating from the bonfire green to every
+        // building (the village "plaza & lanes" layout). Lanes read building
+        // positions from HomesteadLayout, so they track any future move.
+        private static void Roads(Transform root, Dictionary<string, Material> mats)
+        {
+            var cobble = mats.TryGetValue("Cobble", out var cm) ? cm : mats["Stone"];
+
+            var plaza = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            var pcol = plaza.GetComponent<Collider>(); if (pcol != null) Object.DestroyImmediate(pcol);
+            plaza.name = "Plaza";
+            plaza.transform.SetParent(root, false);
+            plaza.transform.localPosition = new Vector3(0f, 0.03f, 0f);
+            plaza.transform.localScale = new Vector3(14f, 0.04f, 14f); // ~7-unit radius disc
+            plaza.GetComponent<MeshRenderer>().sharedMaterial = cobble;
+            plaza.isStatic = true;
+
+            foreach (var b in HomesteadLayout.WorldPositions())
+                CobbleLane(root, cobble, b);
+        }
+
+        // One cobblestone lane strip from the plaza edge to a building's front.
+        private static void CobbleLane(Transform root, Material mat, Vector2 target)
+        {
+            float dist = target.magnitude;
+            float start = 6f, end = dist - 3f;
+            if (end <= start + 0.5f) return;
+            Vector2 dir = target / dist;
+            float len = end - start;
+            Vector2 mid = dir * (start + len * 0.5f);
+
+            var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            var col = go.GetComponent<Collider>(); if (col != null) Object.DestroyImmediate(col);
+            go.name = "Lane";
+            go.transform.SetParent(root, false);
+            go.transform.localPosition = new Vector3(mid.x, 0.035f, mid.y);
+            go.transform.localRotation = Quaternion.Euler(0f, Mathf.Atan2(dir.x, dir.y) * Mathf.Rad2Deg, 0f);
+            go.transform.localScale = new Vector3(2.4f, 0.05f, len);
+            go.GetComponent<MeshRenderer>().sharedMaterial = mat;
+            go.isStatic = true;
+        }
+
         // A worn dirt path strip from the bonfire out toward a building (a thin
         // stretched quad laid on the ground, trimmed at both ends).
         private static void Path(Transform root, Material mat, Vector2 target)
@@ -222,6 +264,9 @@ namespace VoidBound.Editor
                 AddPointLight(bonfire, new Vector3(0f, 1.3f, 0f), new Color(1f, 0.55f, 0.2f), 14f, 4f);
             }
 
+            // Cobblestone plaza + lanes out to every building.
+            Roads(root, mats);
+
             // Fishing lake + dock in the NE corner, ringed with shore rocks.
             Place(root, mats, "Lake", lakeCentre.x, lakeCentre.y, 0f, 1f); taken.Add(lakeCentre);
             var dockPos = lakeCentre + new Vector2(-0.707f, -0.707f) * 4.8f;   // SW shore, toward town
@@ -234,9 +279,10 @@ namespace VoidBound.Editor
                 taken.Add(rp);
             }
 
-            // Residential neighbourhood (SE pocket), homes facing the green.
+            // Outlying cottages at the village edge, tucked in the gaps between
+            // districts (facing the green).
             var homes = new (string prop, float x, float z)[] {
-                ("House", 9f, -12f), ("Cottage", 14f, -13f), ("Cottage", 8f, -16f), ("Cottage", 13f, -16f),
+                ("Cottage", 11f, -26f), ("Cottage", -5f, -27f), ("House", -21f, -20f), ("Cottage", -3f, 28f),
             };
             foreach (var h in homes)
             {
@@ -247,18 +293,20 @@ namespace VoidBound.Editor
 
             // A well on the green, a signpost at the south gateway, lamps around
             // the plaza + entrance.
-            var wellP = new Vector2(-3.5f, 3f);
+            var wellP = new Vector2(3f, 3.5f);
             Place(root, mats, "Well", wellP.x, wellP.y, HomesteadLayout.FaceCentreYaw(wellP), 1f); taken.Add(wellP);
-            Place(root, mats, "Signpost", 1f, -14f, 30f, 1f); taken.Add(new Vector2(1f, -14f));
-            foreach (var lp in new[] { new Vector2(3.5f, 2.5f), new Vector2(-3f, -3.5f), new Vector2(4f, -8f),
-                                       new Vector2(-4.5f, -8f), new Vector2(6.5f, 4.5f) })
+            Place(root, mats, "Signpost", 5f, -19f, 30f, 1f); taken.Add(new Vector2(5f, -19f));
+            // Lampposts ringing the plaza green, each a warm pooled glow.
+            for (int li = 0; li < 6; li++)
             {
+                float a = li * 60f * Mathf.Deg2Rad;
+                var lp = new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * 6.8f;
                 var post = Place(root, mats, "Lamppost", lp.x, lp.y, 0f, 1f);
                 taken.Add(lp);
-                // Warm pooled glow at the lamp head (y tuned to the model; adjust
-                // if the light floats above/below the fixture).
+                // Warm glow at the lamp head (y tuned to the model; adjust if it
+                // floats above/below the fixture).
                 if (post != null)
-                    AddPointLight(post, new Vector3(0f, 2.6f, 0f), new Color(1f, 0.78f, 0.45f), 8f, 2.5f);
+                    AddPointLight(post, new Vector3(0f, 2.6f, 0f), new Color(1f, 0.78f, 0.45f), 9f, 2.5f);
             }
 
             // Barrels & crates beside the working buildings (Merchant/Storage/Forge = 0,1,2).
@@ -273,11 +321,9 @@ namespace VoidBound.Editor
                 Place(root, mats, "Crate", cpos.x, cpos.y, 30f, 1f); taken.Add(cpos);
             }
 
-            // Fences: a garden plot fence (W, by the Garden) + a stretch along the
-            // homes (SE).
+            // A small garden-plot fence in front of the Garden building (S).
             foreach (var f in new (float x, float z, float r)[] {
-                (-21f, 3.6f, 0f), (-18.8f, 6f, 90f), (-23.2f, 6f, 90f),
-                (9f, -9.5f, 20f), (15f, -14.5f, 70f) })
+                (-10f, -16.5f, 0f), (-13f, -18.5f, 90f), (-7f, -18.5f, 90f) })
             { Place(root, mats, "Fence", f.x, f.z, f.r, 1f); taken.Add(new Vector2(f.x, f.z)); }
 
             // Forest ring: all scatter pushed out past the buildings (~30..46) so

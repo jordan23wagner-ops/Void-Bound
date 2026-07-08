@@ -22,23 +22,24 @@ namespace VoidBound.Editor
         // FishingContentSetup (the fishing spots) so they can never drift apart.
         public static readonly Vector2 Lake = new Vector2(21f, 16f);
 
-        // (GameObject name, x, z) — hand-placed by district. Spread wide across the
-        // 56×56 map (buildings sit ~11–26 from the green) so the town breathes and
-        // the central bonfire green stays open.
+        // (GameObject name, x, z) — a plaza-and-lanes village: buildings ring the
+        // central bonfire green in loose districts, ~12–27 from centre and ≥10
+        // apart (solver-spaced, keeping the NE clear for the lake), with cobblestone
+        // lanes radiating out to each (see EnvironmentDressing.Roads).
         public static readonly (string name, float x, float z)[] Buildings =
         {
-            ("Merchant",             10f,  -6f),   // market, E of the green
-            ("Storage Chest",        16f,  -3f),   // bank beside the market
-            ("Forge",               -15f,  -5f),   // crafting quarter (W)
-            ("Campfire",            -21f,  -9f),
-            ("Garden",              -21f,   6f),   // herb garden on the west edge
-            ("Warriors Guild",      -15f,  15f),   // guild row (NW → N)
-            ("Rangers Guild",        -5f,  21f),
-            ("Mages Guild",           6f,  20f),
-            ("Shrine",               17f,  11f),   // spiritual / mystic quarter (NE)
-            ("Pool of Refreshment",  21f,   2f),   // E
-            ("Fast Travel Portal",    0f, -21f),   // south gateway
-            ("Watchtower",          -19f, -18f),   // SW lookout
+            ("Merchant",             14f,   0f),   // market row (E)
+            ("Storage Chest",        24f,   5f),   // bank beside the market
+            ("Forge",               -22f,   6f),   // craft yard (W)
+            ("Campfire",            -19f, -11f),
+            ("Garden",              -10f, -20f),   // garden plot (S)
+            ("Warriors Guild",      -16f,  16f),   // guild green (NW → N)
+            ("Rangers Guild",        -6f,  22f),
+            ("Mages Guild",           4f,  27f),
+            ("Shrine",               13f,  20f),   // mystic quarter (NNE, by the lake)
+            ("Pool of Refreshment",  23f,  -5f),   // E edge
+            ("Fast Travel Portal",    2f, -23f),   // south gateway
+            ("Watchtower",           23f, -15f),   // SE lookout
         };
 
         public static float FaceCentreYaw(Vector2 p) => Mathf.Atan2(-p.x, -p.y) * Mathf.Rad2Deg + 180f;
