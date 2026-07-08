@@ -20,6 +20,8 @@ MonoBehaviour:
   requiredStation: crafting_bench
   ingredients:
   - material: {fileID: 11400000, guid: adbcb2fc09010454d996d0733949e0c2, type: 2}
+    quantity: 3
+  - material: {fileID: 11400000, guid: 525ef1d82c9e8844cb7cdc1837a61062, type: 2}
     quantity: 2
   outputType: 2
   outputMaterial: {fileID: 0}

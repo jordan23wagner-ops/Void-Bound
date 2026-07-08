@@ -59,6 +59,11 @@ namespace VoidBound.Skilling
             closeBtn.onClick.AddListener(Close);
             title = panel.Find("Header/Title").GetComponent<TextMeshProUGUI>();
 
+            // Enlarge the whole crafting panel — and every bit of text on it — by
+            // 50% for readability. TMP is SDF so scaling stays crisp. Scoped to
+            // this panel only (the shared Panel5cFactory sizing is untouched).
+            panel.localScale = Vector3.one * 1.5f;
+
             skillInfo = Panel5cFactory.CreateLabel(content, "SkillInfo", "", 11f, Panel5cFactory.TextMuted);
             Panel5cFactory.SetAnchor(skillInfo.rectTransform, new Vector2(0, 1), new Vector2(1, 1));
             skillInfo.rectTransform.pivot = new Vector2(0.5f, 1f);
@@ -221,11 +226,13 @@ namespace VoidBound.Skilling
                     RarityTier toolTier = tools != null ? tools.GetToolTier(recipe.requiredSkill) : RarityTier.Common;
                     bool locked = (int)toolTier < (int)recipe.requiredToolTier;
 
+                    // Tier label (right) is ALWAYS its rarity colour so it reads
+                    // as the tier at a glance; the name (left) dims when locked.
                     var row = Panel5cFactory.CreateListRow(recipeList,
                         recipe.displayName,
                         OutputTierLabel(recipe),
                         locked ? (Color)Panel5cFactory.TextMuted : (Color)Panel5cFactory.TextPrimary,
-                        locked ? (Color)Panel5cFactory.TextMuted : OutputTierColor(recipe),
+                        OutputTierColor(recipe),
                         interactable: !locked);
                     row.onClick.AddListener(() => SelectRecipe(captured));
                 }

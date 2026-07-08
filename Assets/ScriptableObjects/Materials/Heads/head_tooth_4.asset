@@ -10,14 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ccf3d09145cb58043af35bce30af400a, type: 3}
-  m_Name: log_3
+  m_Name: head_tooth_4
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Data.MaterialItemSO
-  itemId: log_3
-  displayName: Birch Logs
-  description: 
+  itemId: head_tooth_4
+  displayName: Sharp Tooth
+  description: Dropped by beasts / found in chests (wired later). Used to forge high-tier
+    pickaxe teeth.
   icon: {fileID: 0}
-  tier: 3
-  goldValue: 3
+  tier: 4
+  goldValue: 50
   isConsumable: 0
   healOverTime: 0
   hotDuration: 8

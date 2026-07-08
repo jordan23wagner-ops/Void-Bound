@@ -21,6 +21,8 @@ MonoBehaviour:
   ingredients:
   - material: {fileID: 11400000, guid: c0f6a0b69c762f34494967310855fb39, type: 2}
     quantity: 2
+  - material: {fileID: 11400000, guid: 247ce2022ba9897428a747f6434d352f, type: 2}
+    quantity: 2
   outputType: 2
   outputMaterial: {fileID: 0}
   outputGear: {fileID: 0}

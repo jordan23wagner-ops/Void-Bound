@@ -17,8 +17,8 @@ namespace VoidBound.Editor
         // index = rank (Common..Void)
         private static readonly string[] LogNames =
         {
-            "Kindling", "Pinewood", "Oak", "Birch", "Ashwood",
-            "Yew", "Blackwood", "Radiantwood", "Voidwood",
+            "Rough Logs", "Pine Logs", "Oak Logs", "Birch Logs", "Ash Logs",
+            "Yew Logs", "Bleak Logs", "Radiant Logs", "Void Logs",
         };
 
         // A small choppable grove in the open north-central woodland — clear of the
