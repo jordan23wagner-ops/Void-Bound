@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using VoidBound.Data;
 using VoidBound.Inventory;
 using VoidBound.Skilling;
@@ -13,6 +14,12 @@ namespace VoidBound.Combat
         [SerializeField] private float attackRange = 2.5f;         // melee reach
         [SerializeField] private float rangedAttackRange = 11f;    // bow/staff engage distance
         [SerializeField] private LayerMask enemyLayer = ~0;
+
+        [Header("Shockwave ability")]
+        [SerializeField] private float shockRadius = 4.5f;
+        [SerializeField] private float shockCooldown = 5f;
+        [SerializeField] private float shockDamageMult = 2.2f;
+        private float shockCdTimer;
 
         private StatsComponent stats;
         private PlayerInventory inventory;
@@ -37,6 +44,11 @@ namespace VoidBound.Combat
 
         private void Update()
         {
+            // Active ability (Q now; a touch button can call TryShockwave on mobile).
+            shockCdTimer -= Time.deltaTime;
+            if (Keyboard.current != null && Keyboard.current.qKey.wasPressedThisFrame)
+                TryShockwave();
+
             float attackCooldown = stats.AttackInterval;
             if (Time.time - lastAttackTime < attackCooldown) return;
 
@@ -107,6 +119,32 @@ namespace VoidBound.Combat
                 if (style == WeaponStyle.Ranged) anim?.TriggerShoot();
                 else anim?.TriggerCast();
             }
+        }
+
+        // Nova burst: damage every enemy within shockRadius for bonus damage, with
+        // a ring VFX + hit-stop, on a cooldown. Public so a mobile button can fire
+        // it too. Weapon-agnostic (works for melee/ranged/mage).
+        public bool TryShockwave()
+        {
+            if (shockCdTimer > 0f) return false;
+            shockCdTimer = shockCooldown;
+
+            var hits = Physics.OverlapSphere(transform.position, shockRadius, enemyLayer);
+            foreach (var hit in hits)
+            {
+                if (hit.gameObject == gameObject) continue;
+                var h = hit.GetComponent<Health>();
+                var st = hit.GetComponent<StatsComponent>();
+                if (h == null || h.IsDead || st == null) continue;
+                int dmg = DamageCalculator.CalculateDamage(stats, st, Mathf.RoundToInt(baseDamage * shockDamageMult));
+                h.TakeDamage(dmg);
+                CombatXPCalculator.AwardCombatXP(skills, GetEquippedWeaponType(), dmg);
+            }
+
+            Poof.Ring(transform.position, new Color(0.5f, 0.8f, 1f), shockRadius);
+            HitStop.Punch(0.08f, 0.1f);
+            anim?.TriggerAttack();
+            return true;
         }
 
         private WeaponType GetEquippedWeaponType()

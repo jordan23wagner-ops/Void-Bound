@@ -11,6 +11,8 @@ namespace VoidBound.Combat
         public int CurrentHP => currentHP;
         public int MaxHP => maxHP;
         public bool IsDead => currentHP <= 0;
+        // Set true during a dodge-roll's i-frames — TakeDamage is ignored while on.
+        public bool Invulnerable { get; set; }
         public event Action<int, int> OnHealthChanged;
         public event Action OnDamaged; // fired when damage is actually applied
         public event Action OnDeath;
@@ -32,6 +34,7 @@ namespace VoidBound.Combat
         public void TakeDamage(int damage)
         {
             if (IsDead) return;
+            if (Invulnerable) return;
             if (CompareTag("Player") && VoidBound.UI.GodModeFlag.IsActive) return;
 
             currentHP = Mathf.Max(0, currentHP - damage);
