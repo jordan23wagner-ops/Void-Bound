@@ -12,16 +12,15 @@ namespace VoidBound.Homestead
     // gently; destroys its own materials in OnDestroy.
     public class LavaAccent : MonoBehaviour
     {
-        [SerializeField, Tooltip("Overall footprint radius (metres). Keep small — this is an accent.")]
-        private float radius = 0.9f;
+        [SerializeField, Tooltip("Overall footprint radius (metres) the vein web spreads across.")]
+        private float radius = 1.3f;
         [SerializeField, Tooltip("Peak emissive strength of the magma. Low = subtle.")]
-        private float glow = 0.7f;
+        private float glow = 0.85f;
         [SerializeField, Tooltip("Faint light this casts on nearby ground/props. Keep dim.")]
-        private float lightIntensity = 0.28f;
+        private float lightIntensity = 0.3f;
         [SerializeField] private float pulseSpeed = 0.8f;
 
-        private static readonly Color CrackDark = new Color(0.04f, 0.03f, 0.03f); // the split in the ground
-        private static readonly Color Magma = new Color(0.95f, 0.30f, 0.06f);     // deep red-orange, not yellow
+        private static readonly Color Magma = new Color(0.95f, 0.28f, 0.05f); // deep red-orange, not yellow
 
         private readonly List<Material> magmaMats = new List<Material>();
         private Light glowLight;
@@ -35,46 +34,40 @@ namespace VoidBound.Homestead
         {
             built = true;
 
-            // A branching vein: a few thin crack segments radiating from a rough
-            // centre at varied angles/lengths, each a dark gap with a molten line.
-            AddVein(new Vector3(0f, 0f, 0f),                          12f,  radius * 1.9f, radius * 0.16f);
-            AddVein(new Vector3(radius * 0.55f, 0f, radius * 0.12f),  52f,  radius * 1.1f, radius * 0.12f);
-            AddVein(new Vector3(-radius * 0.5f, 0f, -radius * 0.08f), -38f, radius * 0.95f, radius * 0.11f);
-            AddVein(new Vector3(radius * 0.22f, 0f, -radius * 0.4f),  96f,  radius * 0.7f, radius * 0.09f);
+            // A branching web of thin molten cracks laid flat on the (dark ash)
+            // ground — no base plate, so the ground itself reads as the cracked
+            // rock and only the lava glows through the seams. Segments chain off
+            // each other so it looks like a spreading vein network, not a starburst.
+            float r = radius;
+            AddVein(new Vector3(-0.9f * r, 0f, -0.3f * r), 22f, 1.9f * r, 0.10f * r); // main seam
+            AddVein(new Vector3(0.2f * r, 0f, 0.05f * r),  70f, 1.1f * r, 0.08f * r); // branch up
+            AddVein(new Vector3(0.55f * r, 0f, 0.5f * r),  30f, 0.8f * r, 0.06f * r); // offshoot
+            AddVein(new Vector3(-0.35f * r, 0f, 0.15f * r), -48f, 0.9f * r, 0.07f * r); // branch down-left
+            AddVein(new Vector3(-0.7f * r, 0f, -0.55f * r), 100f, 0.7f * r, 0.06f * r); // hairline
+            AddVein(new Vector3(0.75f * r, 0f, -0.35f * r), 120f, 0.6f * r, 0.05f * r); // hairline
 
-            // Very faint warm light so the vein just kisses the ground around it.
+            // Very faint warm light so the seams just kiss the ground around them.
             var lightGO = new GameObject("Glow");
             lightGO.transform.SetParent(transform, false);
-            lightGO.transform.localPosition = new Vector3(0f, 0.12f, 0f);
+            lightGO.transform.localPosition = new Vector3(0f, 0.1f, 0f);
             glowLight = lightGO.AddComponent<Light>();
             glowLight.type = LightType.Point;
-            glowLight.color = new Color(1f, 0.45f, 0.15f);
-            glowLight.range = radius * 3.5f;
+            glowLight.color = new Color(1f, 0.42f, 0.12f);
+            glowLight.range = radius * 3f;
             glowLight.intensity = lightIntensity;
         }
 
-        // One crack segment: a dark gap flush with the ground (the split), with a
-        // thinner molten line glowing inside it. Both hug the surface.
+        // One glowing crack segment: an ultra-flat emissive sliver laid on the
+        // ground surface, so it reads as lava seeping through a seam, not a bar.
         private void AddVein(Vector3 localPos, float yaw, float length, float width)
         {
-            var rot = Quaternion.Euler(0f, yaw, 0f);
-
-            var crack = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            DestroyCollider(crack);
-            crack.name = "Crack";
-            crack.transform.SetParent(transform, false);
-            crack.transform.localPosition = localPos + new Vector3(0f, 0.015f, 0f);
-            crack.transform.localRotation = rot;
-            crack.transform.localScale = new Vector3(length, 0.02f, width);
-            crack.GetComponent<Renderer>().sharedMaterial = MakeMat(CrackDark, false);
-
             var molten = GameObject.CreatePrimitive(PrimitiveType.Cube);
             DestroyCollider(molten);
-            molten.name = "Molten";
+            molten.name = "Seam";
             molten.transform.SetParent(transform, false);
-            molten.transform.localPosition = localPos + new Vector3(0f, 0.028f, 0f);
-            molten.transform.localRotation = rot;
-            molten.transform.localScale = new Vector3(length * 0.9f, 0.015f, width * 0.4f);
+            molten.transform.localPosition = localPos + new Vector3(0f, 0.012f, 0f); // hug the surface
+            molten.transform.localRotation = Quaternion.Euler(0f, yaw, 0f);
+            molten.transform.localScale = new Vector3(length, 0.01f, width);
             var m = MakeMat(Magma, true);
             molten.GetComponent<Renderer>().sharedMaterial = m;
             magmaMats.Add(m);

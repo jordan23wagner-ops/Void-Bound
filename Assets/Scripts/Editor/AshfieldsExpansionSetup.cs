@@ -33,6 +33,7 @@ namespace VoidBound.Editor
             var scene = EditorSceneManager.OpenScene(ScenePath);
 
             EnlargeGround();
+            TuneGround();
             TuneFog();
             RemoveTestWarchief();
 
@@ -70,9 +71,21 @@ namespace VoidBound.Editor
         {
             RenderSettings.fog = true;
             RenderSettings.fogMode = FogMode.Linear;
-            RenderSettings.fogColor = new Color(0.42f, 0.34f, 0.30f);
+            RenderSettings.fogColor = new Color(0.22f, 0.17f, 0.15f); // dark ash haze to match the darker ground
             RenderSettings.fogStartDistance = 26f;
             RenderSettings.fogEndDistance = 95f;
+        }
+
+        // Darken the ground to charred ash so it reads as a volcanic wasteland (and
+        // so lava veins look like cracks IN the rock rather than dark objects laid
+        // on light sand). Recolours the shared AshfieldsGround material.
+        private static void TuneGround()
+        {
+            var mat = AssetDatabase.LoadAssetAtPath<Material>("Assets/Art/Materials/AshfieldsGround.mat");
+            if (mat == null) { Debug.LogWarning("[AshfieldsExpansion] AshfieldsGround.mat not found — ground not darkened."); return; }
+            mat.color = new Color(0.17f, 0.145f, 0.13f);
+            EditorUtility.SetDirty(mat);
+            AssetDatabase.SaveAssets();
         }
 
         private static void RemoveTestWarchief()
