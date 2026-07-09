@@ -88,6 +88,9 @@ namespace VoidBound.Combat
         private void OnDisable()
         {
             if (health != null) health.OnDeath -= HandleDeath;
+            // Leaving the zone (scene unload) destroys/disables the boss — make sure
+            // its health bar doesn't linger on the persistent HUD in the next scene.
+            if (engaged) { engaged = false; VoidBound.UI.BossHealthBarUI.Unbind(health); }
         }
 
         // Runtime entry for the encounter setup (mirrors EnemyAI.SetDefinition).

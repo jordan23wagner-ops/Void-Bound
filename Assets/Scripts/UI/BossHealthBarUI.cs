@@ -56,6 +56,15 @@ namespace VoidBound.UI
             if (bound != null) bound.OnHealthChanged -= OnHealthChanged;
         }
 
+        // Safety net: if the bound boss was destroyed (zone unload) without a clean
+        // unbind, the reference goes (fake-)null — hide so the bar can't linger on
+        // the persistent HUD into the next scene.
+        private void LateUpdate()
+        {
+            if (root != null && root.gameObject.activeSelf && bound == null)
+                HideInternal();
+        }
+
         private void OnHealthChanged(int cur, int max)
         {
             float ratio = max > 0 ? Mathf.Clamp01((float)cur / max) : 0f;
