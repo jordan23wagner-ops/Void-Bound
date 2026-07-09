@@ -81,6 +81,7 @@ namespace VoidBound.Combat
             {
                 int damage = DamageCalculator.CalculateDamage(stats, closestStats, baseDamage);
                 closestTarget.TakeDamage(damage);
+                HitStop.Punch();
                 CombatXPCalculator.AwardCombatXP(skills, weaponType, damage);
                 anim?.TriggerAttack();
             }

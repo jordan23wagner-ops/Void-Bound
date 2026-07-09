@@ -24,6 +24,9 @@ namespace VoidBound.Combat
                 maxHP = 100;
 
             currentHP = maxHP;
+
+            // Every combatant gets hit feedback (damage numbers, flash, punch).
+            if (GetComponent<HitFeedback>() == null) gameObject.AddComponent<HitFeedback>();
         }
 
         public void TakeDamage(int damage)

@@ -65,6 +65,7 @@ namespace VoidBound.Combat
                 {
                     int dmg = DamageCalculator.CalculateDamage(attacker, targetStats, baseDamage);
                     targetHealth.TakeDamage(dmg);
+                    HitStop.Punch();
                     onHit?.Invoke(dmg);
                 }
                 Destroy(gameObject);
