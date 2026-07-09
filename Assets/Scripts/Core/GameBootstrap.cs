@@ -25,11 +25,13 @@ namespace VoidBound.Core
         {
             if (instance != null)
             {
+                Debug.Log("[FreezeDiag] GameBootstrap.Awake: destroying duplicate Player/Camera/HUD from scene file");
                 if (player != null) Destroy(player);
                 if (mainCamera != null) Destroy(mainCamera);
                 if (hudCanvas != null) Destroy(hudCanvas);
                 if (eventSystem != null) Destroy(eventSystem);
                 Destroy(gameObject);
+                Debug.Log("[FreezeDiag] GameBootstrap.Awake: duplicate cleanup queued");
                 return;
             }
 
@@ -50,7 +52,11 @@ namespace VoidBound.Core
                 player.AddComponent<Combat.GatherAnimator>();
 
             SceneManager.sceneLoaded += OnSceneLoaded;
+            SceneManager.sceneUnloaded += OnSceneUnloaded;
         }
+
+        private void OnSceneUnloaded(Scene scene) =>
+            Debug.Log($"[FreezeDiag] sceneUnloaded: {scene.name}");
 
         // Load the save once at boot. Deferred one frame so it runs AFTER other
         // Start() setup (starter gear grants, auto-equip) and authoritatively
@@ -76,19 +82,27 @@ namespace VoidBound.Core
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
+            Debug.Log($"[FreezeDiag] OnSceneLoaded BEGIN: {scene.name}");
+            // Defensive: never carry a hit-stop time slowdown across a scene load.
+            Time.timeScale = 1f;
+
             var spawn = GameObject.Find("PlayerSpawnPoint");
-            if (spawn == null || player == null) return;
+            if (spawn == null || player == null) { Debug.Log("[FreezeDiag] OnSceneLoaded END (no spawn/player)"); return; }
 
             var controller = player.GetComponent<CharacterController>();
             if (controller != null) controller.enabled = false;
             player.transform.position = spawn.transform.position;
             if (controller != null) controller.enabled = true;
+            Debug.Log($"[FreezeDiag] OnSceneLoaded END: {scene.name}");
         }
 
         private void OnDestroy()
         {
             if (instance == this)
+            {
                 SceneManager.sceneLoaded -= OnSceneLoaded;
+                SceneManager.sceneUnloaded -= OnSceneUnloaded;
+            }
         }
     }
 }
