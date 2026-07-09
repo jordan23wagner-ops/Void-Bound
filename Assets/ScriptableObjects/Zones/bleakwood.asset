@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Data.ZoneDefinitionSO
   zoneId: bleakwood
   displayName: Bleakwood
-  sceneName: 
-  isUnlocked: 0
+  sceneName: Bleakwood
+  isUnlocked: 1
   recommendedLevel: 15
   dangerRating: 3
   scoutReport: A dead forest, deeper and darker. Stronger foes, richer spoils - come

@@ -11,5 +11,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Ashfields.unity
     guid: bcf27551e68d28a43a0d111678515b37
+  - enabled: 1
+    path: Assets/Scenes/Bleakwood.unity
+    guid: 1341790b18501404390ec642b9db262d
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

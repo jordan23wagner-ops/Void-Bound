@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e54ecacde23653840af761dca9e7925c, type: 3}
+  m_Name: BleakwoodLoot
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Data.LootTableSO
+  tableId: BleakwoodLoot
+  displayName: Bleakwood Loot
+  gearPool:
+  - {fileID: 11400000, guid: a232856d0ee68484d89029874b02dcac, type: 2}
+  - {fileID: 11400000, guid: eae135e3a9e3ee247b75d48f2a3dba5a, type: 2}
+  - {fileID: 11400000, guid: f1f42cf37ab719a4c87c9bdbd26e8aab, type: 2}
+  - {fileID: 11400000, guid: 94b6ca5b16056374487d501338335462, type: 2}
+  - {fileID: 11400000, guid: 2de1f2c71d3ea1a4dadd7d88a69dbb4b, type: 2}
+  rarityWeights:
+  - rarity: 3
+    weight: 1
+  gearDropChance: 0.1
+  materialDrops:
+  - material: {fileID: 11400000, guid: f5af3269c957f5344989073286b10d7b, type: 2}
+    chance: 0.35
+    minQuantity: 1
+    maxQuantity: 2
+  goldMin: 30
+  goldMax: 90
+  voidShardMin: 1
+  voidShardMax: 4
+  zoneModifier: 1.5

@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0c27df59cea0734daa3d12f9ba16bdf, type: 3}
+  m_Name: Fallen_Hero
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Data.EnemyDefinitionSO
+  enemyId: fallen_hero
+  displayName: Fallen Hero
+  tier: 4
+  visualPrefab: {fileID: 0}
+  baseStats:
+    str: 22
+    dex: 8
+    vig: 38
+    intel: 8
+  baseDamage: 18
+  moveSpeed: 2.2
+  aggroRange: 15
+  attackRange: 2.4
+  lootTable: {fileID: 11400000, guid: a9061f94a23193843b0ad1c92eecd51f, type: 2}
+  appliesPoison: 0
+  poisonChance: 1
+  poisonDamage: 8
+  poisonDuration: 6
+  weapon: {fileID: 0}
+  armor: []
