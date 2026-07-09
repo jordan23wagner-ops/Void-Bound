@@ -29,7 +29,7 @@ namespace VoidBound.Editor
         public static readonly (string name, float x, float z)[] Buildings =
         {
             ("Merchant",             14f,   0f),   // market row (E)
-            ("Storage Chest",        24f,   5f),   // bank beside the market
+            ("Storage Chest",       7.7f, 5.5f),   // hand-placed by Jordon (off the plaza grid)
             ("Forge",               -22f,   6f),   // craft yard (W)
             ("Campfire",            -19f, -11f),
             ("Garden",              -10f, -20f),   // garden plot (S)

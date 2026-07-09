@@ -52,7 +52,7 @@ namespace VoidBound.Editor
             // Keep the chest's natural wood/gold/stone detail; only the cloth
             // lining becomes a glowing void-crystal accent (was all-Void = a purple
             // silhouette). The mystic feel comes from VoidChestEffect + the accent.
-            var chest = BuildStation(root, "Enchanted Chest", "StorageChest", new Vector2(15f, 10f),
+            var chest = BuildStation(root, "Enchanted Chest", "StorageChest", new Vector2(23.2f, 4.9f),
                 slot => slot.Contains("Cloth") ? "Crystal" : slot);
             var ec = chest.AddComponent<PlaceholderStation>();
             ConfigureInteract(ec, "Upgrade", "Upgrade untradables with refined materials. (coming soon)");
