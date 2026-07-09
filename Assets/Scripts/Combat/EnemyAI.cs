@@ -181,11 +181,10 @@ namespace VoidBound.Combat
             anim?.TriggerAttack();
 
             if (playerHealth == null || playerHealth.IsDead) return;
-            if (distToPlayer > attackRange * 1.35f)
-            {
-                Debug.Log($"{gameObject.name}'s strike whiffs — player dodged clear.");
-                return;
-            }
+            // Whiffed — player stepped out of reach or dodged clear. (No log: this
+            // runs every frame for every attacking enemy; a swarm would flood the
+            // editor console with stack-trace-capturing Debug.Logs.)
+            if (distToPlayer > attackRange * 1.35f) return;
 
             int damage = DamageCalculator.CalculateDamage(stats, playerStats, baseDamage);
             playerHealth.TakeDamage(damage); // dodge i-frames (Health.Invulnerable) no-op this
@@ -197,8 +196,6 @@ namespace VoidBound.Combat
                     playerPoison = playerTransform.GetComponent<PoisonStatus>();
                 playerPoison?.Apply(poisonDamage, poisonDuration);
             }
-
-            Debug.Log($"{gameObject.name} strikes Player for {damage} damage.");
         }
 
         private void FacePlayer()
