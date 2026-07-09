@@ -23,6 +23,13 @@ namespace VoidBound.Combat
         [SerializeField] private int poisonDamage = 8;
         [SerializeField] private float poisonDuration = 6f;
 
+        [Header("Attack telegraph")]
+        [SerializeField] private float windUpTime = 0.5f;   // coil time before a strike lands
+        private bool windingUp;
+        private float windUpTimer;
+        private Transform model;
+        private Vector3 modelBaseScale = Vector3.one;
+
         private EnemyState state = EnemyState.Idle;
         private Transform playerTransform;
         private Health health;
@@ -73,6 +80,11 @@ namespace VoidBound.Combat
                 playerHealth = player.GetComponent<Health>();
                 playerPoison = player.GetComponent<PoisonStatus>();
             }
+
+            // The model transform we squash during a wind-up (mirrors HitFeedback).
+            var animator = GetComponentInChildren<Animator>();
+            model = animator != null ? animator.transform : transform;
+            modelBaseScale = model.localScale;
         }
 
         private void Update()
@@ -103,12 +115,14 @@ namespace VoidBound.Combat
                     break;
 
                 case EnemyState.Attack:
-                    if (distToPlayer > attackRange * 1.2f)
+                    // While winding up, the enemy is committed — it won't drop back
+                    // to Chase mid-telegraph, so the player can dodge the coiled hit.
+                    if (!windingUp && distToPlayer > attackRange * 1.2f)
                     {
                         state = EnemyState.Chase;
                         break;
                     }
-                    TryAttackPlayer();
+                    TryAttackPlayer(distToPlayer);
                     break;
             }
 
@@ -128,21 +142,53 @@ namespace VoidBound.Combat
             controller.Move(direction * moveSpeed * Time.deltaTime + Vector3.up * verticalVelocity * Time.deltaTime);
         }
 
-        private void TryAttackPlayer()
+        private void TryAttackPlayer(float distToPlayer)
         {
             if (playerHealth == null || playerHealth.IsDead) return;
 
-            Vector3 direction = (playerTransform.position - transform.position);
-            direction.y = 0f;
-            if (direction.sqrMagnitude > 0.01f)
-                transform.rotation = Quaternion.LookRotation(direction);
+            // Coiling: telegraph a strike, then land it after windUpTime. During the
+            // wind-up the enemy holds still and squashes down — the tell that gives
+            // the player a window to dodge (i-frames) or step out of reach.
+            if (windingUp)
+            {
+                FacePlayer();
+                windUpTimer -= Time.deltaTime;
+                float t = 1f - Mathf.Clamp01(windUpTimer / Mathf.Max(0.01f, windUpTime));
+                if (model != null)
+                    model.localScale = Vector3.Lerp(modelBaseScale,
+                        Vector3.Scale(modelBaseScale, new Vector3(1.18f, 0.68f, 1.18f)), t);
+                if (windUpTimer <= 0f)
+                    ReleaseAttack(distToPlayer);
+                return;
+            }
 
             float attackInterval = stats.AttackInterval;
             if (Time.time - lastAttackTime < attackInterval) return;
 
+            FacePlayer();
+            windingUp = true;
+            windUpTimer = windUpTime;
+        }
+
+        // Resolves a committed strike at the end of a wind-up. The hit only lands if
+        // the player is still within reach; a dodge that carries them out (or whose
+        // i-frames make TakeDamage a no-op) turns it into a whiff.
+        private void ReleaseAttack(float distToPlayer)
+        {
+            windingUp = false;
             lastAttackTime = Time.time;
+            if (model != null) model.localScale = modelBaseScale;
+            anim?.TriggerAttack();
+
+            if (playerHealth == null || playerHealth.IsDead) return;
+            if (distToPlayer > attackRange * 1.35f)
+            {
+                Debug.Log($"{gameObject.name}'s strike whiffs — player dodged clear.");
+                return;
+            }
+
             int damage = DamageCalculator.CalculateDamage(stats, playerStats, baseDamage);
-            playerHealth.TakeDamage(damage);
+            playerHealth.TakeDamage(damage); // dodge i-frames (Health.Invulnerable) no-op this
 
             // Poison-coated attackers apply a DoT on a landed, non-killing hit (§4).
             if (appliesPoison && !playerHealth.IsDead && Random.value <= poisonChance)
@@ -152,8 +198,16 @@ namespace VoidBound.Combat
                 playerPoison?.Apply(poisonDamage, poisonDuration);
             }
 
-            anim?.TriggerAttack();
-            Debug.Log($"{gameObject.name} attacks Player for {damage} damage.");
+            Debug.Log($"{gameObject.name} strikes Player for {damage} damage.");
+        }
+
+        private void FacePlayer()
+        {
+            if (playerTransform == null) return;
+            Vector3 direction = (playerTransform.position - transform.position);
+            direction.y = 0f;
+            if (direction.sqrMagnitude > 0.01f)
+                transform.rotation = Quaternion.LookRotation(direction);
         }
 
         private void ApplyGravity()
