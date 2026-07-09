@@ -19,6 +19,7 @@ namespace VoidBound.Homestead
         private readonly List<Material> created = new List<Material>();
         private bool built;
         private System.Random rng;
+        private float layerY; // each blob sits a hair higher than the last (no z-fighting)
         private float Rand(float a, float b) => a + (float)rng.NextDouble() * (b - a);
 
         private void OnEnable() { if (!built) Build(); }
@@ -31,6 +32,7 @@ namespace VoidBound.Homestead
             rng = new System.Random(seed == 0 ? 1 : seed);
 
             float r = radius * Rand(0.5f, 1.6f);
+            layerY = 0.02f;
 
             // Main pool — a few overlapping blobs so the edge is lobed, not a disc.
             int blobs = 2 + rng.Next(0, 3);
@@ -57,7 +59,10 @@ namespace VoidBound.Homestead
             if (col != null) { if (Application.isPlaying) Destroy(col); else DestroyImmediate(col); }
             go.name = "Blood";
             go.transform.SetParent(transform, false);
-            go.transform.localPosition = localPos + new Vector3(0f, 0.012f, 0f); // hug the ground
+            // Each blob a hair higher than the last so overlapping discs never share a
+            // plane (that co-planarity is what flickered as the camera moved).
+            go.transform.localPosition = localPos + new Vector3(0f, layerY, 0f);
+            layerY += 0.004f;
             go.transform.localRotation = Quaternion.Euler(0f, (float)rng.NextDouble() * 360f, 0f);
             go.transform.localScale = new Vector3(rad * 2f, 0.01f, rad * 2f);
 

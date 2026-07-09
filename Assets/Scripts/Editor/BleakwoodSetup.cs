@@ -27,6 +27,12 @@ namespace VoidBound.Editor
         private const string RootName = "Bleakwood Content";
         private const float Half = 40f;
 
+        // Corpse palette — sickly green-grey rot so the risen read as clearly dead,
+        // not living villagers.
+        private static readonly Color FleshCol = new Color(0.40f, 0.47f, 0.36f); // rotted green-grey
+        private static readonly Color HairCol  = new Color(0.07f, 0.075f, 0.07f);
+        private static readonly Color RobeCol  = new Color(0.13f, 0.13f, 0.145f); // tattered dark
+
         [MenuItem("VoidBound/Setup Bleakwood")]
         public static void Setup()
         {
@@ -232,21 +238,58 @@ namespace VoidBound.Editor
         private static void BuildDeadForest(Transform root)
         {
             var g = new GameObject("Dead Forest").transform; g.SetParent(root, false);
-            int n = 46;
-            for (int i = 0; i < n; i++)
+            var bark = LoadOrCreateMat("BleakBark", new Color(0.10f, 0.09f, 0.08f)); // dead grey-brown
+            for (int i = 0; i < 62; i++)
+                BuildDeadTree(g, "Dead Tree " + i, RingPoint(7f, Half - 3f), bark, Random.Range(1, int.MaxValue));
+        }
+
+        // A gnarled bare dead tree: a leaning tapered trunk forking into thinning,
+        // crooked branches. Built from cylinders, seeded so each is unique.
+        private static void BuildDeadTree(Transform parent, string name, Vector3 pos, Material bark, int seed)
+        {
+            var tree = new GameObject(name).transform;
+            tree.SetParent(parent, false);
+            tree.position = pos;
+            tree.localRotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
+            var rng = new System.Random(seed);
+            float R(float a, float b) => a + (float)rng.NextDouble() * (b - a);
+            float scale = R(0.8f, 1.5f);
+            var up = Quaternion.Euler(R(-9f, 9f), 0f, R(-9f, 9f)) * Vector3.up; // slight lean
+            Branch(tree, bark, Vector3.zero, up, R(2.2f, 3.4f) * scale, R(0.14f, 0.2f) * scale, 2, rng);
+        }
+
+        private static void Branch(Transform parent, Material bark, Vector3 start, Vector3 dir,
+            float length, float thick, int depth, System.Random rng)
+        {
+            float R(float a, float b) => a + (float)rng.NextDouble() * (b - a);
+            dir = dir.normalized;
+
+            var seg = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            var col = seg.GetComponent<Collider>(); if (col != null) Object.DestroyImmediate(col);
+            seg.name = "Limb";
+            seg.transform.SetParent(parent, false);
+            seg.transform.localPosition = start + dir * (length * 0.5f);
+            seg.transform.localRotation = Quaternion.FromToRotation(Vector3.up, dir);
+            seg.transform.localScale = new Vector3(thick, length * 0.5f, thick); // cylinder is 2 units tall
+            seg.GetComponent<Renderer>().sharedMaterial = bark;
+
+            if (depth <= 0) return;
+            var end = start + dir * length;
+            int kids = rng.Next(2, 4);
+            for (int k = 0; k < kids; k++)
             {
-                var p = RingPoint(7f, Half - 3f);
-                Prop(g, "Dead Tree " + i, "DeadTree", p, Random.Range(0f, 360f), Random.Range(1.2f, 3.4f),
-                    new Color(0.11f, 0.10f, 0.09f)); // dead grey-brown bark
+                var nd = Quaternion.Euler(R(18f, 46f), R(0f, 360f), 0f) * dir;
+                nd = Vector3.Slerp(nd, Vector3.up, 0.12f);          // still reach upward
+                Branch(parent, bark, end, nd, length * R(0.55f, 0.72f), thick * R(0.5f, 0.66f), depth - 1, rng);
             }
         }
 
         private static void ScatterCorpses(Transform root)
         {
             var g = new GameObject("The Fallen").transform; g.SetParent(root, false);
-            var flesh = LoadOrCreateMat("UndeadFlesh", new Color(0.52f, 0.55f, 0.48f));
-            var hair = LoadOrCreateMat("UndeadHair", new Color(0.09f, 0.09f, 0.11f));
-            var robe = LoadOrCreateMat("UndeadRobe", new Color(0.18f, 0.17f, 0.19f));
+            var flesh = LoadOrCreateMat("UndeadFlesh", FleshCol);
+            var hair = LoadOrCreateMat("UndeadHair", HairCol);
+            var robe = LoadOrCreateMat("UndeadRobe", RobeCol);
 
             // Fallen heroes (Hero rig, laid flat, pallid).
             for (int i = 0; i < 7; i++)
@@ -277,9 +320,9 @@ namespace VoidBound.Editor
             var g = new GameObject("Encounters").transform; g.SetParent(root, false);
             var goblinCtrl = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>("Assets/Animation/GoblinAnimator.controller");
             var heroCtrl = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>("Assets/Animation/HeroAnimator.controller");
-            var flesh = LoadOrCreateMat("UndeadFlesh", new Color(0.52f, 0.55f, 0.48f));
-            var hair = LoadOrCreateMat("UndeadHair", new Color(0.09f, 0.09f, 0.11f));
-            var robe = LoadOrCreateMat("UndeadRobe", new Color(0.18f, 0.17f, 0.19f));
+            var flesh = LoadOrCreateMat("UndeadFlesh", FleshCol);
+            var hair = LoadOrCreateMat("UndeadHair", HairCol);
+            var robe = LoadOrCreateMat("UndeadRobe", RobeCol);
 
             // Risen goblins — several packs.
             var gobFbx = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Art/Models/Goblin_Warrior.fbx");
