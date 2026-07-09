@@ -24,7 +24,8 @@ namespace VoidBound.Combat
         [Tooltip("Rigged character FBX (e.g. Goblin_Warrior.fbx); falls back to a capsule if null.")]
         [SerializeField] private GameObject modelFbx;
         [SerializeField] private RuntimeAnimatorController animatorController;
-        [SerializeField] private Material skinMaterial;
+        [Tooltip("Per-submesh materials (skin + baked gear), ordered to the model's slots.")]
+        [SerializeField] private Material[] slotMaterials;
         [SerializeField, Min(0.1f)] private float modelScale = 1f;
 
         [Header("Pack")]
@@ -129,7 +130,7 @@ namespace VoidBound.Combat
             if (modelFbx != null)
             {
                 // Rigged model as a child, exactly like the placed enemies + boss.
-                RiggedModelBuilder.Attach(go, modelFbx, animatorController, skinMaterial, modelScale);
+                RiggedModelBuilder.Attach(go, modelFbx, animatorController, slotMaterials, modelScale);
             }
             else
             {

@@ -82,11 +82,16 @@ namespace VoidBound.Editor
                 so.FindProperty("definition").objectReferenceValue = def;
                 so.FindProperty("lootTable").objectReferenceValue = loot;
                 so.FindProperty("tier").enumValueIndex = (int)spec.Tier;
-                // Rigged model so spawned goblins match the placed enemies + boss.
-                so.FindProperty("modelFbx").objectReferenceValue =
-                    AssetDatabase.LoadAssetAtPath<GameObject>($"Assets/Art/Models/{spec.EnemyId}.fbx");
+                // Rigged model so spawned goblins match the placed enemies + boss,
+                // with per-slot materials so the sculpted armour renders in colour.
+                var fbx = AssetDatabase.LoadAssetAtPath<GameObject>($"Assets/Art/Models/{spec.EnemyId}.fbx");
+                so.FindProperty("modelFbx").objectReferenceValue = fbx;
                 so.FindProperty("animatorController").objectReferenceValue = ctrl;
-                so.FindProperty("skinMaterial").objectReferenceValue = SkinFor(spec.Tier);
+                var mats = BuildGoblinSlotMaterials(fbx, spec.Tier);
+                var arr = so.FindProperty("slotMaterials");
+                arr.arraySize = mats.Length;
+                for (int i = 0; i < mats.Length; i++)
+                    arr.GetArrayElementAtIndex(i).objectReferenceValue = mats[i];
                 so.FindProperty("modelScale").floatValue = ScaleFor(spec.Tier);
                 so.FindProperty("maxAlive").intValue = spec.MaxAlive;
                 so.ApplyModifiedPropertiesWithoutUndo();
@@ -99,6 +104,33 @@ namespace VoidBound.Editor
         }
 
         public static void RunFromBatch() => Run();
+
+        // Ordered per-submesh materials for the goblin FBX: baked-gear slots get their
+        // palette material, skin slots get the tier skin (mirrors CharacterModelSwap).
+        private static Material[] BuildGoblinSlotMaterials(GameObject fbx, EnemyTier tier)
+        {
+            if (fbx == null) return System.Array.Empty<Material>();
+            var smr = fbx.GetComponentInChildren<SkinnedMeshRenderer>();
+            if (smr == null) return System.Array.Empty<Material>();
+            var skin = SkinFor(tier);
+            var slots = smr.sharedMaterials;
+            var result = new Material[slots.Length];
+            for (int i = 0; i < slots.Length; i++)
+                result[i] = MapGoblinSlot(slots[i] != null ? slots[i].name : "", skin);
+            return result;
+        }
+
+        private static Material MapGoblinSlot(string slot, Material skin)
+        {
+            if (slot.Contains("Cloth")) return Mat("GoblinCloth");
+            if (slot.Contains("Dark"))  return Mat("GoblinDark");
+            if (slot.Contains("Gold"))  return Mat("GoblinGold");
+            if (slot.Contains("Gem"))   return Mat("GoblinGem");
+            if (slot.Contains("Bone"))  return Mat("GoblinBone");
+            return skin;
+        }
+
+        private static Material Mat(string name) => AssetDatabase.LoadAssetAtPath<Material>($"Assets/Art/Materials/{name}.mat");
 
         // Per-tier skin + world scale, matching CharacterModelSwap's goblin variants.
         private static Material SkinFor(EnemyTier tier)

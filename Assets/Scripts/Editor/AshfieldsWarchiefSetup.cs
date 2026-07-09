@@ -170,10 +170,26 @@ namespace VoidBound.Editor
             if (ctrl != null) anim.runtimeAnimatorController = ctrl;
             anim.applyRootMotion = false;
 
+            // Per-slot so the sculpted armour shows (crimson skin + gear palette),
+            // not a flat single tint.
             var skin = FindAsset<Material>("GoblinSkin_RareElite");
             var smr = model.GetComponentInChildren<SkinnedMeshRenderer>();
-            if (smr != null && skin != null)
-                smr.sharedMaterials = Enumerable.Repeat(skin, smr.sharedMaterials.Length).ToArray();
+            if (smr != null)
+            {
+                var slots = smr.sharedMaterials;
+                var mats = new Material[slots.Length];
+                for (int i = 0; i < slots.Length; i++)
+                {
+                    string n = slots[i] != null ? slots[i].name : "";
+                    mats[i] = n.Contains("Cloth") ? FindAsset<Material>("GoblinCloth")
+                        : n.Contains("Dark") ? FindAsset<Material>("GoblinDark")
+                        : n.Contains("Gold") ? FindAsset<Material>("GoblinGold")
+                        : n.Contains("Gem")  ? FindAsset<Material>("GoblinGem")
+                        : n.Contains("Bone") ? FindAsset<Material>("GoblinBone")
+                        : skin;
+                }
+                smr.sharedMaterials = mats;
+            }
         }
 
         // The HUDCanvas is persisted from Homestead (DontDestroyOnLoad), so it isn't

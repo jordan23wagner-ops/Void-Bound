@@ -9,8 +9,12 @@ namespace VoidBound.Combat
     // EnemySpawner so spawned foes look as polished as the hand-placed / boss models.
     public static class RiggedModelBuilder
     {
+        // slotMaterials is the per-submesh material set, ordered to match the FBX's
+        // material slots (skin + baked-in gear: Cloth/Dark/Gold/Gem/Bone), mapped at
+        // setup time so the sculpted armour renders in its proper colours instead of
+        // being flattened to one skin tint.
         public static void Attach(GameObject root, GameObject fbx, RuntimeAnimatorController controller,
-            Material skin, float scale)
+            Material[] slotMaterials, float scale)
         {
             if (root == null || fbx == null) return;
 
@@ -32,10 +36,12 @@ namespace VoidBound.Combat
             anim.applyRootMotion = false;
 
             var smr = model.GetComponentInChildren<SkinnedMeshRenderer>();
-            if (smr != null && skin != null)
+            if (smr != null && slotMaterials != null && slotMaterials.Length > 0)
             {
-                var mats = new Material[smr.sharedMaterials.Length];
-                for (int i = 0; i < mats.Length; i++) mats[i] = skin;
+                int n = smr.sharedMaterials.Length;
+                var mats = new Material[n];
+                for (int i = 0; i < n; i++)
+                    mats[i] = slotMaterials[Mathf.Min(i, slotMaterials.Length - 1)];
                 smr.sharedMaterials = mats;
             }
 
