@@ -2940,6 +2940,41 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: e1cb7b2d1c4f7a44185d3c804f7c0eef, type: 3}
   m_PrefabInstance: {fileID: 441488640}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &445806596
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 445806597}
+  m_Layer: 0
+  m_Name: Ashfields Encounters
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &445806597
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 445806596}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2050462170}
+  - {fileID: 1936496105}
+  - {fileID: 756088720}
+  - {fileID: 1498638805}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &458610301
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3441,58 +3476,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 3fa5b1c8db9b21041aedd66d21751b8e, type: 3}
   m_PrefabInstance: {fileID: 536766043}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &559363800
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 559363801}
-  - component: {fileID: 559363802}
-  m_Layer: 0
-  m_Name: Spawner - Scout Camp
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &559363801
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 559363800}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4, y: 0.1, z: 3}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1714316344}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &559363802
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 559363800}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 032b72c5ad86f6844b2931c45517947b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Combat.EnemySpawner
-  definition: {fileID: 11400000, guid: f3630805160b475409c6514f05caeef6, type: 2}
-  lootTable: {fileID: 11400000, guid: 8aee60f036cdb884f8b1c4761002fc8f, type: 2}
-  tier: 0
-  bodyPrefab: {fileID: 919132149155446097, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
-  maxAlive: 2
-  respawnDelay: 8
-  spawnRadius: 3
-  playerHoldRadius: 6
 --- !u!1001 &564628574
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4632,58 +4615,6 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 1.4
   m_Center: {x: 0.000000059604645, y: 0.45, z: 0.000000029802322}
---- !u!1 &690303197
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 690303198}
-  - component: {fileID: 690303199}
-  m_Layer: 0
-  m_Name: Spawner - War Band
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &690303198
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 690303197}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8, y: 0.1, z: -7}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1714316344}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &690303199
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 690303197}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 032b72c5ad86f6844b2931c45517947b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Combat.EnemySpawner
-  definition: {fileID: 11400000, guid: b44fc003d28847445b2094dd6eb3b718, type: 2}
-  lootTable: {fileID: 11400000, guid: d67214ddde15158469d3a0663ed85426, type: 2}
-  tier: 1
-  bodyPrefab: {fileID: 919132149155446097, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
-  maxAlive: 2
-  respawnDelay: 8
-  spawnRadius: 3
-  playerHoldRadius: 6
 --- !u!1 &691672867
 GameObject:
   m_ObjectHideFlags: 0
@@ -5109,6 +5040,61 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: e6d000f71423e7845aa1d669b02e7127, type: 3}
   m_PrefabInstance: {fileID: 742414313}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &756088719
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 756088720}
+  - component: {fileID: 756088721}
+  m_Layer: 0
+  m_Name: Spawner - Warrior Post
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &756088720
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 756088719}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 8, y: 0.1, z: -3}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 445806597}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &756088721
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 756088719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 032b72c5ad86f6844b2931c45517947b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Combat.EnemySpawner
+  definition: {fileID: 11400000, guid: b44fc003d28847445b2094dd6eb3b718, type: 2}
+  lootTable: {fileID: 11400000, guid: d67214ddde15158469d3a0663ed85426, type: 2}
+  tier: 1
+  modelFbx: {fileID: 919132149155446097, guid: 7f1a950980bf63b46961b883d3aabc7e, type: 3}
+  animatorController: {fileID: 9100000, guid: 8c0c4d2d32a70b246bad740a017a0684, type: 2}
+  skinMaterial: {fileID: 2100000, guid: b4f45c112a97d124c8e31f3d16189a81, type: 2}
+  modelScale: 1
+  maxAlive: 1
+  respawnDelay: 8
+  spawnRadius: 3
+  playerHoldRadius: 6
 --- !u!1 &782506902
 GameObject:
   m_ObjectHideFlags: 0
@@ -5856,58 +5842,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a5799fbe3459c46439aadebf5695399e, type: 3}
   m_PrefabInstance: {fileID: 829605300}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &885908394
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 885908395}
-  - component: {fileID: 885908396}
-  m_Layer: 0
-  m_Name: Spawner - Scout Patrol
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &885908395
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 885908394}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6, y: 0.1, z: 5}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1714316344}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &885908396
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 885908394}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 032b72c5ad86f6844b2931c45517947b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Combat.EnemySpawner
-  definition: {fileID: 11400000, guid: f3630805160b475409c6514f05caeef6, type: 2}
-  lootTable: {fileID: 11400000, guid: 8aee60f036cdb884f8b1c4761002fc8f, type: 2}
-  tier: 0
-  bodyPrefab: {fileID: 919132149155446097, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
-  maxAlive: 2
-  respawnDelay: 8
-  spawnRadius: 3
-  playerHoldRadius: 6
 --- !u!1001 &893982453
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9172,6 +9106,61 @@ MonoBehaviour:
   glow: 0.85
   lightIntensity: 0.3
   pulseSpeed: 0.8
+--- !u!1 &1498638804
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1498638805}
+  - component: {fileID: 1498638806}
+  m_Layer: 0
+  m_Name: Spawner - War Band
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1498638805
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1498638804}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -8, y: 0.1, z: -7}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 445806597}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1498638806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1498638804}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 032b72c5ad86f6844b2931c45517947b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Combat.EnemySpawner
+  definition: {fileID: 11400000, guid: b44fc003d28847445b2094dd6eb3b718, type: 2}
+  lootTable: {fileID: 11400000, guid: d67214ddde15158469d3a0663ed85426, type: 2}
+  tier: 1
+  modelFbx: {fileID: 919132149155446097, guid: 7f1a950980bf63b46961b883d3aabc7e, type: 3}
+  animatorController: {fileID: 9100000, guid: 8c0c4d2d32a70b246bad740a017a0684, type: 2}
+  skinMaterial: {fileID: 2100000, guid: b4f45c112a97d124c8e31f3d16189a81, type: 2}
+  modelScale: 1
+  maxAlive: 2
+  respawnDelay: 8
+  spawnRadius: 3
+  playerHoldRadius: 6
 --- !u!1001 &1499569172
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10424,41 +10413,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 027f8f8714ef80c48a2093f90ffeccac, type: 3}
   m_PrefabInstance: {fileID: 1709901352}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1714316343
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1714316344}
-  m_Layer: 0
-  m_Name: Ashfields Encounters
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1714316344
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1714316343}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 559363801}
-  - {fileID: 885908395}
-  - {fileID: 1971122167}
-  - {fileID: 690303198}
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1718534080
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11482,6 +11436,61 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 1.4
   m_Center: {x: 0.000000059604645, y: 0.45, z: 0.000000029802322}
+--- !u!1 &1936496104
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1936496105}
+  - component: {fileID: 1936496106}
+  m_Layer: 0
+  m_Name: Spawner - Scout Patrol
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1936496105
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1936496104}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -6, y: 0.1, z: 5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 445806597}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1936496106
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1936496104}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 032b72c5ad86f6844b2931c45517947b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Combat.EnemySpawner
+  definition: {fileID: 11400000, guid: f3630805160b475409c6514f05caeef6, type: 2}
+  lootTable: {fileID: 11400000, guid: 8aee60f036cdb884f8b1c4761002fc8f, type: 2}
+  tier: 0
+  modelFbx: {fileID: 919132149155446097, guid: 261afe7394a80d44aae8bb04ea7dadf2, type: 3}
+  animatorController: {fileID: 9100000, guid: 8c0c4d2d32a70b246bad740a017a0684, type: 2}
+  skinMaterial: {fileID: 2100000, guid: 00b995c9c39ac85419c4e14b9f2f0c1e, type: 2}
+  modelScale: 0.92
+  maxAlive: 2
+  respawnDelay: 8
+  spawnRadius: 3
+  playerHoldRadius: 6
 --- !u!1001 &1938315335
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11871,58 +11880,6 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 1.4
   m_Center: {x: 0.000000059604645, y: 0.45, z: 0.000000029802322}
---- !u!1 &1971122166
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1971122167}
-  - component: {fileID: 1971122168}
-  m_Layer: 0
-  m_Name: Spawner - Warrior Post
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1971122167
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1971122166}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8, y: 0.1, z: -3}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1714316344}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1971122168
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1971122166}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 032b72c5ad86f6844b2931c45517947b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Combat.EnemySpawner
-  definition: {fileID: 11400000, guid: b44fc003d28847445b2094dd6eb3b718, type: 2}
-  lootTable: {fileID: 11400000, guid: d67214ddde15158469d3a0663ed85426, type: 2}
-  tier: 1
-  bodyPrefab: {fileID: 919132149155446097, guid: c3f29e580fdafa44685a2982fc6fc721, type: 3}
-  maxAlive: 1
-  respawnDelay: 8
-  spawnRadius: 3
-  playerHoldRadius: 6
 --- !u!1001 &1991193367
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12305,6 +12262,61 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: c13931d6ee522c74b8d1e3907ff75bd0, type: 3}
   m_PrefabInstance: {fileID: 2041754196}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2050462169
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2050462170}
+  - component: {fileID: 2050462171}
+  m_Layer: 0
+  m_Name: Spawner - Scout Camp
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2050462170
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2050462169}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4, y: 0.1, z: 3}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 445806597}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2050462171
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2050462169}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 032b72c5ad86f6844b2931c45517947b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Combat.EnemySpawner
+  definition: {fileID: 11400000, guid: f3630805160b475409c6514f05caeef6, type: 2}
+  lootTable: {fileID: 11400000, guid: 8aee60f036cdb884f8b1c4761002fc8f, type: 2}
+  tier: 0
+  modelFbx: {fileID: 919132149155446097, guid: 261afe7394a80d44aae8bb04ea7dadf2, type: 3}
+  animatorController: {fileID: 9100000, guid: 8c0c4d2d32a70b246bad740a017a0684, type: 2}
+  skinMaterial: {fileID: 2100000, guid: 00b995c9c39ac85419c4e14b9f2f0c1e, type: 2}
+  modelScale: 0.92
+  maxAlive: 2
+  respawnDelay: 8
+  spawnRadius: 3
+  playerHoldRadius: 6
 --- !u!1001 &2059208282
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13050,8 +13062,8 @@ SceneRoots:
   - {fileID: 1906489892}
   - {fileID: 2122567050}
   - {fileID: 1452375728}
-  - {fileID: 1714316344}
   - {fileID: 302214923}
   - {fileID: 436713024}
   - {fileID: 55966595}
   - {fileID: 1000608233}
+  - {fileID: 445806597}

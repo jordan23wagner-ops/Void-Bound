@@ -20,9 +20,12 @@ namespace VoidBound.Combat
         [SerializeField] private LootTableSO lootTable;
         [SerializeField] private EnemyTier tier = EnemyTier.Weak;
 
-        [Header("Body (matches the editor spawners' placeholder mesh)")]
-        [Tooltip("Optional visual mesh; falls back to a capsule primitive if null.")]
-        [SerializeField] private GameObject bodyPrefab;
+        [Header("Rigged body (matches CharacterModelSwap output on placed enemies)")]
+        [Tooltip("Rigged character FBX (e.g. Goblin_Warrior.fbx); falls back to a capsule if null.")]
+        [SerializeField] private GameObject modelFbx;
+        [SerializeField] private RuntimeAnimatorController animatorController;
+        [SerializeField] private Material skinMaterial;
+        [SerializeField, Min(0.1f)] private float modelScale = 1f;
 
         [Header("Pack")]
         [Tooltip("How many live enemies this spawner tries to keep alive.")]
@@ -120,15 +123,23 @@ namespace VoidBound.Combat
 
         private GameObject BuildBody(Vector3 pos)
         {
-            if (bodyPrefab != null)
-                return Instantiate(bodyPrefab, pos, Quaternion.identity);
+            var go = new GameObject("EnemyBody");
+            go.transform.position = pos;
 
-            // Fallback so the spawner still works if no mesh is wired.
-            var go = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-            // Primitive ships with its own collider; the enemy uses a
-            // CharacterController for movement, so drop the capsule collider.
-            var col = go.GetComponent<Collider>();
-            if (col != null) Destroy(col);
+            if (modelFbx != null)
+            {
+                // Rigged model as a child, exactly like the placed enemies + boss.
+                RiggedModelBuilder.Attach(go, modelFbx, animatorController, skinMaterial, modelScale);
+            }
+            else
+            {
+                // Fallback so the spawner still works if no model is wired.
+                var cap = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+                var col = cap.GetComponent<Collider>();
+                if (col != null) Destroy(col);
+                cap.transform.SetParent(go.transform, false);
+                cap.transform.localPosition = new Vector3(0f, 1f, 0f);
+            }
             return go;
         }
 

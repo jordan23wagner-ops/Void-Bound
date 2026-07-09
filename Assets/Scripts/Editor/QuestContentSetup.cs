@@ -130,12 +130,11 @@ namespace VoidBound.Editor
         // spawn sightline (spawn is (0,0,-5) facing +Z toward the green).
         private static void BuildWarden(QuestSO quest)
         {
-            var root = GameObject.Find(WardenName);
-            if (root == null)
-            {
-                root = new GameObject(WardenName);
-                BuildWardenVisual(root);
-            }
+            // Rebuild fresh each run so visual tweaks take effect (idempotent).
+            var old = GameObject.Find(WardenName);
+            if (old != null) Object.DestroyImmediate(old);
+            var root = new GameObject(WardenName);
+            BuildWardenVisual(root);
             root.transform.position = new Vector3(4f, 0f, -2f);
             root.transform.rotation = Quaternion.Euler(0f, 180f, 0f); // face the spawning player
 
@@ -161,25 +160,60 @@ namespace VoidBound.Editor
 
         private static void BuildWardenVisual(GameObject root)
         {
-            var robe = new Color(0.10f, 0.11f, 0.15f);
-            var hood = new Color(0.06f, 0.06f, 0.09f);
+            var robe = new Color(0.13f, 0.12f, 0.17f);  // dark charcoal-violet robe
+            var hood = new Color(0.06f, 0.055f, 0.09f);
             var gold = new Color(0.98f, 0.78f, 0.30f);
 
-            // Robed body (tapered capsule) + hooded head.
-            var body = MakePart(PrimitiveType.Capsule, root.transform, "Body",
-                new Vector3(0f, 1.0f, 0f), new Vector3(0.85f, 0.95f, 0.85f), robe, false);
-            MakePart(PrimitiveType.Sphere, root.transform, "Head",
-                new Vector3(0f, 1.9f, 0.05f), new Vector3(0.5f, 0.5f, 0.5f), hood, false);
-            // Hood cowl (slightly larger dark sphere behind the head).
-            MakePart(PrimitiveType.Sphere, root.transform, "Cowl",
-                new Vector3(0f, 1.92f, -0.05f), new Vector3(0.62f, 0.6f, 0.62f), hood, false);
+            // Rigged Hero body, reskinned dark — matches the model + animation
+            // standard used for the player/goblins/boss (idles via HeroAnimator).
+            var fbx = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Art/Models/Hero.fbx");
+            var ctrl = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>("Assets/Animation/HeroAnimator.controller");
+            if (fbx != null)
+            {
+                var model = (GameObject)PrefabUtility.InstantiatePrefab(fbx);
+                model.name = "Model";
+                model.transform.SetParent(root.transform, false);
+                model.transform.localPosition = Vector3.zero;
+                model.transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
+                model.transform.localScale = Vector3.one;
+
+                var anim = model.GetComponent<Animator>() ?? model.AddComponent<Animator>();
+                if (ctrl != null) anim.runtimeAnimatorController = ctrl;
+                anim.applyRootMotion = false;
+
+                // Per-slot reskin (Hero FBX order: Skin, Hair, Armor): a gaunt pale
+                // face + dark hair over a dark robe — a wan, hooded-looking figure.
+                var faceMat = SolidMat(new Color(0.58f, 0.55f, 0.52f));
+                var hairMat = SolidMat(hood);
+                var robeMat = SolidMat(robe);
+                var smr = model.GetComponentInChildren<SkinnedMeshRenderer>();
+                if (smr != null)
+                {
+                    int n = smr.sharedMaterials.Length;
+                    smr.sharedMaterials = n >= 3
+                        ? new[] { faceMat, hairMat, robeMat }
+                        : System.Linq.Enumerable.Repeat(robeMat, n).ToArray();
+                }
+            }
+            else
+            {
+                MakePart(PrimitiveType.Capsule, root.transform, "Body",
+                    new Vector3(0f, 1.0f, 0f), new Vector3(0.85f, 0.95f, 0.85f), robe, false);
+            }
+
+            // A dark hood peak above/behind the head so it reads as cowled.
+            MakePart(PrimitiveType.Sphere, root.transform, "Hood",
+                new Vector3(0f, 1.78f, -0.06f), new Vector3(0.42f, 0.5f, 0.42f), hood, false);
 
             // Floating gold quest marker (a rotated cube = diamond) above the head.
             var marker = MakePart(PrimitiveType.Cube, root.transform, "QuestMarker",
-                new Vector3(0f, 2.75f, 0f), new Vector3(0.26f, 0.26f, 0.26f), gold, true);
+                new Vector3(0f, 2.4f, 0f), new Vector3(0.26f, 0.26f, 0.26f), gold, true);
             marker.transform.localRotation = Quaternion.Euler(45f, 45f, 0f);
-            var mk = marker.AddComponent<VoidBound.Homestead.QuestMarkerBob>();
+            marker.AddComponent<VoidBound.Homestead.QuestMarkerBob>();
         }
+
+        private static Material SolidMat(Color color) =>
+            new Material(Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Standard")) { color = color };
 
         private static GameObject MakePart(PrimitiveType type, Transform parent, string name,
             Vector3 lpos, Vector3 lscale, Color color, bool emissive)

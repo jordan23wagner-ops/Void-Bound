@@ -50,9 +50,9 @@ namespace VoidBound.Editor
         [MenuItem("VoidBound/Setup Ashfields Encounters")]
         public static void Run()
         {
-            var mesh = AssetDatabase.LoadAssetAtPath<GameObject>(PlaceholderMesh);
-            if (mesh == null)
-                Debug.LogWarning($"[AshfieldsEncounters] {PlaceholderMesh} not found — spawners will fall back to a capsule primitive.");
+            var ctrl = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>("Assets/Animation/GoblinAnimator.controller");
+            if (ctrl == null)
+                Debug.LogWarning("[AshfieldsEncounters] GoblinAnimator.controller not found — spawned goblins won't animate.");
 
             var scene = EditorSceneManager.OpenScene(ScenePath);
 
@@ -82,7 +82,12 @@ namespace VoidBound.Editor
                 so.FindProperty("definition").objectReferenceValue = def;
                 so.FindProperty("lootTable").objectReferenceValue = loot;
                 so.FindProperty("tier").enumValueIndex = (int)spec.Tier;
-                so.FindProperty("bodyPrefab").objectReferenceValue = mesh;
+                // Rigged model so spawned goblins match the placed enemies + boss.
+                so.FindProperty("modelFbx").objectReferenceValue =
+                    AssetDatabase.LoadAssetAtPath<GameObject>($"Assets/Art/Models/{spec.EnemyId}.fbx");
+                so.FindProperty("animatorController").objectReferenceValue = ctrl;
+                so.FindProperty("skinMaterial").objectReferenceValue = SkinFor(spec.Tier);
+                so.FindProperty("modelScale").floatValue = ScaleFor(spec.Tier);
                 so.FindProperty("maxAlive").intValue = spec.MaxAlive;
                 so.ApplyModifiedPropertiesWithoutUndo();
                 made++;
@@ -94,6 +99,27 @@ namespace VoidBound.Editor
         }
 
         public static void RunFromBatch() => Run();
+
+        // Per-tier skin + world scale, matching CharacterModelSwap's goblin variants.
+        private static Material SkinFor(EnemyTier tier)
+        {
+            string name = tier switch
+            {
+                EnemyTier.Weak     => "GoblinSkin_Weak",
+                EnemyTier.Standard => "GoblinSkin_Standard",
+                EnemyTier.Elite    => "GoblinSkin_Elite",
+                _                  => "GoblinSkin_RareElite",
+            };
+            return AssetDatabase.LoadAssetAtPath<Material>($"Assets/Art/Materials/{name}.mat");
+        }
+
+        private static float ScaleFor(EnemyTier tier) => tier switch
+        {
+            EnemyTier.Weak     => 0.92f,
+            EnemyTier.Standard => 1.00f,
+            EnemyTier.Elite    => 1.18f,
+            _                  => 1.50f,
+        };
     }
 }
 #endif
