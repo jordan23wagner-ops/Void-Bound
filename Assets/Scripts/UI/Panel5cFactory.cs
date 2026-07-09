@@ -316,6 +316,8 @@ namespace VoidBound.UI
             if (pool != null && (object)pool != except) pool.Close();
             var watchtower = host.GetComponent<WatchtowerUI>();
             if (watchtower != null && (object)watchtower != except) watchtower.Close();
+            var questGiver = host.GetComponent<QuestGiverUI>();
+            if (questGiver != null && (object)questGiver != except) questGiver.Close();
         }
     }
 }

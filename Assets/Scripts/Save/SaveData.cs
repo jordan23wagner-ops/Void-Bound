@@ -43,5 +43,11 @@ namespace VoidBound.Save
         // state on GraveManager otherwise — without this they're lost on quit.
         public GraveSave grave = new();
         public List<string> reclaimable = new();
+
+        // Quest log: the in-progress quest (by id) with its per-objective counters,
+        // plus every quest already turned in.
+        public string activeQuestId = "";
+        public List<int> questProgress = new();
+        public List<string> completedQuests = new();
     }
 }

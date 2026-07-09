@@ -29,10 +29,11 @@ namespace VoidBound.Editor
 
             reg.gear = LoadAll<GearItemSO>();
             reg.materials = LoadAll<MaterialItemSO>();
+            reg.quests = LoadAll<QuestSO>();
             EditorUtility.SetDirty(reg);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-            Debug.Log($"[ItemRegistry] Baked {reg.gear.Length} gear + {reg.materials.Length} materials → {Path}");
+            Debug.Log($"[ItemRegistry] Baked {reg.gear.Length} gear + {reg.materials.Length} materials + {reg.quests.Length} quests → {Path}");
         }
 
         public static void RunFromBatch() => Bake();

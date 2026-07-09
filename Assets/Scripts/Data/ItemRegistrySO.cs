@@ -10,9 +10,11 @@ namespace VoidBound.Data
     {
         public GearItemSO[] gear;
         public MaterialItemSO[] materials;
+        public QuestSO[] quests;
 
         private Dictionary<string, GearItemSO> gearById;
         private Dictionary<string, MaterialItemSO> matById;
+        private Dictionary<string, QuestSO> questById;
 
         public GearItemSO GetGear(string id)
         {
@@ -26,6 +28,12 @@ namespace VoidBound.Data
             return !string.IsNullOrEmpty(id) && matById.TryGetValue(id, out var m) ? m : null;
         }
 
+        public QuestSO GetQuest(string id)
+        {
+            if (questById == null) Build();
+            return !string.IsNullOrEmpty(id) && questById.TryGetValue(id, out var q) ? q : null;
+        }
+
         private void Build()
         {
             gearById = new Dictionary<string, GearItemSO>();
@@ -37,6 +45,11 @@ namespace VoidBound.Data
             if (materials != null)
                 foreach (var m in materials)
                     if (m != null && !string.IsNullOrEmpty(m.itemId)) matById[m.itemId] = m;
+
+            questById = new Dictionary<string, QuestSO>();
+            if (quests != null)
+                foreach (var q in quests)
+                    if (q != null && !string.IsNullOrEmpty(q.questId)) questById[q.questId] = q;
         }
     }
 
@@ -49,5 +62,6 @@ namespace VoidBound.Data
 
         public static GearItemSO Gear(string id) => Instance != null ? Instance.GetGear(id) : null;
         public static MaterialItemSO Material(string id) => Instance != null ? Instance.GetMaterial(id) : null;
+        public static QuestSO Quest(string id) => Instance != null ? Instance.GetQuest(id) : null;
     }
 }

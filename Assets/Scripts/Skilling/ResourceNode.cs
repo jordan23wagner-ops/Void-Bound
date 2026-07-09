@@ -65,6 +65,7 @@ namespace VoidBound.Skilling
             if (mat == null) return;
 
             matInv.AddMaterial(mat, gatherQuantity);
+            VoidBound.Quests.QuestEvents.RaiseGathered(mat.itemId, gatherQuantity); // quest Gather objectives
             FloatingDamageNumber.SpawnText(transform.position,
                 $"+{gatherQuantity} {mat.displayName}", new Color(0.4f, 0.9f, 0.3f));
 

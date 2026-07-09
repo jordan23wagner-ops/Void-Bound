@@ -76,6 +76,14 @@ namespace VoidBound.Save
             }
             foreach (var it in GraveManager.Reclaimable) if (it != null) d.reclaimable.Add(it.itemId);
 
+            var quests = player.GetComponent<Quests.PlayerQuests>();
+            if (quests != null)
+            {
+                d.activeQuestId = quests.ActiveQuestId;
+                d.questProgress = new List<int>(quests.ProgressSnapshot);
+                d.completedQuests = new List<string>(quests.Completed);
+            }
+
             File.WriteAllText(FilePath, JsonUtility.ToJson(d, true));
             Debug.Log($"[Save] Wrote {FilePath}");
         }
@@ -146,6 +154,13 @@ namespace VoidBound.Save
                 d.grave?.scene, new Vector3(d.grave?.x ?? 0f, d.grave?.y ?? 0f, d.grave?.z ?? 0f),
                 graveItems, graveMats, d.grave?.gold ?? 0, d.grave?.shards ?? 0, reclaimItems);
 
+            var quests = player.GetComponent<Quests.PlayerQuests>();
+            if (quests != null)
+            {
+                var activeQuest = ItemRegistry.Quest(d.activeQuestId);
+                quests.LoadState(activeQuest, d.questProgress != null ? d.questProgress.ToArray() : null, d.completedQuests);
+            }
+
             Debug.Log($"[Save] Loaded {FilePath}");
         }
 
@@ -182,6 +197,9 @@ namespace VoidBound.Save
 
             var pool = Object.FindAnyObjectByType<PoolStation>();
             if (pool != null) pool.SetTier(0);
+
+            var quests = player.GetComponent<Quests.PlayerQuests>();
+            if (quests != null) quests.WipeState();
         }
 
         // Resolve saved gear entries to their SO assets, applying their upgrade tier.

@@ -330,6 +330,13 @@ namespace VoidBound.Skilling
             Combat.FloatingDamageNumber.SpawnText(currentInstigator.transform.position,
                 $"Crafted: {selectedRecipe.displayName}", new Color(0.3f, 0.8f, 1f));
 
+            // Advance any active Craft objective (quest system, §Phase 3).
+            string craftedId =
+                selectedRecipe.outputType == RecipeOutputType.Tool && selectedRecipe.outputTool != null ? selectedRecipe.outputTool.itemId :
+                selectedRecipe.outputType == RecipeOutputType.Gear && selectedRecipe.outputGear != null ? selectedRecipe.outputGear.itemId :
+                selectedRecipe.outputMaterial != null ? selectedRecipe.outputMaterial.itemId : null;
+            VoidBound.Quests.QuestEvents.RaiseCrafted(selectedRecipe.recipeId, craftedId);
+
             var kept = selectedRecipe;
             Refresh();
             SelectRecipe(kept);

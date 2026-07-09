@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b565a5175b660b40bb238a1b3ade92f, type: 3}
+  m_Name: warden_charge
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Data.QuestSO
+  questId: warden_charge
+  title: The Warden's Charge
+  giverName: The Warden
+  offerText: "You there \u2014 new blood. The Bleak creeps closer each night and
+    the watch grows thin. Prove your worth: bring me timber for the palisade, fletch
+    your own arrows, and thin the goblin scouts massing in the Ashfields. Do that,
+    and the hold will call you one of its own."
+  activeText: The palisade won't raise itself, and those goblins still draw breath.
+    Come back when the work is done.
+  turnInText: "Timber, arrows, and goblin blood on the ash. You'll do. Take this
+    \u2014 you've earned a place at the fire."
+  objectives:
+  - type: 0
+    targetId: log_0
+    required: 3
+    label: Chop Rough Logs
+  - type: 1
+    targetId: arrows
+    required: 1
+    label: Fletch Arrows at the Bench
+  - type: 2
+    targetId: 
+    required: 4
+    label: Slay Goblins in the Ashfields
+  reward:
+    gold: 60
+    voidShards: 2
+    xpSkill: 8
+    xpAmount: 150
+    rewardMaterial: {fileID: 11400000, guid: 8069a67604e8b7645a9e83afc99e3ec4, type: 2}
+    rewardMaterialQty: 15
+    rewardGear: {fileID: 0}

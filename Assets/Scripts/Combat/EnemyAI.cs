@@ -232,6 +232,9 @@ namespace VoidBound.Combat
             state = EnemyState.Dead;
             Vector3 deathPos = transform.position;
 
+            // Advance any active Kill objective (quest system, §Phase 3).
+            VoidBound.Quests.QuestEvents.RaiseEnemyKilled(definition != null ? definition.enemyId : null);
+
             var dropper = GetComponent<LootDropper>();
             if (dropper != null)
                 dropper.DropLoot(deathPos);
