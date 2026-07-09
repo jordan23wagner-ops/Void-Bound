@@ -85,6 +85,11 @@ namespace VoidBound.Combat
         // material asset); an empty block clears the override back to normal.
         private void SetFlash(bool on)
         {
+            // Re-init if a domain reload cleared the non-serialized state (editor-only:
+            // a mid-play recompile drops mpb/renderers and doesn't re-run Awake).
+            if (mpb == null) mpb = new MaterialPropertyBlock();
+            if (renderers == null) renderers = GetComponentsInChildren<Renderer>();
+
             mpb.Clear();
             if (on) mpb.SetColor(BaseColorID, Color.white);
             foreach (var r in renderers)

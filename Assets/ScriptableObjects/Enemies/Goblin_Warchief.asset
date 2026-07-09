@@ -14,17 +14,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Data.EnemyDefinitionSO
   enemyId: goblin_warchief
   displayName: Goblin Warchief
-  tier: 3
+  tier: 4
   visualPrefab: {fileID: 0}
   baseStats:
-    str: 14
-    dex: 9
-    vig: 22
+    str: 22
+    dex: 10
+    vig: 45
     intel: 5
-  baseDamage: 18
+  baseDamage: 16
   moveSpeed: 3.2
-  aggroRange: 14
-  attackRange: 2.6
-  lootTable: {fileID: 11400000, guid: 911cfc3105c4eb64786190c9e375544a, type: 2}
+  aggroRange: 12
+  attackRange: 2.4
+  lootTable: {fileID: 11400000, guid: 19e1300a0330aef4b8204d77974a2779, type: 2}
+  appliesPoison: 1
+  poisonChance: 0.5
+  poisonDamage: 12
+  poisonDuration: 6
   weapon: {fileID: 0}
   armor: []

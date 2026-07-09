@@ -19,6 +19,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 376d4b53d1e72a54f9634be165c177f8, type: 2}
   - {fileID: 11400000, guid: 9048b394d8e881140a0f207f588b237b, type: 2}
   - {fileID: 11400000, guid: afac43a938351784fa18cde35df56d3e, type: 2}
+  - {fileID: 11400000, guid: e1cee0a9f261d1e49954a9eb1dbd0c18, type: 2}
   - {fileID: 11400000, guid: f471f3349888f2f45a40545539f4dda8, type: 2}
   - {fileID: 11400000, guid: 694fd6902e9216e41b4ac55336d428a4, type: 2}
   - {fileID: 11400000, guid: 94b6ca5b16056374487d501338335462, type: 2}
@@ -267,5 +268,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f34091e0f1dcdc249a783af93f72e826, type: 2}
   - {fileID: 11400000, guid: e255aa3668857d242b40d0cc4b65821a, type: 2}
   - {fileID: 11400000, guid: c74756883aa62c04b9b9e85a8c3dc00c, type: 2}
+  - {fileID: 11400000, guid: 90d1514495bad7242b6c3fe10adc1077, type: 2}
   quests:
   - {fileID: 11400000, guid: 64438d1f3fb2f7e4f8d2ce4cf5dd5e8d, type: 2}

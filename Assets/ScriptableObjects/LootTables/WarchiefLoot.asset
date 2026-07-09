@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e54ecacde23653840af761dca9e7925c, type: 3}
+  m_Name: WarchiefLoot
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Data.LootTableSO
+  tableId: WarchiefLoot
+  displayName: Warchief Loot
+  gearPool:
+  - {fileID: 11400000, guid: e1cee0a9f261d1e49954a9eb1dbd0c18, type: 2}
+  rarityWeights:
+  - rarity: 4
+    weight: 1
+  gearDropChance: 0.04
+  materialDrops:
+  - material: {fileID: 11400000, guid: 90d1514495bad7242b6c3fe10adc1077, type: 2}
+    chance: 0.1
+    minQuantity: 1
+    maxQuantity: 1
+  goldMin: 80
+  goldMax: 160
+  voidShardMin: 1
+  voidShardMax: 3
+  zoneModifier: 1

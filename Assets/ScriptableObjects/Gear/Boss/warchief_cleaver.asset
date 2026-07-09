@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68a3e1c9b7987c246bf826e0449d5225, type: 3}
+  m_Name: warchief_cleaver
+  m_EditorClassIdentifier: Assembly-CSharp::VoidBound.Data.GearItemSO
+  itemId: warchief_cleaver
+  displayName: Warchief's Cleaver
+  slot: 0
+  weaponType: 1
+  rarity: 4
+  statModifiers:
+    str: 14
+    dex: 2
+    vig: 4
+    intel: 0
+  visualPrefab: {fileID: 0}
+  setId: 
+  untradable: 0
+  ammoSaver: 0
+  baseDamage: 26
+  goldValue: 400
