@@ -76,16 +76,80 @@ namespace VoidBound.Editor
             RenderSettings.fogEndDistance = 95f;
         }
 
-        // Darken the ground to charred ash so it reads as a volcanic wasteland (and
-        // so lava veins look like cracks IN the rock rather than dark objects laid
-        // on light sand). Recolours the shared AshfieldsGround material.
+        // Give the ground a charred-ash look with real surface detail: a generated,
+        // seamless texture (mottled ash + soot blotches + hairline dark cracks +
+        // faint ember flecks) instead of one flat colour — so it reads as cracked
+        // volcanic rock and lava veins look like part of it.
         private static void TuneGround()
         {
             var mat = AssetDatabase.LoadAssetAtPath<Material>("Assets/Art/Materials/AshfieldsGround.mat");
-            if (mat == null) { Debug.LogWarning("[AshfieldsExpansion] AshfieldsGround.mat not found — ground not darkened."); return; }
-            mat.color = new Color(0.17f, 0.145f, 0.13f);
+            if (mat == null) { Debug.LogWarning("[AshfieldsExpansion] AshfieldsGround.mat not found — ground unchanged."); return; }
+
+            var tex = BuildAshTexture(256);
+            if (!System.IO.Directory.Exists("Assets/Art/Textures")) System.IO.Directory.CreateDirectory("Assets/Art/Textures");
+            const string texPath = "Assets/Art/Textures/AshfieldsGround.asset";
+            var existing = AssetDatabase.LoadAssetAtPath<Texture2D>(texPath);
+            if (existing != null) AssetDatabase.DeleteAsset(texPath);
+            AssetDatabase.CreateAsset(tex, texPath);
+
+            mat.SetColor("_BaseColor", Color.white); // texture carries the colour now
+            mat.color = Color.white;
+            mat.mainTexture = tex;
+            mat.SetTexture("_BaseMap", tex);
+            mat.mainTextureScale = new Vector2(10f, 10f);
+            mat.SetTextureScale("_BaseMap", new Vector2(10f, 10f));
+            mat.SetFloat("_Smoothness", 0.05f); // dry ash, not shiny
             EditorUtility.SetDirty(mat);
             AssetDatabase.SaveAssets();
+        }
+
+        private static Texture2D BuildAshTexture(int s)
+        {
+            var tex = new Texture2D(s, s, TextureFormat.RGBA32, true) { wrapMode = TextureWrapMode.Repeat, name = "AshfieldsGround" };
+            var ash  = new Color(0.18f, 0.15f, 0.135f);
+            var soot = new Color(0.085f, 0.07f, 0.065f);
+            var ember = new Color(0.34f, 0.17f, 0.09f);
+            for (int y = 0; y < s; y++)
+                for (int x = 0; x < s; x++)
+                {
+                    float u = x / (float)s, v = y / (float)s;
+                    float mottle = Fbm(u, v, 4, 4);                 // broad value variation
+                    var c = ash * (0.78f + mottle * 0.5f);
+                    float blot = Fbm(u + 0.37f, v + 0.19f, 3, 3);   // dark soot patches
+                    if (blot < 0.42f) c = Color.Lerp(c, soot, (0.42f - blot) * 2f);
+                    float crack = 1f - Mathf.Abs(Fbm(u, v, 9, 2) * 2f - 1f); // ridged -> hairline cracks
+                    if (crack > 0.93f) c *= 0.5f;
+                    float fleck = Fbm(u + 0.7f, v + 0.5f, 34, 2);    // rare warm ember specks
+                    if (fleck > 0.86f) c = Color.Lerp(c, ember, (fleck - 0.86f) * 3f);
+                    c.a = 1f;
+                    tex.SetPixel(x, y, c);
+                }
+            tex.Apply();
+            return tex;
+        }
+
+        // Seamless (tiling) value noise: bilinear blend of a Perlin sample with its
+        // period-shifted neighbours so the texture wraps without a visible seam.
+        private static float SeamlessPerlin(float x, float y, float period)
+        {
+            float wx = (x % period) / period, wy = (y % period) / period;
+            float a = Mathf.PerlinNoise(x, y);
+            float b = Mathf.PerlinNoise(x - period, y);
+            float c = Mathf.PerlinNoise(x, y - period);
+            float d = Mathf.PerlinNoise(x - period, y - period);
+            return a * (1 - wx) * (1 - wy) + b * wx * (1 - wy) + c * (1 - wx) * wy + d * wx * wy;
+        }
+
+        private static float Fbm(float u, float v, int baseFreq, int octaves)
+        {
+            float sum = 0f, amp = 1f, norm = 0f;
+            int f = baseFreq;
+            for (int o = 0; o < octaves; o++)
+            {
+                sum += SeamlessPerlin(u * f, v * f, f) * amp;
+                norm += amp; amp *= 0.5f; f *= 2;
+            }
+            return sum / norm;
         }
 
         private static void RemoveTestWarchief()

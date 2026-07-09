@@ -30,21 +30,22 @@ namespace VoidBound.Homestead
 
         private void OnEnable() { if (!built) Build(); }
 
+        private System.Random rng;
+        private float Rand(float a, float b) => a + (float)rng.NextDouble() * (b - a);
+
         private void Build()
         {
             built = true;
 
-            // A branching web of thin molten cracks laid flat on the (dark ash)
-            // ground — no base plate, so the ground itself reads as the cracked
-            // rock and only the lava glows through the seams. Segments chain off
-            // each other so it looks like a spreading vein network, not a starburst.
-            float r = radius;
-            AddVein(new Vector3(-0.9f * r, 0f, -0.3f * r), 22f, 1.9f * r, 0.10f * r); // main seam
-            AddVein(new Vector3(0.2f * r, 0f, 0.05f * r),  70f, 1.1f * r, 0.08f * r); // branch up
-            AddVein(new Vector3(0.55f * r, 0f, 0.5f * r),  30f, 0.8f * r, 0.06f * r); // offshoot
-            AddVein(new Vector3(-0.35f * r, 0f, 0.15f * r), -48f, 0.9f * r, 0.07f * r); // branch down-left
-            AddVein(new Vector3(-0.7f * r, 0f, -0.55f * r), 100f, 0.7f * r, 0.06f * r); // hairline
-            AddVein(new Vector3(0.75f * r, 0f, -0.35f * r), 120f, 0.6f * r, 0.05f * r); // hairline
+            // Seed from world position so each accent is unique but stable across
+            // sessions — no two vein webs look alike (size, shape, orientation).
+            var p = transform.position;
+            int seed = Mathf.RoundToInt(p.x * 127.1f) * 73856093 ^ Mathf.RoundToInt(p.z * 311.7f) * 19349663;
+            rng = new System.Random(seed == 0 ? 1 : seed);
+
+            float r = radius * Rand(0.55f, 1.55f);           // variable overall size
+            var start = new Vector3(Rand(-0.2f, 0.2f) * r, 0f, Rand(-0.2f, 0.2f) * r);
+            BuildCrack(start, Rand(0f, 360f), 3 + rng.Next(0, 3), r, 0);
 
             // Very faint warm light so the seams just kiss the ground around them.
             var lightGO = new GameObject("Glow");
@@ -53,19 +54,36 @@ namespace VoidBound.Homestead
             glowLight = lightGO.AddComponent<Light>();
             glowLight.type = LightType.Point;
             glowLight.color = new Color(1f, 0.42f, 0.12f);
-            glowLight.range = radius * 3f;
-            glowLight.intensity = lightIntensity;
+            glowLight.range = r * 2.6f;
+            glowLight.intensity = lightIntensity * Rand(0.8f, 1.15f);
+        }
+
+        // Wandering crack: lay chained seams that turn slightly each step, with the
+        // occasional branch — an organic fissure rather than a fixed rosette.
+        private void BuildCrack(Vector3 pos, float dir, int segs, float r, int depth)
+        {
+            for (int i = 0; i < segs; i++)
+            {
+                float len = Rand(0.4f, 0.95f) * r;
+                float width = Mathf.Max(0.035f * r, Rand(0.06f, 0.12f) * r * (1f - 0.08f * i));
+                var fwd = Quaternion.Euler(0f, dir, 0f) * Vector3.right;
+                AddSeam(pos + fwd * (len * 0.5f), dir, len, width);
+                pos += fwd * len;
+                dir += Rand(-35f, 35f);                       // gentle wander
+                if (depth < 2 && rng.NextDouble() < 0.4)       // occasional branch
+                    BuildCrack(pos, dir + (rng.NextDouble() < 0.5 ? 55f : -55f), 1 + rng.Next(0, 2), r * 0.7f, depth + 1);
+            }
         }
 
         // One glowing crack segment: an ultra-flat emissive sliver laid on the
         // ground surface, so it reads as lava seeping through a seam, not a bar.
-        private void AddVein(Vector3 localPos, float yaw, float length, float width)
+        private void AddSeam(Vector3 center, float yaw, float length, float width)
         {
             var molten = GameObject.CreatePrimitive(PrimitiveType.Cube);
             DestroyCollider(molten);
             molten.name = "Seam";
             molten.transform.SetParent(transform, false);
-            molten.transform.localPosition = localPos + new Vector3(0f, 0.012f, 0f); // hug the surface
+            molten.transform.localPosition = center + new Vector3(0f, 0.012f, 0f); // hug the surface
             molten.transform.localRotation = Quaternion.Euler(0f, yaw, 0f);
             molten.transform.localScale = new Vector3(length, 0.01f, width);
             var m = MakeMat(Magma, true);
