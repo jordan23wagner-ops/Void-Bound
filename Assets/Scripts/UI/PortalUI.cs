@@ -145,13 +145,10 @@ namespace VoidBound.UI
                     // sticks across the trip.
                     row.onClick.AddListener(() =>
                     {
-                        Debug.Log($"[FreezeDiag] Portal travel clicked -> {targetScene}");
                         Close();
                         if (VoidBound.Save.SaveSystem.AutoEnabled)
                             VoidBound.Save.SaveSystem.Save(GameObject.FindGameObjectWithTag("Player"));
-                        Debug.Log($"[FreezeDiag] calling LoadScene({targetScene})");
                         SceneManager.LoadScene(targetScene);
-                        Debug.Log($"[FreezeDiag] LoadScene queued (deferred to frame end)");
                     });
                 }
             }
